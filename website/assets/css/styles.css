@@ -49,6 +49,8 @@ button { font: inherit; }
 .language-toggle:hover { border-color: var(--cyan); color: var(--cyan); }
 .github-link { display: inline-flex; align-items: center; gap: 7px; color: #e8edf7; font-size: .78rem; font-weight: 800; text-decoration: none; }
 .github-link svg { width: 20px; fill: currentColor; }
+.sponsor-link { min-height: 36px; display: inline-flex; align-items: center; padding: 0 13px; border: 1px solid rgba(255,46,196,.48); border-radius: 7px; background: rgba(255,46,196,.1); color: #ffd5f5; font-size: .7rem; font-weight: 900; letter-spacing: .07em; text-decoration: none; text-transform: uppercase; transition: border-color .2s, background .2s, color .2s, box-shadow .2s; }
+.sponsor-link:hover { border-color: var(--pink); background: rgba(255,46,196,.18); color: #fff; box-shadow: 0 0 24px rgba(255,46,196,.14); }
 .menu-toggle { display: none; width: 44px; height: 40px; margin-left: auto; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.04); color: #fff; cursor: pointer; }
 .menu-toggle > span:not(.sr-only) { display: block; width: 20px; height: 2px; margin: 4px auto; background: currentColor; transition: transform .2s, opacity .2s; }
 .menu-toggle[aria-expanded="true"] > span:nth-of-type(2) { transform: translateY(6px) rotate(45deg); }
@@ -72,6 +74,8 @@ button { font: inherit; }
 .button-primary:hover { box-shadow: 0 14px 46px rgba(47,224,255,.32); }
 .button-secondary { border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.035); color: #fff; }
 .button-secondary:hover { border-color: rgba(255,255,255,.5); }
+.button-sponsor { border-color: rgba(255,46,196,.5); background: rgba(255,46,196,.1); color: #ffd5f5; box-shadow: 0 10px 36px rgba(255,46,196,.09); }
+.button-sponsor:hover { border-color: var(--pink); background: rgba(255,46,196,.18); color: #fff; box-shadow: 0 14px 46px rgba(255,46,196,.2); }
 .hero-facts { display: flex; flex-wrap: wrap; gap: 15px 24px; margin: 32px 0 0; padding: 0; color: #9eaabd; list-style: none; }
 .hero-facts li { display: flex; align-items: center; gap: 8px; font-size: .76rem; }
 .hero-facts li > span { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); }
@@ -264,6 +268,7 @@ button { font: inherit; }
 @media (max-width: 430px) {
   .brand-logo { width: 39px; height: 39px; }
   .brand-name { font-size: 15px; }
+  .sponsor-link { min-height: 34px; padding: 0 9px; font-size: .62rem; }
   .hero h1 { font-size: clamp(2.75rem, 14vw, 3.65rem); }
   .hero-version { font-size: .62rem; }
   .section h2 { font-size: 2.45rem; }
