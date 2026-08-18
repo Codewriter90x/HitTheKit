@@ -72,6 +72,33 @@ matching rules.
 - **Support the project:** visit [GitHub Sponsors](https://github.com/sponsors/Codewriter90x)
   or read [FUNDING.md](FUNDING.md) for the funding boundary and current tiers.
 
+## Why sponsor HitTheKit?
+
+HitTheKit combines deterministic rhythm-game timing, electronic-drum hardware
+integration, beginner-focused lesson design, and an original rights-clean
+presentation. Keeping that foundation public requires more than feature work:
+it also requires hardware testing, accessibility review, release validation,
+documentation, and original assets.
+
+Sponsorship helps fund:
+
+- reproducible testing across electronic-drum modules, MIDI devices, audio
+  interfaces, and clean machines;
+- accessibility, localization, and beginner-friendly learning content;
+- original rights-clean visual and audio assets plus public documentation;
+- release engineering for future macOS distributions after every public gate
+  is met; and
+- focused maintenance time for the open-source core and contributor support.
+
+Sponsorship does not buy feature priority, roadmap control, commercial-song
+rights, private GoMyRO access, or a commercial HitTheKit license.
+
+[**Sponsor HitTheKit on GitHub →**](https://github.com/sponsors/Codewriter90x)
+
+Prefer to help without spending money? Test the source build, report a
+sanitized hardware result, improve documentation, or pick a
+[`good first issue`](https://github.com/Codewriter90x/HitTheKit/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22).
+
 ## Quick source setup
 
 Requirements: the .NET SDK selected by [`global.json`](global.json) and, for

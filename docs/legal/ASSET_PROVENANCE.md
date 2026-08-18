@@ -35,6 +35,7 @@ the public repository for chain-of-title review.
 | `Assets/HitTheKit/UI/MainMenu/Icons/play-neon.png` | `09d65de2c22d0f9b19c0558cfe772b9ebd77ccd95f522031ef5dc9ed0950e562` | Play menu icon |
 | `website/assets/images/hitthekit-readme-hero.jpg` | `6808877a6e952da9e6e1a4f660d46fe6b4e60b99cbad97311a3d0e7361fc7f21` | README and GitHub Sponsors hero artwork |
 | `website/assets/images/hitthekit-social-preview.jpg` | `8d5610553900157921047bbe8c4ea4ccc02c6e0f925041dc3f9be831e09994c8` | Website and repository social preview |
+| `website/assets/images/hitthekit-launch-square.png` | `7926db15a73249f67d9886d0ec4c3ae8c6f19a83cb7289d452220a415344b4a8` | Square community and social launch artwork |
 
 The older gameplay background variants and design-reference images are retained
 only as project-authored visual-development evidence. They are not third-party
