@@ -13,15 +13,16 @@ support:
 <https://github.com/sponsors/Codewriter90x>
 
 The maintainer's Sponsors profile is public and its payment connection is
-active. The repository integration is defined in `.github/FUNDING.yml`. Before
-this change is published, the profile, funding link and Sponsor button must be
-reviewed from a logged-out session.
+active. The repository integration is defined in `.github/FUNDING.yml`. The
+public profile, funding link, and Sponsor button have been verified from a
+logged-out session.
 
 ## What funding would support
 
 Priority order:
 
-1. Apple Developer signing and notarization costs;
+1. release engineering and future Apple Developer signing and notarization
+   costs after public distribution gates are met;
 2. additional MIDI modules, electronic kits, and audio interfaces for
    reproducible compatibility and latency tests;
 3. accessibility and clean-machine release validation;
@@ -39,7 +40,18 @@ The public profile currently offers three monthly tiers in US dollars:
 - **$15 — Backstage Supporter:** adds optional supporter recognition and
   occasional development or release updates; and
 - **$35 — Studio Patron:** adds prominent optional recognition and early access
-  to selected public playtest or release-candidate builds.
+  to development notes, public release plans, technical previews, and
+  behind-the-scenes updates.
+
+Three one-time tiers provide the same low-maintenance, rights-neutral way to
+help without creating a recurring commitment:
+
+- **$10 — Pair of Sticks:** a direct contribution to open-source development,
+  documentation, testing, accessibility, and rights-clean assets;
+- **$25 — Hardware Test Boost:** helps cover electronic-drum, MIDI,
+  audio-interface, and clean-machine compatibility testing; and
+- **$50 — Open Source Milestone:** gives release validation, documentation,
+  accessibility, and focused development time a meaningful one-time boost.
 
 Custom monthly and one-time support remains available through GitHub Sponsors.
 Rewards are digital, low-maintenance, privacy-conscious and independent of GPL
