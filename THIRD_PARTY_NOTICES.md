@@ -12,9 +12,11 @@ provenance is recorded separately in
 | Unity Test Framework | 1.7.0 | Unity Companion License v1.4 | EditMode and PlayMode testing | Package source is resolved by Unity Package Manager, not tracked or intended for player distribution | Preserve the package license and copyright notice if substantial package portions are redistributed. |
 | Unity Custom NUnit (`com.unity.ext.nunit`) | 2.1.0, based on NUnit 3.5 | Unity Package Distribution License v2.1; bundled NUnit portions under MIT | Transitive Unity test dependency | Resolved by Unity Package Manager, not tracked or intended for player distribution | Preserve Unity package terms and the bundled NUnit MIT notice when applicable. |
 | .NET SDK | 8.0.411 requested by `global.json` | MIT plus the distribution's third-party notices | Build tooling | No | Build tool only; follow the license and notices of the installed distribution. |
-| Microsoft.NET.Test.Sdk | 17.11.1 | MIT | Core and MIDI-tool test tooling | NuGet package is restored, not tracked; not a runtime dependency | Preserve MIT notices if redistributed. |
-| xUnit.net / Visual Studio runner | xUnit 2.9.2; runner 2.8.2 | Apache License 2.0 / MIT as declared by the packages | Core and MIDI-tool test tooling | NuGet packages are restored, not tracked; not runtime dependencies | Preserve the applicable notices if redistributed. |
+| Microsoft.NET.Test.Sdk | 18.9.0 | MIT | Core and MIDI-tool test tooling | NuGet package is restored, not tracked; not a runtime dependency | Preserve MIT notices if redistributed. |
+| xUnit.net / Visual Studio runner | xUnit 2.9.3; runner 4.0.0 | Apache License 2.0 / MIT as declared by the packages | Core and MIDI-tool test tooling | NuGet packages are restored, not tracked; not runtime dependencies | Preserve the applicable notices if redistributed. |
 | Melanchall.DryWetMidi | 8.0.3 | MIT | MIDI-file parsing in the standalone `HitTheKit.MidiCapture` developer tool | Present on `main` as a restored NuGet dependency of the tool; it is not linked into the Unity runtime | Preserve the MIT notice and audit the exact packaged dependency set before distributing the tool. A HitTheKit commercial license does not relicense DryWetMIDI. |
+| Universal Render Pipeline and rendering packages | URP/Core/Shader Graph/URP Config 17.5.0; Searcher 4.9.4 | Package-specific Unity license files and Unity Package Manager terms | Unity rendering and shader authoring | Resolved by Unity Package Manager; package source is not tracked | Preserve the license and notice shipped with each exact resolved package when redistribution makes it applicable. |
+| Unity resolved support packages | Burst 1.8.29; Collections 6.5.0; Mathematics 1.4.0; Performance Testing 3.5.0; Mono.Cecil 1.11.6 | Package-specific license files; Mono.Cecil is MIT | Transitive compilation, collections, mathematics, testing and assembly-inspection support | Resolved by Unity Package Manager; package source is not tracked | Regenerate this list from `Packages/packages-lock.json` for a release candidate and preserve every applicable package notice. |
 | GitHub Unity `.gitignore` template | upstream `github/gitignore` template, revision not recorded | CC0-1.0 | Repository ignore rules | The adapted text is tracked in `.gitignore` | No attribution required by CC0; provenance is retained in the file header and this inventory. |
 
 ## Verified sources
@@ -26,9 +28,9 @@ provenance is recorded separately in
   <https://unity.com/legal/licenses/unity-package-distribution-license>
 - Microsoft .NET SDK: <https://github.com/dotnet/sdk>
 - Microsoft test platform: <https://github.com/microsoft/vstest>
-- xUnit.net: <https://www.nuget.org/packages/xunit/2.9.2>
+- xUnit.net: <https://www.nuget.org/packages/xunit/2.9.3>
 - xUnit.net Visual Studio runner:
-  <https://www.nuget.org/packages/xunit.runner.visualstudio/2.8.2>
+  <https://www.nuget.org/packages/xunit.runner.visualstudio/4.0.0>
 - DryWetMIDI 8.0.3:
   <https://www.nuget.org/packages/Melanchall.DryWetMidi/8.0.3>
 - GitHub gitignore templates: <https://github.com/github/gitignore>

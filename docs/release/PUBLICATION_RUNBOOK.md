@@ -1,6 +1,9 @@
 # Clean public repository runbook
 
-Status: **source-readiness preparation authorized; publication execution still pending exact-SHA approval**.
+Status: **clean source-only repository published on 2026-08-18**. This document
+is retained as the historical runbook and as a verification checklist. Public
+Unity binaries remain out of scope pending their separate legal and release
+gates; the first attested source-snapshot workflow run is also still pending.
 
 The existing private repository contains historical playtest tags and releases.
 The preferred non-destructive publication path is a new repository initialized
@@ -15,11 +18,10 @@ Because the website and documentation already use the canonical
 - repoint the local remotes deliberately, preserving a clearly named private
   archive remote when still needed.
 
-The maintainer has selected this topology and authorized its preparation. The
-rename, public-repository creation, visibility change, remote rewiring and
-workflow activation remain publication actions: execute them only in a later
-turn after review of this readiness PR and fresh authorization tied to the
-exact source SHA.
+The maintainer selected this topology. The private history is now retained in
+`HitTheKit-private-archive`, while `Codewriter90x/HitTheKit` is the clean public
+source repository. Do not repeat the rename or repository-creation steps below;
+they remain documented to explain and audit the publication boundary.
 
 GitHub warns that redirects can stop working when a new repository reuses the
 old name. Immediately after the archive rename and public repository creation,
@@ -75,18 +77,16 @@ Before opening access, configure:
 - GitHub Sponsors only after its profile is approved and the funding link is
   confirmed from a logged-out session.
 
-After the public repository exists, rename
-`.github/workflows/pages.yml.example` to `.github/workflows/pages.yml`, enable
-Pages with GitHub Actions as the source, and verify the deployment before
-setting the repository homepage URL. Do not activate this workflow in the
-private historical archive.
+The public repository uses `.github/workflows/pages.yml`; Pages is enabled with
+GitHub Actions as the source and the repository homepage points to the verified
+deployment. The private historical archive must not activate this workflow.
 
-Also rename `.github/workflows/source-release.yml.example` to
-`.github/workflows/source-release.yml` in the public repository. Run it only
-for an approved exact version, then verify the downloaded source snapshot's
-SHA-256 and GitHub artifact attestation before attaching it to a release.
+The public repository also contains `.github/workflows/source-release.yml`.
+Run it only for an approved exact version, then verify the downloaded source
+snapshot's SHA-256 and GitHub artifact attestation before attaching it to a
+release.
 
-In the same reviewed publication commit, change `PUBLICATION_STATUS` from
+The reviewed publication commit changed `PUBLICATION_STATUS` from
 `private-preparation` to `public`. The public-readiness contract deliberately
 fails if active deployment workflows appear in the private state or if the
 public state is missing them.

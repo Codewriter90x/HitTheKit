@@ -64,3 +64,12 @@ jobs:
           persist-credentials: false
       - run: bash tests/scripts/macos-signing-foundation-tests.sh
       - run: bash tests/scripts/windows-packaging-contract-tests.sh
+
+  native-coremidi:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Build and test the macOS arm64 CoreMIDI plug-in
+        run: ./scripts/build-coremidi-plugin-macos-arm64.sh

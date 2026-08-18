@@ -23,9 +23,9 @@ support contract.
 - **Commercial licensing:** the route is not active until legal review and a
   dedicated private contact are complete; see [LICENSING.md](LICENSING.md).
 
-General troubleshooting discussions will be enabled when the clean public
-repository is launched. Until then, use only the structured issue forms that
-match the categories above.
+Use GitHub Discussions for general troubleshooting and community questions.
+Use the structured issue forms for reproducible bugs, hardware evidence, and
+proposals so that actionable reports retain the information needed for review.
 
 ## Supported versions
 

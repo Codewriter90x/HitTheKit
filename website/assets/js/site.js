@@ -33,10 +33,13 @@ const header = document.querySelector("[data-header]");
 function getSavedLanguage() {
   try {
     const value = localStorage.getItem("htk-lang");
-    return value === "en" ? "en" : "it";
+    if (value === "en" || value === "it") return value;
   } catch {
-    return "it";
+    // Fall through to the browser preference when storage is unavailable.
   }
+
+  const browserLanguage = navigator.languages?.[0] || navigator.language || "";
+  return browserLanguage.toLowerCase().startsWith("it") ? "it" : "en";
 }
 
 function applyLanguage(language) {
