@@ -45,7 +45,7 @@ jobs:
         with:
           subject-path: artifacts/source/HitTheKit-source-${{ inputs.version }}.tar.gz
       - name: Upload source release evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: HitTheKit-source-${{ inputs.version }}
           path: artifacts/source
