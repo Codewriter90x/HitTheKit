@@ -128,8 +128,8 @@ namespace HitTheKit.Unity.Tests
             flow.ChoosePreset("minimal");
             flow.BeginGuidedMapping();
 
-            flow.ProcessCapturedMessage(RawMidiMessage.NoteOn(9, 37, 80));
-            flow.ProcessCapturedMessage(RawMidiMessage.NoteOn(9, 37, 100));
+            for (int index = 0; index < flow.Snapshot.CurrentStep.CaptureCount; index++)
+                flow.ProcessCapturedMessage(RawMidiMessage.NoteOn(9, 37, 80 + index));
             Assert.That(flow.AcceptCurrentCapture().Succeeded, Is.True);
             Assert.That(flow.State, Is.EqualTo(DeviceSetupState.ConflictReview));
             Assert.That(flow.Snapshot.ReviewIssues.Any(issue =>

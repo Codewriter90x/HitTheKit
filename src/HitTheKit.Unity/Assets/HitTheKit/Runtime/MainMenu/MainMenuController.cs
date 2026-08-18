@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using HitTheKit.Core;
 using HitTheKit.Unity.Input;
 using HitTheKit.Unity.Gameplay;
 using HitTheKit.Unity.DeviceSetup;
