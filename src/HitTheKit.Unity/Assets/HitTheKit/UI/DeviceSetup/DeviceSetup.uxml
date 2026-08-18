@@ -1,0 +1,187 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="DeviceSetup.uss" />
+    <ui:VisualElement name="device-setup-app" class="app-shell">
+        <ui:VisualElement class="device-setup-background" />
+        <ui:VisualElement class="device-setup-scrim" />
+        <ui:VisualElement class="topbar">
+            <ui:VisualElement class="setup-title-block">
+                <ui:Label text="HITTHEKIT · SOUND CHECK" class="setup-kicker" />
+                <ui:Label name="app-title" class="app-title" text="Configura la tua batteria elettronica" />
+            </ui:VisualElement>
+            <ui:VisualElement class="topbar-actions">
+                <ui:Button name="main-menu-button" text="MENU PRINCIPALE" class="main-menu-button" />
+                <ui:VisualElement class="language-row">
+                    <ui:Label text="IT / EN" />
+                    <ui:DropdownField name="language-dropdown" class="language-dropdown" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:Label name="flow-message" class="flow-message" />
+
+        <ui:VisualElement name="screen-welcome" class="screen welcome-screen">
+            <ui:VisualElement class="hero-card">
+                <ui:Label name="welcome-heading" class="hero-title" />
+                <ui:Label name="welcome-subtitle" class="hero-copy" />
+                <ui:Label name="welcome-privacy" class="privacy-note" />
+                <ui:VisualElement class="button-row">
+                    <ui:Button name="start-button" class="button-primary" />
+                    <ui:Button name="back-game-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="screen-deviceselection" class="screen">
+            <ui:VisualElement class="section-header">
+                <ui:VisualElement>
+                    <ui:Label text="FASE 01 · CONNESSIONE" class="eyebrow" />
+                    <ui:Label name="device-heading" class="section-title" />
+                </ui:VisualElement>
+                <ui:Button name="refresh-button" />
+            </ui:VisualElement>
+            <ui:VisualElement class="device-status-strip">
+                <ui:VisualElement class="device-status-cell"><ui:Label text="STATO SISTEMA" class="status-caption" /><ui:Label name="device-system-state" text="PRONTO" class="status-value status-value--ready" /></ui:VisualElement>
+                <ui:VisualElement class="device-status-cell"><ui:Label text="DISPOSITIVI TROVATI" class="status-caption" /><ui:Label name="device-count" text="0" class="status-value" /></ui:VisualElement>
+                <ui:VisualElement class="device-status-cell"><ui:Label text="PROFILI DISPONIBILI" class="status-caption" /><ui:Label name="device-profile-count" text="0" class="status-value" /></ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement class="device-selection-workspace">
+                <ui:VisualElement class="device-list-panel">
+                    <ui:Label text="DISPOSITIVI MIDI" class="panel-title" />
+                    <ui:ScrollView name="device-list" class="card-list device-card-list" />
+                    <ui:Label text="Non trovi il dispositivo? Verifica il collegamento USB e premi Aggiorna." class="device-help" />
+                    <ui:Label name="audio-routing-help" class="device-help audio-routing-help" />
+                </ui:VisualElement>
+                <ui:VisualElement class="soundcheck-panel">
+                    <ui:Label text="SOUND CHECK" class="panel-title panel-title--amber" />
+                    <ui:Label text="MAPPA DEL KIT" class="soundcheck-subtitle" />
+                    <ui:VisualElement class="soundcheck-kit-visual" />
+                    <ui:VisualElement class="soundcheck-legend">
+                        <ui:Label text="CYAN · ZONA RILEVATA" />
+                        <ui:Label text="AMBRA · DA CONFERMARE" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="screen-profileselection" class="screen">
+            <ui:Label name="profile-heading" class="section-title" />
+            <ui:ScrollView name="profile-list" class="card-list" />
+            <ui:VisualElement class="button-row">
+                <ui:Button name="configure-new-button" class="button-primary" />
+                <ui:Button name="profile-back-button" text="Indietro / Back" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="screen-kitstructure" class="screen">
+            <ui:Label name="structure-heading" class="section-title" />
+            <ui:Label name="structure-copy" class="section-copy" />
+            <ui:VisualElement class="preset-grid">
+                <ui:VisualElement name="preset-card-minimal" class="choice-card preset-card">
+                    <ui:VisualElement class="preset-image preset-image--minimal" />
+                    <ui:Label name="preset-minimal-title" class="preset-title" />
+                    <ui:Label name="preset-minimal-copy" class="preset-copy" />
+                    <ui:Button name="preset-minimal" class="preset-select" />
+                </ui:VisualElement>
+                <ui:VisualElement name="preset-card-standard" class="choice-card preset-card">
+                    <ui:VisualElement class="preset-image preset-image--standard" />
+                    <ui:Label name="preset-standard-title" class="preset-title" />
+                    <ui:Label name="preset-standard-copy" class="preset-copy" />
+                    <ui:Button name="preset-standard" class="preset-select" />
+                </ui:VisualElement>
+                <ui:VisualElement name="preset-card-extended" class="choice-card preset-card">
+                    <ui:VisualElement class="preset-image preset-image--extended" />
+                    <ui:Label name="preset-extended-title" class="preset-title" />
+                    <ui:Label name="preset-extended-copy" class="preset-copy" />
+                    <ui:Button name="preset-extended" class="preset-select" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:Foldout text="Custom" class="custom-foldout">
+                <ui:VisualElement class="custom-grid">
+                    <ui:IntegerField name="custom-toms" label="Tom (0–4)" value="2" />
+                    <ui:IntegerField name="custom-crashes" label="Crash (0–3)" value="1" />
+                    <ui:Toggle name="custom-ride" label="Ride" value="true" />
+                    <ui:Toggle name="custom-ride-bell" label="Ride bell" value="true" />
+                    <ui:Toggle name="custom-snare-rim" label="Snare rim" value="true" />
+                    <ui:Toggle name="custom-hihat" label="Hi-hat" value="true" />
+                    <ui:Toggle name="custom-hihat-pedal" label="Hi-hat pedal" value="true" />
+                    <ui:Toggle name="custom-chokes" label="Crash choke" value="true" />
+                </ui:VisualElement>
+                <ui:Button name="custom-apply-button" text="Usa struttura custom / Apply custom" />
+            </ui:Foldout>
+            <ui:VisualElement class="button-row">
+                <ui:Button name="begin-wizard-button" class="button-primary" />
+                <ui:Button name="structure-back-button" text="Indietro / Back" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="screen-guidedmapping" class="screen workspace-screen">
+            <ui:VisualElement class="workspace-grid">
+                <ui:VisualElement class="workspace-panel navigation-panel">
+                    <ui:Label name="guided-progress" class="eyebrow" />
+                    <ui:Label name="guided-target" class="guided-target" />
+                    <ui:Label name="guided-title" class="section-title" />
+                    <ui:Label name="guided-instruction" class="instruction" />
+                    <ui:ProgressBar name="hit-progress" low-value="0" high-value="5" value="0" class="hit-progress" />
+                    <ui:Label name="candidate-hint" class="candidate-hint" />
+                    <ui:Label name="guided-help" class="hint" />
+                    <ui:VisualElement class="button-stack">
+                        <ui:Button name="simulate-button" class="button-primary" />
+                        <ui:Button name="accept-button" class="button-primary capture-cta" />
+                        <ui:Button name="retry-button" />
+                        <ui:Button name="skip-button" />
+                        <ui:Button name="guided-back-button" />
+                        <ui:Button name="save-draft-button" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement class="workspace-panel diagram-panel">
+                    <ui:VisualElement name="diagram-host" class="kit-diagram" />
+                </ui:VisualElement>
+                <ui:VisualElement class="workspace-panel monitor-panel">
+                    <ui:Label text="Event monitor (max 10)" class="panel-title" />
+                    <ui:Label name="connection-status" class="connection-status" />
+                    <ui:Label name="guided-status" class="capture-status" />
+                    <ui:ScrollView name="event-list" class="event-list" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="screen-conflictreview" class="screen">
+            <ui:Label name="conflict-heading" class="section-title" />
+            <ui:Label text="Lo stesso trigger non viene mai unito silenziosamente. Riprova lo step oppure mantienilo unresolved." class="section-copy" />
+            <ui:ScrollView name="conflict-list" class="conflict-list" />
+            <ui:VisualElement class="button-row">
+                <ui:Button name="conflict-retry-button" class="button-primary" />
+                <ui:Button name="keep-unresolved-button" text="Mantieni unresolved" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="screen-configurationreview" class="screen">
+            <ui:Label name="review-heading" class="section-title" />
+            <ui:ScrollView name="review-list" class="review-list" />
+            <ui:VisualElement class="button-row">
+                <ui:Button name="review-back-button" text="Torna alla configurazione" />
+                <ui:Button name="review-save-draft-button" text="Salva bozza / Save draft" />
+                <ui:Button name="test-button" class="button-primary" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="screen-testkit" class="screen workspace-screen">
+            <ui:Label name="test-heading" class="section-title" />
+            <ui:VisualElement class="workspace-grid">
+                <ui:VisualElement class="workspace-panel diagram-panel">
+                    <ui:VisualElement name="test-diagram-host" class="kit-diagram" />
+                </ui:VisualElement>
+                <ui:VisualElement class="workspace-panel">
+                    <ui:Label name="test-status" class="capture-status" />
+                    <ui:ScrollView name="test-event-list" class="event-list" />
+                    <ui:Button name="test-simulate-button" text="Simula test kit" class="button-primary" />
+                    <ui:Button name="complete-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="screen-completed" class="screen">
+            <ui:Label name="completed-heading" class="hero-title" />
+            <ui:Label text="La configurazione è stata salvata e verrà usata dal gameplay CoreMIDI." class="hero-copy" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

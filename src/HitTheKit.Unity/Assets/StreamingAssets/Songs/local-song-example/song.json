@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "local-song-example",
+  "title": "Local Song Example",
+  "artist": "Your Library",
+  "sortOrder": 20,
+  "audioAvailability": "missing",
+  "chartAvailability": "unavailable"
+}

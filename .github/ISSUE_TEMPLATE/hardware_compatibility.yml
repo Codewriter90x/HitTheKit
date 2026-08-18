@@ -1,0 +1,60 @@
+name: Compatibilità batteria elettronica
+description: Condividi un test riproducibile di modulo, kit o interfaccia MIDI senza dati privati.
+title: "[Hardware]: "
+labels: [hardware]
+body:
+  - type: input
+    id: kit
+    attributes:
+      label: Batteria o modulo
+      placeholder: Produttore e modello esatto
+    validations:
+      required: true
+  - type: input
+    id: connection
+    attributes:
+      label: Collegamento
+      placeholder: USB diretto, interfaccia MIDI, hub, adattatore
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Ambiente
+      placeholder: HitTheKit 0.5.0 o commit, macOS e architettura
+    validations:
+      required: true
+  - type: dropdown
+    id: workflow
+    attributes:
+      label: Flusso provato
+      options:
+        - Rilevamento dispositivo
+        - Configurazione guidata
+        - Test configurazione
+        - Gameplay
+        - Calibrazione
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Risultato riproducibile
+      description: Elenca passi, comportamento atteso e comportamento osservato.
+    validations:
+      required: true
+  - type: textarea
+    id: mapping
+    attributes:
+      label: Note o controlli osservati
+      description: Inserisci solo dati minimi e sanitizzati; non allegare catture complete non richieste.
+      placeholder: "Kick: canale 10, nota 36; Snare: canale 10, nota 38"
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy e diritti
+      options:
+        - label: Non ho incluso musica, credenziali, dati personali o catture MIDI non sanitizzate.
+          required: true
+        - label: Capisco che questa osservazione non crea automaticamente un profilo hardware verificato.
+          required: true

@@ -1,0 +1,131 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="GameplayHighway.uss" />
+    <ui:VisualElement name="gameplay-app" class="gameplay-shell theme--arcade-neon">
+        <ui:VisualElement name="gameplay-background" class="gameplay-background" />
+        <ui:VisualElement class="gameplay-vignette" />
+
+        <ui:VisualElement class="hud-top">
+            <ui:VisualElement class="hud-panel track-panel">
+                <ui:Label text="HITTHEKIT" class="brand" />
+                <ui:Label name="track-name" text="NEON CIRCUIT" class="track-name" />
+                <ui:Label name="track-meta" text="DEMO STAGE · EASY · 120 BPM" class="eyebrow" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="progress-panel">
+                <ui:VisualElement class="song-progress-track">
+                    <ui:VisualElement name="song-progress-fill" class="song-progress-fill" />
+                </ui:VisualElement>
+                <ui:Label name="song-position" text="00:00 / 00:16" class="song-position" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="score-panel">
+                <ui:VisualElement class="metric">
+                    <ui:Label text="SCORE" class="metric-label" />
+                    <ui:Label name="score-value" text="0" class="metric-value" />
+                </ui:VisualElement>
+                <ui:VisualElement class="metric metric--compact">
+                    <ui:Label text="COMBO" class="metric-label" />
+                    <ui:Label name="combo-value" text="0" class="metric-value metric-value--accent" />
+                </ui:VisualElement>
+                <ui:VisualElement class="metric metric--compact">
+                    <ui:Label text="ACCURACY" class="metric-label" />
+                    <ui:Label name="accuracy-value" text="100.0%" class="metric-value metric-value--small" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:Label name="session-kicker" text="MODALITÀ GIOCO · LA BATTERIA SUONA SOLO QUANDO LA COLPISCI" class="session-kicker" />
+
+        <ui:VisualElement class="gameplay-content">
+            <ui:VisualElement class="side-rail side-rail--left">
+                <ui:VisualElement class="hud-panel rail-card">
+                    <ui:Label text="TIMING" class="rail-title" />
+                    <ui:Label text="PERFECT" class="timing-row timing-row--perfect" />
+                    <ui:Label text="GOOD" class="timing-row timing-row--good" />
+                    <ui:Label text="EARLY / LATE" class="timing-row timing-row--warning" />
+                    <ui:Label text="MISS" class="timing-row timing-row--miss" />
+                </ui:VisualElement>
+                <ui:VisualElement class="hud-panel rail-card latency-card">
+                    <ui:Label text="DSP CLOCK" class="rail-title" />
+                    <ui:Label text="48.0 kHz · STABLE" class="rail-value" />
+                    <ui:Label text="LOOK-AHEAD 4.0 s" class="rail-copy" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement class="highway-column">
+                <ui:VisualElement name="highway-host" class="highway-host" />
+                <ui:VisualElement class="environment-identity">
+                    <ui:Label name="environment-title" text="ARCADE NEON" class="environment-title" />
+                    <ui:Label name="environment-subtitle" text="HOLOGRAPHIC RUNWAY" class="environment-subtitle" />
+                </ui:VisualElement>
+                <ui:Label name="kit-guidance-label" text="SEGUI I COLORI: LA NOTA E IL PEZZO SI ACCENDONO INSIEME" class="kit-guidance-label" />
+                <ui:VisualElement name="kit-visual-host" class="kit-visual-host" />
+                <ui:VisualElement name="countdown-overlay" class="countdown-overlay">
+                    <ui:Label text="PREPARATI" class="countdown-heading" />
+                    <ui:Label name="countdown-label" text="4" class="countdown-label" />
+                    <ui:Label text="ASCOLTA IL TEMPO" class="countdown-copy" />
+                </ui:VisualElement>
+                <ui:Label name="judgment-label" text="READY" class="judgment-label" />
+                <ui:VisualElement name="targets-host" class="targets-host" />
+                <ui:VisualElement name="kick-target-host" class="kick-target-host" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="side-rail side-rail--right">
+                <ui:VisualElement class="hud-panel rail-card">
+                    <ui:Label text="INPUT DEVICE" class="rail-title" />
+                    <ui:Label name="device-status" text="INPUT READY" class="rail-value" />
+                    <ui:Label text="CORE MIDI / KEYBOARD" class="rail-copy" />
+                </ui:VisualElement>
+                <ui:VisualElement class="hud-panel rail-card current-input-card">
+                    <ui:Label text="CURRENT INPUT" class="rail-title" />
+                    <ui:Label name="current-input" text="IN ATTESA DEL PRIMO COLPO" class="current-input" />
+                </ui:VisualElement>
+                <ui:VisualElement class="hud-panel rail-card key-guide">
+                    <ui:Label text="CONTROLLI" class="rail-title" />
+                    <ui:Label name="key-guide-cymbals" text="D/S  PIATTI" class="rail-copy" />
+                    <ui:Label name="key-guide-toms" text="G/H  TOM" class="rail-copy" />
+                    <ui:Label name="key-guide-snare-hihat" text="J/K  RULLANTE / HI-HAT" class="rail-copy" />
+                    <ui:Label name="key-guide-floor-kick" text="L/F  TIMPANO / GRANCASSA" class="rail-copy" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement class="footer-strip">
+            <ui:Label text="COLPISCI QUANDO LA NOTA TOCCA LA LINEA LUMINOSA" />
+            <ui:VisualElement class="footer-actions">
+                <ui:Label text="STILE VISIVO: IMPOSTAZIONI" />
+                <ui:Button name="pause-button" text="ESC / P  PAUSA" class="gameplay-menu-button" />
+                <ui:Button name="menu-button" text="MENU" class="gameplay-menu-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="pause-overlay" class="run-overlay" style="display: none;">
+            <ui:VisualElement class="run-dialog">
+                <ui:Label text="IN PAUSA" class="run-dialog-title" />
+                <ui:Label text="La traccia e il timing sono fermi." class="run-dialog-copy" />
+                <ui:Button name="resume-button" text="RIPRENDI" class="run-primary-button" />
+                <ui:Button name="restart-button" text="RICOMINCIA" class="run-secondary-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="results-overlay" class="run-overlay" style="display: none;">
+            <ui:VisualElement class="results-dialog">
+                <ui:Label text="BRANO COMPLETATO" class="eyebrow results-eyebrow" />
+                <ui:Label name="result-rank" text="S" class="result-rank" />
+                <ui:VisualElement class="results-metrics">
+                    <ui:VisualElement class="result-metric"><ui:Label text="SCORE" class="metric-label" /><ui:Label name="result-score" text="0" class="result-value" /></ui:VisualElement>
+                    <ui:VisualElement class="result-metric"><ui:Label text="ACCURACY" class="metric-label" /><ui:Label name="result-accuracy" text="100.0%" class="result-value" /></ui:VisualElement>
+                    <ui:VisualElement class="result-metric"><ui:Label text="MAX COMBO" class="metric-label" /><ui:Label name="result-combo" text="0" class="result-value" /></ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Label name="result-breakdown" text="PERFECT 0   GOOD 0   EARLY/LATE 0   MISS 0" class="result-breakdown" />
+                <ui:Label name="result-practice" text="FOCUS: COMPLETA UNA SESSIONE" class="result-practice" />
+                <ui:Label name="result-calibration" text="CALIBRAZIONE: SERVONO 8 COLPI VALIDI" class="result-calibration" />
+                <ui:Button name="result-apply-calibration" text="APPLICA CALIBRAZIONE" class="run-secondary-button result-calibration-button" />
+                <ui:VisualElement class="result-actions">
+                    <ui:Button name="result-restart-button" text="SUONA ANCORA" class="run-primary-button" />
+                    <ui:Button name="result-menu-button" text="MENU PRINCIPALE" class="run-secondary-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

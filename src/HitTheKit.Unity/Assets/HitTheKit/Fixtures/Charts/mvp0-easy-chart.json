@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "offsetSeconds": 0.0,
+  "difficulties": {
+    "easy": [
+      { "time": 0.50, "pad": "kick" },
+      { "time": 0.75, "pad": "hiHat" },
+      { "time": 1.00, "pad": "snare" },
+      { "time": 1.25, "pad": "hiHat" },
+      { "time": 1.50, "pad": "tom1" },
+      { "time": 1.75, "pad": "tom2" },
+      { "time": 2.00, "pad": "floorTom" },
+      { "time": 2.25, "pad": "crash" },
+      { "time": 2.25, "pad": "kick" },
+      { "time": 2.50, "pad": "ride" },
+      { "time": 2.75, "pad": "hiHat" },
+      { "time": 3.00, "pad": "snare" },
+      { "time": 3.25, "pad": "kick" },
+      { "time": 3.50, "pad": "hiHat" },
+      { "time": 3.75, "pad": "tom1" },
+      { "time": 4.00, "pad": "tom2" },
+      { "time": 4.25, "pad": "floorTom" },
+      { "time": 4.50, "pad": "crash" },
+      { "time": 4.50, "pad": "kick" },
+      { "time": 4.75, "pad": "ride" },
+      { "time": 5.00, "pad": "snare" },
+      { "time": 5.25, "pad": "hiHat" },
+      { "time": 5.50, "pad": "kick" },
+      { "time": 5.75, "pad": "tom1" },
+      { "time": 6.00, "pad": "tom2" },
+      { "time": 6.25, "pad": "floorTom" },
+      { "time": 6.50, "pad": "crash" },
+      { "time": 6.50, "pad": "kick" },
+      { "time": 6.75, "pad": "ride" },
+      { "time": 7.00, "pad": "snare" },
+      { "time": 7.25, "pad": "hiHat" },
+      { "time": 7.50, "pad": "kick" }
+    ]
+  }
+}

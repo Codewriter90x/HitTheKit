@@ -1,0 +1,52 @@
+name: Build and attest public source snapshot
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Exact semantic version from VERSION
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  source-snapshot:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - name: Verify release input
+        run: |
+          set -eu
+          test "$RELEASE_VERSION" = "$(tr -d '[:space:]' < VERSION)"
+          printf '%s\n' "$RELEASE_VERSION" | rg -q '^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$'
+      - name: Run source release gates
+        run: |
+          dotnet test HitTheKit.sln --configuration Release
+          ./scripts/check-nuget-vulnerabilities.sh
+          bash tests/scripts/public-readiness-contract-tests.sh
+      - name: Create rights-clean source snapshot
+        run: |
+          mkdir -p artifacts/source
+          ./scripts/create-public-source-snapshot.sh "artifacts/source/HitTheKit-source-$RELEASE_VERSION.tar.gz"
+          sha256sum "artifacts/source/HitTheKit-source-$RELEASE_VERSION.tar.gz" > artifacts/source/SHA256SUMS
+      - name: Attest source provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: artifacts/source/HitTheKit-source-${{ inputs.version }}.tar.gz
+      - name: Upload source release evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: HitTheKit-source-${{ inputs.version }}
+          path: artifacts/source
+          if-no-files-found: error

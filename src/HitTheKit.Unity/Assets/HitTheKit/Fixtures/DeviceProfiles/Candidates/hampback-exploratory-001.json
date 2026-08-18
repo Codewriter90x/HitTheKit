@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "profileCandidateId": "dream-edrum-hampback-candidate-001",
+  "profileCandidateVersion": 1,
+  "manufacturer": "DREAM S.A.S.",
+  "deviceDisplayName": "eDrum -1",
+  "sourceCaptureId": "hampback-exploratory-capture-001",
+  "captureSha256": "0b0cc8d4f007177ab5d9ae865558a92b3027380ac0bed4eab1acf316b4197162",
+  "status": "candidate",
+  "productionReady": false,
+  "autoSelectable": false,
+  "requiresConfirmation": true,
+  "mappings": [
+    { "stepId": "kick", "targetElementId": "kick", "articulation": "default", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 36, "minimumValue": 1, "maximumValue": 127, "confidence": "high", "evidence": ["Attempt 3 contained five clean note 36 strikes; earlier attempts also contained note 40."], "warnings": ["Targeted confirmation is still required."], "requiresRecapture": true },
+    { "stepId": "snare-center", "targetElementId": "snare.head", "articulation": "head", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 38, "minimumValue": 1, "maximumValue": 127, "confidence": "high", "evidence": ["Five positive NoteOn messages used note 38."], "warnings": [], "requiresRecapture": false },
+    { "stepId": "snare-rim", "targetElementId": "snare.rim", "articulation": "rim", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 40, "minimumValue": 1, "maximumValue": 127, "confidence": "high", "evidence": ["Five positive NoteOn messages used note 40."], "warnings": [], "requiresRecapture": false },
+    { "stepId": "tom-1", "targetElementId": "tom1.head", "articulation": "head", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 48, "minimumValue": 1, "maximumValue": 127, "confidence": "high", "evidence": ["Five positive NoteOn messages used note 48."], "warnings": [], "requiresRecapture": false },
+    { "stepId": "tom-2", "targetElementId": "tom2.head", "articulation": "head", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 45, "minimumValue": 1, "maximumValue": 127, "confidence": "high", "evidence": ["Five positive NoteOn messages used note 45."], "warnings": [], "requiresRecapture": false },
+    { "stepId": "floor-tom", "targetElementId": "floor-tom.head", "articulation": "head", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 43, "minimumValue": 1, "maximumValue": 127, "confidence": "high", "evidence": ["Five positive NoteOn messages used note 43."], "warnings": [], "requiresRecapture": false },
+    { "stepId": "crash-1", "targetElementId": "crash1.bow", "articulation": "bow", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 49, "minimumValue": 1, "maximumValue": 127, "confidence": "high", "evidence": ["Five positive NoteOn messages used note 49 in the normal Crash 1 step."], "warnings": ["The choke step did not repeat note 49."], "requiresRecapture": true },
+    { "stepId": "hihat-closed", "targetElementId": "hihat.closed", "articulation": "closed", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 42, "minimumValue": 1, "maximumValue": 127, "confidence": "medium", "evidence": ["Attempt 2 contained five clean note 42 strikes."], "warnings": ["Attempt 1 contained note 44, which may be a pedal note, contamination, or another hi-hat state."], "requiresRecapture": true },
+    { "stepId": "hihat-open", "targetElementId": "hihat.open", "articulation": "open", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 46, "minimumValue": 1, "maximumValue": 127, "confidence": "high", "evidence": ["Five positive NoteOn messages used note 46 in the open step."], "warnings": [], "requiresRecapture": true },
+    { "stepId": "hihat-pedal", "targetElementId": "hihat.pedal", "articulation": "pedal", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 44, "minimumValue": 1, "maximumValue": 127, "confidence": "high", "evidence": ["Five positive NoteOn messages used note 44 in the pedal step."], "warnings": [], "requiresRecapture": true },
+    { "stepId": "crash-choke", "targetElementId": "crash1.choke", "articulation": "choke", "role": "choke", "triggerKind": "polyAftertouch", "channel": 9, "data1": 26, "minimumValue": 127, "maximumValue": 127, "confidence": "medium", "evidence": ["Thirteen PolyAftertouch messages on note 26 with value 127 were observed across all three choke attempts."], "warnings": ["Associated strike notes 26 and 46 conflict with the normal Crash 1 note 49."], "requiresRecapture": true },
+    { "stepId": "ride-choke-optional", "targetElementId": "ride.choke", "articulation": "choke", "role": "choke", "triggerKind": "polyAftertouch", "channel": 9, "data1": 59, "minimumValue": 127, "maximumValue": 127, "confidence": "medium", "evidence": ["Eleven PolyAftertouch messages on note 59 with value 127 were observed during choke attempts."], "warnings": ["Associated strike notes 51 and 59 remain ambiguous."], "requiresRecapture": true }
+  ],
+  "excludedOrConflictedMappings": [
+    { "stepId": "crash-2-optional", "targetElementId": "crash2.bow", "articulation": "bow", "role": "strike", "confidence": "insufficient", "evidence": ["The optional Crash 2 step was skipped."], "warnings": ["No candidate trigger is available."], "requiresRecapture": true },
+    { "stepId": "ride-bow", "targetElementId": "ride.bow", "articulation": "bow", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 51, "minimumValue": 1, "maximumValue": 127, "confidence": "conflicted", "evidence": ["Notes 51 and 59 occurred in different Ride bow attempts."], "warnings": ["Isolated recapture is required."], "requiresRecapture": true },
+    { "stepId": "ride-bow", "targetElementId": "ride.bow", "articulation": "bow", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 59, "minimumValue": 1, "maximumValue": 127, "confidence": "conflicted", "evidence": ["Notes 51 and 59 occurred in different Ride bow attempts."], "warnings": ["Isolated recapture is required."], "requiresRecapture": true },
+    { "stepId": "ride-bell-optional", "targetElementId": "ride.bell", "articulation": "bell", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 51, "minimumValue": 1, "maximumValue": 127, "confidence": "conflicted", "evidence": ["Note 51 was observed in the bell step and also in Ride bow attempts."], "warnings": ["Bow and bell are not yet distinguishable."], "requiresRecapture": true },
+    { "stepId": "hihat-continuous", "targetElementId": "hihat.continuous", "articulation": "continuous", "role": "continuous", "confidence": "insufficient", "evidence": ["No Control Change message was observed."], "warnings": ["Do not infer CC4."], "requiresRecapture": true },
+    { "stepId": "crash-choke", "targetElementId": "crash1.choke", "articulation": "choke", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 26, "minimumValue": 1, "maximumValue": 127, "confidence": "conflicted", "evidence": ["Strike notes 26 and 46 appeared; neither confirms the normal Crash 1 note 49."], "warnings": ["Keep strike and choke evidence separate."], "requiresRecapture": true },
+    { "stepId": "crash-choke", "targetElementId": "crash1.choke", "articulation": "choke", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 46, "minimumValue": 1, "maximumValue": 127, "confidence": "conflicted", "evidence": ["Strike notes 26 and 46 appeared; neither confirms the normal Crash 1 note 49."], "warnings": ["Keep strike and choke evidence separate."], "requiresRecapture": true },
+    { "stepId": "ride-choke-optional", "targetElementId": "ride.choke", "articulation": "choke", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 51, "minimumValue": 1, "maximumValue": 127, "confidence": "conflicted", "evidence": ["Strike notes 51 and 59 appeared across choke attempts."], "warnings": ["Keep strike and choke evidence separate."], "requiresRecapture": true },
+    { "stepId": "ride-choke-optional", "targetElementId": "ride.choke", "articulation": "choke", "role": "strike", "triggerKind": "noteOn", "channel": 9, "data1": 59, "minimumValue": 1, "maximumValue": 127, "confidence": "conflicted", "evidence": ["Strike notes 51 and 59 appeared across choke attempts."], "warnings": ["Keep strike and choke evidence separate."], "requiresRecapture": true }
+  ],
+  "notes": [
+    "Exploratory candidate only; not production-ready, not auto-selected and requires confirmation.",
+    "The manufacturer and device display name are observed capture metadata, not a verified commercial model designation.",
+    "Ride, choke and continuous hi-hat mappings require targeted capture #2."
+  ]
+}

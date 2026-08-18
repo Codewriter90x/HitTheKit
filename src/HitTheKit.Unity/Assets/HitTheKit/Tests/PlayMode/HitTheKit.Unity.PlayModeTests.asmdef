@@ -1,0 +1,23 @@
+{
+  "name": "HitTheKit.Unity.PlayModeTests",
+  "rootNamespace": "HitTheKit.Unity.Tests",
+  "references": [
+    "HitTheKit.Unity.Runtime"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "HitTheKit.Core.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

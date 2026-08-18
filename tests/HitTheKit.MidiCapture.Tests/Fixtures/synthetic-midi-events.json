@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "label": "synthetic-electronic-drum",
+  "events": [
+    { "schemaVersion": 1, "sequence": 1, "elapsedSeconds": 0.10, "stepId": "kick", "rawKind": "noteOn", "channel": 9, "data1": 36, "data2": 110 },
+    { "schemaVersion": 1, "sequence": 2, "elapsedSeconds": 0.20, "stepId": "snare-center", "rawKind": "noteOn", "channel": 9, "data1": 38, "data2": 104 },
+    { "schemaVersion": 1, "sequence": 3, "elapsedSeconds": 0.28, "stepId": "snare-center", "rawKind": "noteOff", "channel": 9, "data1": 38, "data2": 32 },
+    { "schemaVersion": 1, "sequence": 4, "elapsedSeconds": 0.40, "stepId": "hihat-closed", "rawKind": "noteOn", "channel": 9, "data1": 42, "data2": 91 },
+    { "schemaVersion": 1, "sequence": 5, "elapsedSeconds": 0.55, "stepId": "hihat-open", "rawKind": "noteOn", "channel": 9, "data1": 46, "data2": 96 },
+    { "schemaVersion": 1, "sequence": 6, "elapsedSeconds": 0.65, "stepId": "hihat-continuous", "rawKind": "controlChange", "channel": 9, "data1": 4, "data2": 12 },
+    { "schemaVersion": 1, "sequence": 7, "elapsedSeconds": 0.72, "stepId": "hihat-continuous", "rawKind": "controlChange", "channel": 9, "data1": 4, "data2": 98 },
+    { "schemaVersion": 1, "sequence": 8, "elapsedSeconds": 0.85, "stepId": "ride-bell-optional", "rawKind": "noteOn", "channel": 9, "data1": 53, "data2": 112 },
+    { "schemaVersion": 1, "sequence": 9, "elapsedSeconds": 0.94, "stepId": "crash-choke", "rawKind": "polyAftertouch", "channel": 9, "data1": 49, "data2": 87 },
+    { "schemaVersion": 1, "sequence": 10, "elapsedSeconds": 1.02, "stepId": "free-play", "rawKind": "noteOn", "channel": 9, "data1": 42, "data2": 0, "isNoteOffEquivalent": true },
+    { "schemaVersion": 1, "sequence": 11, "elapsedSeconds": 1.10, "stepId": "free-play", "rawKind": "unknownVendorEvent", "unknownHexPrefix": "010203", "unknownLength": 3, "description": "synthetic unknown event" }
+  ]
+}

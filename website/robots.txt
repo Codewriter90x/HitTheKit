@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://codewriter90x.github.io/HitTheKit/sitemap.xml

@@ -1,0 +1,25 @@
+changelog:
+  exclude:
+    labels:
+      - skip-changelog
+  categories:
+    - title: Gameplay and learning
+      labels:
+        - gameplay
+        - education
+    - title: Hardware and compatibility
+      labels:
+        - hardware
+        - compatibility
+    - title: Accessibility and experience
+      labels:
+        - accessibility
+        - ux
+    - title: Security and maintenance
+      labels:
+        - security
+        - dependencies
+        - maintenance
+    - title: Other changes
+      labels:
+        - "*"

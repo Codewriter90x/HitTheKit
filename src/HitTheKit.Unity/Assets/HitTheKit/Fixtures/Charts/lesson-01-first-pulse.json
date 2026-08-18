@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "offsetSeconds": 0.0,
+  "difficulties": {
+    "easy": [
+      { "time": 1.50, "pad": "kick" },
+      { "time": 3.00, "pad": "kick" },
+      { "time": 4.50, "pad": "kick" },
+      { "time": 6.00, "pad": "kick" },
+      { "time": 7.50, "pad": "kick" },
+      { "time": 9.00, "pad": "kick" },
+      { "time": 10.50, "pad": "kick" }
+    ]
+  }
+}

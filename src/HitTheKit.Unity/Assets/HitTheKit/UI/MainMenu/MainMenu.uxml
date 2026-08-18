@@ -1,0 +1,321 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="MainMenu.uss" />
+    <ui:VisualElement name="main-menu-app" class="main-menu-shell">
+        <ui:VisualElement name="main-menu-background" class="main-menu-background" />
+        <ui:VisualElement class="main-menu-scrim" />
+
+        <ui:VisualElement name="main-home" class="main-home">
+        <ui:VisualElement class="brand-block">
+            <ui:Label text="HITTHEKIT" class="brand-title" />
+            <ui:Label name="menu-eyebrow" text="STAGE COMMAND" class="brand-eyebrow" />
+            <ui:VisualElement class="brand-line" />
+        </ui:VisualElement>
+
+        <ui:VisualElement class="menu-column">
+            <ui:Button name="menu-play" class="menu-choice menu-choice--selected">
+                <ui:VisualElement class="choice-index"><ui:VisualElement class="choice-icon choice-icon--play" /></ui:VisualElement>
+                <ui:VisualElement class="choice-copy">
+                    <ui:Label name="choice-title" text="GIOCA" class="choice-title" />
+                    <ui:Label name="choice-subtitle" text="Scegli un brano e sali sul palco" class="choice-subtitle" />
+                </ui:VisualElement>
+                <ui:Label name="choice-state" text="SELECT" class="choice-state" />
+            </ui:Button>
+            <ui:Button name="menu-learn" class="menu-choice">
+                <ui:VisualElement class="choice-index"><ui:VisualElement class="choice-icon choice-icon--learn" /></ui:VisualElement>
+                <ui:VisualElement class="choice-copy">
+                    <ui:Label name="choice-title" text="IMPARA" class="choice-title" />
+                    <ui:Label name="choice-subtitle" text="Allenati con lezioni e pattern guidati" class="choice-subtitle" />
+                </ui:VisualElement>
+                <ui:Label name="choice-state" class="choice-state" />
+            </ui:Button>
+            <ui:Button name="menu-setup" class="menu-choice">
+                <ui:VisualElement class="choice-index"><ui:VisualElement class="choice-icon choice-icon--setup" /></ui:VisualElement>
+                <ui:VisualElement class="choice-copy">
+                    <ui:Label name="choice-title" text="CONFIGURA BATTERIA" class="choice-title choice-title--long" />
+                    <ui:Label name="choice-subtitle" text="Collega e mappa il tuo kit elettronico" class="choice-subtitle" />
+                </ui:VisualElement>
+                <ui:Label name="choice-state" class="choice-state" />
+            </ui:Button>
+        </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement class="footer-rail">
+            <ui:VisualElement class="input-status-row">
+                <ui:VisualElement class="status-dot" />
+                <ui:Label name="input-status" text="INPUT: TASTIERA / CORE MIDI" class="input-status" />
+            </ui:VisualElement>
+            <ui:VisualElement class="footer-actions">
+                <ui:Button name="language-button" text="IT / EN" class="footer-button" />
+                <ui:Button name="settings-button" text="IMPOSTAZIONI" class="footer-button" />
+                <ui:Button name="exit-button" text="ESCI" class="footer-button footer-button--danger" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="play-overlay" class="song-library-section">
+            <ui:VisualElement class="song-library-rail">
+                <ui:VisualElement class="learn-brand">
+                    <ui:Label text="HTK" class="learn-brand-mark" />
+                    <ui:Label text="HitTheKit" class="learn-brand-name" />
+                </ui:VisualElement>
+                <ui:VisualElement class="learn-rail-rule" />
+                <ui:VisualElement class="song-rail-index"><ui:Label text="01" /></ui:VisualElement>
+                <ui:Label text="SETLIST" class="song-rail-title" />
+                <ui:Label text="SONG LIBRARY" class="song-rail-subtitle" />
+                <ui:VisualElement class="learn-rail-spacer" />
+                <ui:Label text="LIVE ROOM 001" class="learn-case-label" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="song-library-panel">
+                <ui:VisualElement class="song-library-header">
+                    <ui:VisualElement class="song-library-heading">
+                        <ui:Label text="LIVE SET · SONG SELECT" class="modal-eyebrow" />
+                        <ui:Label name="song-library-heading" text="SCEGLI IL BRANO" class="modal-title" />
+                        <ui:Label name="song-library-copy" text="La scaletta viene rilevata dalle cartelle Songs." class="modal-copy" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="song-library-summary">
+                        <ui:Label name="song-library-count" text="0 BRANI RILEVATI" class="song-library-summary-value" />
+                        <ui:Label name="song-library-ready-count" text="0 PRONTI A SUONARE" class="song-library-summary-ready" />
+                        <ui:Label name="song-library-source" class="song-library-summary-source" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="song-library-workspace">
+                    <ui:ScrollView name="song-library-list" class="song-list" vertical-scroller-visibility="Auto" />
+                    <ui:VisualElement class="song-detail-card">
+                        <ui:ScrollView name="song-detail-scroll" class="song-detail-scroll" vertical-scroller-visibility="Auto">
+                            <ui:Label text="BRANO SELEZIONATO" class="modal-eyebrow" />
+                            <ui:Label name="song-detail-number" text="01" class="song-detail-number" />
+                            <ui:Label name="song-detail-title" text="NEON CIRCUIT" class="song-detail-title" />
+                            <ui:Label name="song-detail-artist" text="HITTHEKIT" class="song-detail-artist" />
+                            <ui:VisualElement class="song-detail-rule" />
+                            <ui:Label name="song-detail-album" class="song-detail-album" />
+                            <ui:Label name="song-detail-metadata" class="song-detail-metadata" />
+                            <ui:Label name="song-detail-origin" class="song-detail-origin" />
+                            <ui:VisualElement class="song-launch-controls">
+                                <ui:VisualElement class="song-option-block">
+                                    <ui:Label name="song-difficulty-title" text="DIFFICOLTÀ CHART" class="song-option-title" />
+                                    <ui:VisualElement name="song-difficulty-buttons" class="song-option-buttons" />
+                                    <ui:Label name="song-difficulty-note" class="song-option-note" />
+                                </ui:VisualElement>
+                                <ui:VisualElement class="song-option-block song-option-block--speed">
+                                    <ui:Label name="song-speed-title" text="VELOCITÀ" class="song-option-title" />
+                                    <ui:VisualElement class="song-option-buttons">
+                                        <ui:Button name="song-speed-sixty" text="60%" class="song-speed-button" />
+                                        <ui:Button name="song-speed-seventy" text="70%" class="song-speed-button" />
+                                        <ui:Button name="song-speed-eighty" text="80%" class="song-speed-button" />
+                                        <ui:Button name="song-speed-ninety" text="90%" class="song-speed-button" />
+                                        <ui:Button name="song-speed-full" text="1,00×" class="song-speed-button song-speed-button--selected" />
+                                    </ui:VisualElement>
+                                    <ui:Label name="song-effective-bpm" text="120 BPM → 120 BPM" class="song-effective-bpm" />
+                                    <ui:Label name="song-speed-note" class="song-option-note" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                            <ui:Label name="song-detail-readiness" class="song-detail-readiness" />
+                        </ui:ScrollView>
+                        <ui:VisualElement class="song-play-actions">
+                            <ui:Button name="song-play-button" text="SUONA ORA" class="song-play-button" />
+                            <ui:Label text="INVIO O DOPPIO KICK" class="song-play-hint" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="song-library-footer">
+                    <ui:Label name="song-library-diagnostic" class="song-library-diagnostic" />
+                    <ui:VisualElement class="song-library-actions">
+                        <ui:Button name="song-refresh-button" text="AGGIORNA LIBRERIA" class="song-library-secondary" />
+                        <ui:Button name="song-folder-button" text="APRI CARTELLA BRANI" class="song-library-secondary" />
+                        <ui:Button name="song-back-button" text="INDIETRO" class="song-library-secondary" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="learn-overlay" class="learn-section">
+            <ui:VisualElement class="learn-rail">
+                <ui:VisualElement class="learn-brand">
+                    <ui:Label text="HTK" class="learn-brand-mark" />
+                    <ui:Label text="HitTheKit" class="learn-brand-name" />
+                </ui:VisualElement>
+                <ui:VisualElement class="learn-rail-rule" />
+                <ui:Button name="learn-rail-learn" class="learn-rail-item learn-rail-item--selected">
+                    <ui:VisualElement class="learn-rail-icon choice-icon--learn" />
+                    <ui:Label text="IMPARA" class="learn-rail-label" />
+                </ui:Button>
+                <ui:Button name="learn-rail-train" class="learn-rail-item">
+                    <ui:VisualElement class="learn-rail-icon choice-icon--play" />
+                    <ui:Label text="ALLENA" class="learn-rail-label" />
+                </ui:Button>
+                <ui:Button name="learn-rail-setup" class="learn-rail-item">
+                    <ui:VisualElement class="learn-rail-icon choice-icon--setup" />
+                    <ui:Label text="CONFIGURA" class="learn-rail-label" />
+                </ui:Button>
+                <ui:VisualElement class="learn-rail-spacer" />
+                <ui:Label text="STUDY SETLIST 001" class="learn-case-label" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="learn-panel">
+                <ui:VisualElement class="learning-header">
+                    <ui:VisualElement class="learning-heading-block">
+                        <ui:Label text="PERCORSO PRINCIPIANTI" class="modal-eyebrow" />
+                        <ui:Label name="learn-heading" text="IMPARA" class="modal-title" />
+                        <ui:Label name="learn-copy" class="modal-copy" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="learning-summary">
+                        <ui:Label name="learn-progress-count" text="0 / 12 LEZIONI ATTIVE" class="learning-summary-value" />
+                        <ui:Label name="learn-progress-accuracy" text="PRECISIONE MEDIA —" class="learning-summary-label" />
+                        <ui:Label name="learn-progress-time" text="ALLENAMENTO 0m" class="learning-summary-time" />
+                        <ui:VisualElement class="learning-progress-track"><ui:VisualElement name="learn-progress-fill" class="learning-progress-fill" /></ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement class="learning-rule">
+                    <ui:Label text="R" class="learning-rule-badge" />
+                    <ui:Label name="learn-pass-rule" text="SBLOCCA LA LEZIONE SUCCESSIVA CON ALMENO L'80% A VELOCITÀ 1,0×" />
+                </ui:VisualElement>
+                <ui:VisualElement class="learning-workspace">
+                    <ui:ScrollView name="learn-list" class="lesson-list" vertical-scroller-visibility="Auto" />
+                </ui:VisualElement>
+                <ui:VisualElement class="lesson-command-deck">
+                    <ui:VisualElement class="lesson-command-copy">
+                        <ui:Label text="LEZIONE SELEZIONATA" class="modal-eyebrow" />
+                        <ui:VisualElement class="lesson-detail-title-row">
+                            <ui:Label name="learn-selected-number" text="01" class="lesson-detail-number" />
+                            <ui:VisualElement class="lesson-selected-text">
+                                <ui:Label name="learn-selected-title" text="PRIMO BATTITO" class="lesson-detail-title" />
+                                <ui:Label name="learn-selected-focus" class="lesson-detail-focus" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:Label name="learn-selected-copy" class="lesson-detail-copy" />
+                        <ui:Label name="learn-selected-objective" class="lesson-detail-objective" />
+                        <ui:Label name="learn-selected-pattern" class="lesson-detail-pattern" />
+                        <ui:Label name="learn-selected-best" class="lesson-detail-best" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="study-speed-panel">
+                        <ui:Label text="VELOCITÀ DI STUDIO" class="study-speed-title" />
+                        <ui:VisualElement class="study-speed-buttons">
+                            <ui:Button name="learn-speed-half" text="0,5×" class="study-speed-button" />
+                            <ui:Button name="learn-speed-three-quarter" text="0,75×" class="study-speed-button" />
+                            <ui:Button name="learn-speed-full" text="1,0×" class="study-speed-button study-speed-button--selected" />
+                        </ui:VisualElement>
+                        <ui:Label name="learn-effective-bpm" text="80 BPM → 80 BPM" class="effective-bpm" />
+                        <ui:Label name="learn-speed-note" class="study-speed-note" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="lesson-command-actions">
+                        <ui:Button name="learn-start-button" text="INIZIA" class="modal-primary lesson-start-button" />
+                        <ui:Label text="INVIO O DOPPIO KICK" class="lesson-start-hint" />
+                        <ui:Button name="learn-back-button" text="INDIETRO" class="modal-secondary learn-back-button" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="onboarding-overlay" class="modal-layer onboarding-layer">
+            <ui:VisualElement class="modal-panel onboarding-panel">
+                <ui:Label text="BENVENUTO IN HITTHEKIT" class="modal-eyebrow" />
+                <ui:Label name="onboarding-title" text="COME VUOI SUONARE?" class="modal-title" />
+                <ui:Label name="onboarding-copy" text="Puoi cambiare scelta in qualsiasi momento. La tastiera funziona subito; una batteria elettronica va configurata una volta." class="modal-copy" />
+                <ui:VisualElement class="onboarding-choices">
+                    <ui:Button name="onboarding-keyboard" class="onboarding-choice">
+                        <ui:Label text="⌨" class="onboarding-icon" />
+                        <ui:Label text="TASTIERA" class="onboarding-choice-title" />
+                        <ui:Label text="F kick · J rullante · K hi-hat&#10;G/H tom · L timpano · D/S piatti" class="onboarding-choice-copy" />
+                    </ui:Button>
+                    <ui:Button name="onboarding-midi" class="onboarding-choice">
+                        <ui:Label text="◉" class="onboarding-icon" />
+                        <ui:Label text="BATTERIA ELETTRONICA" class="onboarding-choice-title" />
+                        <ui:Label text="Collega via USB/MIDI, scegli il kit e colpisci ogni pezzo illuminato." class="onboarding-choice-copy" />
+                    </ui:Button>
+                </ui:VisualElement>
+                <ui:Label name="onboarding-note" text="Dopo una sessione HitTheKit può suggerire una calibrazione separata per tastiera e MIDI." class="onboarding-note" />
+                <ui:Button name="onboarding-skip" text="SALTA PER ORA" class="modal-secondary onboarding-skip" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="settings-overlay" class="modal-layer">
+            <ui:VisualElement class="modal-panel modal-panel--small">
+                <ui:Label text="STAGE CONTROL" class="modal-eyebrow" />
+                <ui:Label name="settings-heading" text="IMPOSTAZIONI" class="modal-title" />
+                <ui:ScrollView class="settings-scroll" vertical-scroller-visibility="Auto">
+                <ui:Button name="audio-button" text="AUDIO: ON" class="setting-row" />
+                <ui:Button name="motion-button" text="RIDUCI MOVIMENTO: OFF" class="setting-row" />
+                <ui:VisualElement class="player-settings-block">
+                    <ui:Label text="AUDIO &amp; ACCESSIBILITÀ" class="modal-eyebrow" />
+                    <ui:VisualElement class="compact-setting-row">
+                        <ui:Button name="volume-down" text="−" class="compact-setting-button" />
+                        <ui:Label name="volume-value" text="VOLUME 100%" class="compact-setting-value" />
+                        <ui:Button name="volume-up" text="+" class="compact-setting-button" />
+                    </ui:VisualElement>
+                    <ui:Button name="timing-diagnostics-button" text="DIAGNOSTICA TIMING: ON" class="setting-row setting-row--compact" />
+                    <ui:Button name="metronome-button" text="METRONOMO: OFF" class="setting-row setting-row--compact" />
+                    <ui:Button name="high-contrast-button" text="ALTO CONTRASTO: OFF" class="setting-row setting-row--compact" />
+                </ui:VisualElement>
+                <ui:VisualElement class="player-settings-block">
+                    <ui:Label text="CALIBRAZIONE INPUT" class="modal-eyebrow" />
+                    <ui:VisualElement class="compact-setting-row">
+                        <ui:Button name="keyboard-offset-down" text="−5" class="compact-setting-button" />
+                        <ui:Label name="keyboard-offset-value" text="TASTIERA 0 ms" class="compact-setting-value" />
+                        <ui:Button name="keyboard-offset-up" text="+5" class="compact-setting-button" />
+                        <ui:Button name="keyboard-offset-reset" text="RESET" class="compact-setting-reset" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="compact-setting-row">
+                        <ui:Button name="midi-offset-down" text="−5" class="compact-setting-button" />
+                        <ui:Label name="midi-offset-value" text="MIDI 0 ms" class="compact-setting-value" />
+                        <ui:Button name="midi-offset-up" text="+5" class="compact-setting-button" />
+                        <ui:Button name="midi-offset-reset" text="RESET" class="compact-setting-reset" />
+                    </ui:VisualElement>
+                    <ui:Label name="calibration-help" text="Valori positivi compensano un input registrato in ritardo." class="theme-settings-description" />
+                </ui:VisualElement>
+                <ui:VisualElement class="player-settings-block">
+                    <ui:Label text="TASTIERA" class="modal-eyebrow" />
+                    <ui:VisualElement class="keybinding-grid">
+                        <ui:Button name="binding-kick" class="keybinding-button" />
+                        <ui:Button name="binding-snare" class="keybinding-button" />
+                        <ui:Button name="binding-hihat" class="keybinding-button" />
+                        <ui:Button name="binding-tom1" class="keybinding-button" />
+                        <ui:Button name="binding-tom2" class="keybinding-button" />
+                        <ui:Button name="binding-floor-tom" class="keybinding-button" />
+                        <ui:Button name="binding-crash" class="keybinding-button" />
+                        <ui:Button name="binding-ride" class="keybinding-button" />
+                    </ui:VisualElement>
+                    <ui:Label name="binding-status" text="Seleziona un pezzo, poi premi un tasto non ancora assegnato." class="theme-settings-description" />
+                </ui:VisualElement>
+                <ui:VisualElement class="player-settings-block">
+                    <ui:Label text="SCHERMO" class="modal-eyebrow" />
+                    <ui:Button name="fullscreen-button" text="SCHERMO INTERO: ON" class="setting-row setting-row--compact" />
+                    <ui:VisualElement class="compact-setting-row">
+                        <ui:Button name="resolution-previous" text="−" class="compact-setting-button" />
+                        <ui:Label name="resolution-value" text="1920 × 1080" class="compact-setting-value" />
+                        <ui:Button name="resolution-next" text="+" class="compact-setting-button" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement class="theme-settings">
+                    <ui:Label name="settings-theme-heading" text="AMBIENTE DI GIOCO" class="modal-eyebrow" />
+                    <ui:VisualElement class="theme-settings-options">
+                        <ui:Button name="settings-theme-arcade" text="ARCADE NEON" class="theme-settings-button theme-settings-button--selected" />
+                        <ui:Button name="settings-theme-concert" text="CONCERT STAGE" class="theme-settings-button" />
+                        <ui:Button name="settings-theme-precision" text="PRECISION GRID" class="theme-settings-button" />
+                    </ui:VisualElement>
+                    <ui:Label name="settings-theme-description" class="theme-settings-description" />
+                </ui:VisualElement>
+                <ui:VisualElement class="progress-settings">
+                    <ui:Label text="PROGRESSI &amp; BACKUP" class="modal-eyebrow" />
+                    <ui:Label name="settings-progress-summary" text="0m DI ALLENAMENTO · 0 SESSIONI" class="progress-settings-summary" />
+                    <ui:Label name="settings-backup-path" class="progress-settings-path" />
+                    <ui:VisualElement class="progress-settings-actions">
+                        <ui:Button name="settings-export-progress" text="ESPORTA BACKUP" class="setting-row progress-settings-button" />
+                        <ui:Button name="settings-import-progress" text="IMPORTA E SOSTITUISCI" class="setting-row progress-settings-button" />
+                    </ui:VisualElement>
+                    <ui:Label name="settings-backup-status" class="progress-settings-status" />
+                </ui:VisualElement>
+                <ui:VisualElement class="player-settings-block">
+                    <ui:Label text="INFORMAZIONI &amp; DATI" class="modal-eyebrow" />
+                    <ui:Label name="about-value" text="HitTheKit 0.5.0 · GPL-3.0 · nessuna telemetria applicativa" class="theme-settings-description" />
+                    <ui:Button name="reset-preferences" text="RIPRISTINA IMPOSTAZIONI" class="setting-row setting-row--compact" />
+                    <ui:Button name="reset-local-data" text="CANCELLA PROGRESSI E CONFIGURAZIONE" class="setting-row setting-row--compact setting-row--danger" />
+                    <ui:Label name="reset-status" class="progress-settings-status" />
+                </ui:VisualElement>
+                </ui:ScrollView>
+                <ui:Button name="settings-back-button" text="INDIETRO" class="modal-secondary" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

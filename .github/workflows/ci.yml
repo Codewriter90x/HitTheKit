@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dotnet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - run: dotnet restore HitTheKit.sln
+      - run: dotnet test HitTheKit.sln --no-restore --configuration Release
+      - run: ./scripts/check-nuget-vulnerabilities.sh
+
+  repository-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Validate public-readiness contracts
+        run: bash tests/scripts/public-readiness-contract-tests.sh
+      - name: Validate asset provenance hashes
+        run: bash tests/scripts/asset-provenance-contract-tests.sh
+      - name: Validate bundled song manifests
+        run: find src/HitTheKit.Unity/Assets/StreamingAssets/Songs -name song.json -print0 | xargs -0 -n1 jq empty
+      - name: Reject commercial catalog metadata
+        run: |
+          if rg -i 'AC/DC|Highway to Hell|Nirvana|Audioslave|Van Halen|Ozzy Osbourne|Thirty Seconds to Mars|Hot Milk' \
+            src/HitTheKit.Unity/Assets/StreamingAssets/Songs; then
+            echo 'Commercial artist/title metadata must not be bundled.' >&2
+            exit 1
+          fi
+      - name: Check Unity metadata pairs
+        run: |
+          missing=0
+          while IFS= read -r -d '' path; do
+            if [ ! -f "$path.meta" ]; then
+              echo "Missing Unity meta file: $path.meta" >&2
+              missing=1
+            fi
+          done < <(find src/HitTheKit.Unity/Assets -type f ! -name '*.meta' -print0)
+          exit "$missing"
+
+  macos-packaging-contracts:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - run: bash tests/scripts/macos-signing-foundation-tests.sh
+      - run: bash tests/scripts/windows-packaging-contract-tests.sh

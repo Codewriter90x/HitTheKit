@@ -1,0 +1,17 @@
+# The single-maintainer model is documented in MAINTAINERS.md.
+* @Codewriter90x
+
+# Changes to legal, security, funding, release, and governance material always
+# require explicit maintainer review.
+/LICENSE @Codewriter90x
+/SECURITY.md @Codewriter90x
+/LICENSING.md @Codewriter90x
+/FUNDING.md @Codewriter90x
+/.github/FUNDING.yml.example @Codewriter90x
+/.github/workflows/pages.yml.example @Codewriter90x
+/.github/workflows/source-release.yml.example @Codewriter90x
+/GOVERNANCE.md @Codewriter90x
+/PUBLICATION_STATUS @Codewriter90x
+/docs/legal/ @Codewriter90x
+/docs/release/ @Codewriter90x
+/.github/ @Codewriter90x

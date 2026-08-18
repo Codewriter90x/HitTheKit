@@ -1,0 +1,40 @@
+name: Proposta lezione
+description: Proponi un obiettivo didattico originale e valutabile senza materiale musicale di terzi.
+title: "[Lesson]: "
+labels: [education]
+body:
+  - type: input
+    id: objective
+    attributes:
+      label: Obiettivo didattico
+      placeholder: "Esempio: mantenere un backbeat stabile a 72 BPM"
+    validations:
+      required: true
+  - type: textarea
+    id: prerequisites
+    attributes:
+      label: Prerequisiti
+      description: Quali abilità dovrebbe avere già il giocatore?
+    validations:
+      required: true
+  - type: textarea
+    id: exercise
+    attributes:
+      label: Esercizio originale
+      description: Descrivi pezzi, conteggio, BPM e progressione senza citare o trascrivere un brano commerciale.
+    validations:
+      required: true
+  - type: textarea
+    id: assessment
+    attributes:
+      label: Valutazione
+      description: Quale risultato può misurare onestamente il motore attuale?
+    validations:
+      required: true
+  - type: checkboxes
+    id: rights
+    attributes:
+      label: Originalità
+      options:
+        - label: L'esercizio è originale e non riproduce una canzone, trascrizione o metodo protetto di terzi.
+          required: true

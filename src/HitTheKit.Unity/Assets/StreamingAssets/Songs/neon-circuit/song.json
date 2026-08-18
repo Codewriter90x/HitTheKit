@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "neon-circuit",
+  "title": "Neon Circuit",
+  "artist": "HitTheKit",
+  "album": "Original Playtest Sessions",
+  "genre": "Electronic Rock",
+  "year": 2026,
+  "bpm": 120,
+  "bars": 8,
+  "beatsPerBar": 4,
+  "difficultyHint": "Easy",
+  "sortOrder": 10,
+  "audioAvailability": "generated",
+  "chartAvailability": "generated"
+}

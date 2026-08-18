@@ -1,0 +1,217 @@
+:root {
+    --bg: rgb(5, 8, 12);
+    --panel: rgba(11, 16, 22, 0.96);
+    --panel-strong: rgba(20, 29, 38, 0.98);
+    --text: rgb(240, 245, 252);
+    --muted: rgb(163, 180, 195);
+    --blue: rgb(61, 213, 255);
+    --amber: rgb(239, 164, 65);
+    --green: rgb(50, 205, 145);
+    --orange: rgb(245, 167, 66);
+    --red: rgb(240, 93, 94);
+}
+
+.app-shell {
+    flex-grow: 1;
+    background-color: var(--bg);
+    color: var(--text);
+    padding: 22px 32px 24px 32px;
+    min-width: 720px;
+    overflow: hidden;
+}
+
+.device-setup-background,
+.device-setup-scrim {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.device-setup-background {
+    background-image: url("../Gameplay/Backgrounds/concert-stage-environment-v2.png");
+    -unity-background-scale-mode: scale-and-crop;
+    opacity: 0.48;
+}
+
+.device-setup-scrim { background-color: rgba(1, 4, 8, 0.66); }
+
+.topbar,
+.flow-message,
+.screen { position: relative; }
+
+.topbar {
+    min-height: 68px;
+    padding: 0 14px 12px 14px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(239, 164, 65, 0.48);
+}
+
+.topbar, .section-header, .button-row, .language-row, .topbar-actions {
+    flex-direction: row;
+    align-items: center;
+}
+
+.topbar, .section-header { justify-content: space-between; }
+.language-row { min-width: 210px; justify-content: flex-end; }
+.language-dropdown { width: 140px; margin-left: 10px; }
+.topbar-actions { justify-content: flex-end; }
+.setup-title-block { justify-content: center; }
+.setup-kicker { color: var(--blue); font-size: 10px; -unity-font-style: bold; letter-spacing: 2px; }
+.main-menu-button { margin-right: 14px; border-color: var(--blue); background-color: rgba(5, 20, 29, 0.96); }
+.device-setup--high-contrast .panel,
+.device-setup--high-contrast .device-card,
+.device-setup--high-contrast .preset-card { border-color: white; background-color: rgba(0, 0, 0, 0.97); }
+.device-setup--high-contrast Label { color: white; }
+.app-title { margin-top: 3px; font-size: 28px; -unity-font-style: bold; letter-spacing: 0.4px; }
+.flow-message { min-height: 24px; color: var(--orange); margin-top: 6px; white-space: normal; }
+.screen { flex-grow: 1; margin-top: 10px; padding: 14px; background-color: rgba(4, 8, 12, 0.82); border-width: 1px; border-color: rgba(115, 91, 60, 0.5); }
+.hero-card, .workspace-panel, .profile-card, .choice-card, .custom-foldout, .conflict-list, .review-list {
+    background-color: var(--panel);
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: rgba(97, 119, 137, 0.62);
+    padding: 18px;
+}
+.hero-card { max-width: 780px; align-self: center; margin-top: 60px; }
+.hero-title { font-size: 34px; -unity-font-style: bold; white-space: normal; }
+.hero-copy, .privacy-note, .section-copy, .instruction, .hint { white-space: normal; margin-top: 12px; }
+.hero-copy, .instruction { font-size: 18px; }
+.privacy-note, .hint { color: var(--muted); }
+.section-title { margin-top: 3px; font-size: 25px; -unity-font-style: bold; white-space: normal; }
+.eyebrow, .panel-title { color: var(--blue); -unity-font-style: bold; letter-spacing: 1px; font-size: 11px; }
+.panel-title--amber { color: var(--amber); }
+.button-row { margin-top: 18px; flex-wrap: wrap; }
+.button-row > Button { margin-right: 10px; margin-bottom: 8px; }
+Button {
+    min-height: 40px;
+    padding-left: 16px;
+    padding-right: 16px;
+    background-color: rgba(16, 25, 34, 0.98);
+    color: var(--text);
+    border-radius: 4px;
+    border-width: 1px;
+    border-color: rgb(79, 101, 133);
+    font-size: 15px;
+}
+Button:hover { background-color: rgb(27, 47, 62); border-color: var(--blue); }
+Button:focus { border-width: 3px; border-color: rgb(255, 215, 92); }
+Button:disabled { opacity: 0.45; }
+.button-primary { background-color: rgb(8, 83, 108); border-color: var(--blue); }
+.card-list { flex-grow: 1; margin-top: 14px; }
+.choice-card { margin-bottom: 10px; white-space: normal; min-height: 72px; }
+.device-status-strip {
+    height: 72px;
+    min-height: 72px;
+    margin-top: 12px;
+    flex-direction: row;
+    background-color: rgba(9, 14, 19, 0.96);
+    border-width: 1px;
+    border-color: rgba(76, 157, 185, 0.48);
+}
+.device-status-cell { width: 33.333%; padding-left: 18px; justify-content: center; border-right-width: 1px; border-right-color: rgba(76, 100, 116, 0.45); }
+.status-caption { color: rgb(139, 157, 171); font-size: 9px; -unity-font-style: bold; letter-spacing: 1px; }
+.status-value { margin-top: 4px; color: var(--blue); font-size: 17px; -unity-font-style: bold; }
+.status-value--ready { color: var(--green); }
+.device-selection-workspace { flex-grow: 1; min-height: 0; margin-top: 12px; flex-direction: row; }
+.device-list-panel { width: 65%; min-width: 0; margin-right: 12px; padding: 14px; background-color: rgba(6, 10, 14, 0.96); border-width: 1px; border-color: rgba(90, 109, 123, 0.54); }
+.device-card-list { margin-top: 8px; }
+.device-card {
+    min-height: 104px;
+    margin-bottom: 10px;
+    padding: 13px 14px;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(13, 19, 25, 0.98);
+    border-color: rgba(94, 114, 132, 0.62);
+}
+.device-card--selected { border-width: 2px; border-color: var(--blue); background-color: rgba(5, 39, 53, 0.98); }
+.device-card-indicator { width: 18px; height: 18px; min-width: 18px; margin-right: 16px; border-width: 2px; border-color: var(--blue); border-radius: 50%; background-color: rgba(3, 10, 15, 0.9); }
+.device-card--selected .device-card-indicator { background-color: var(--blue); }
+.device-card-copy { flex-grow: 1; min-width: 0; align-items: flex-start; }
+.device-card-name { color: white; font-size: 20px; -unity-font-style: bold; }
+.device-card-identity { margin-top: 4px; color: rgb(187, 199, 209); font-size: 12px; }
+.device-card-connection { margin-top: 7px; color: var(--green); font-size: 11px; -unity-font-style: bold; }
+.device-card-badge { min-width: 112px; padding: 7px 9px; color: var(--blue); font-size: 10px; -unity-font-style: bold; -unity-text-align: middle-center; border-width: 1px; border-color: var(--blue); }
+.device-card-badge--warning { color: var(--amber); border-color: var(--amber); }
+.device-help { min-height: 38px; margin-top: 5px; padding: 9px 12px; color: rgb(151, 170, 184); font-size: 10px; white-space: normal; background-color: rgba(13, 20, 25, 0.94); border-left-width: 3px; border-left-color: var(--blue); }
+.audio-routing-help { min-height: 54px; margin-top: 9px; color: rgb(174, 211, 229); border-left-width: 2px; border-left-color: rgb(43, 202, 255); }
+.soundcheck-panel { width: 35%; min-width: 300px; padding: 14px; background-color: rgba(7, 11, 15, 0.97); border-width: 1px; border-color: rgba(239, 164, 65, 0.58); }
+.soundcheck-subtitle { margin-top: 4px; color: rgb(168, 181, 191); font-size: 10px; letter-spacing: 1px; }
+.soundcheck-kit-visual { flex-grow: 1; min-height: 250px; margin-top: 10px; background-image: url("../MainMenu/Icons/drum-kit-neon.png"); -unity-background-scale-mode: scale-to-fit; -unity-background-image-tint-color: rgb(70, 211, 255); }
+.soundcheck-legend { min-height: 50px; padding: 8px 10px; flex-direction: row; justify-content: space-between; background-color: rgba(13, 18, 22, 0.96); border-top-width: 1px; border-top-color: rgba(87, 108, 122, 0.52); }
+.soundcheck-legend Label { color: rgb(173, 187, 197); font-size: 9px; -unity-font-style: bold; }
+.profile-card { margin-bottom: 12px; }
+.profile-card > Label { white-space: normal; margin-bottom: 8px; }
+.preset-grid, .custom-grid { flex-direction: row; flex-wrap: wrap; margin-top: 12px; }
+.preset-card { width: 31%; min-height: 310px; margin-right: 2%; padding: 10px; }
+.preset-card--selected { border-width: 3px; border-color: var(--blue); background-color: rgba(6, 38, 52, 0.98); }
+.preset-image { height: 172px; min-height: 172px; background-color: rgb(3, 8, 14); -unity-background-scale-mode: scale-and-crop; }
+.preset-image--minimal { background-image: url("Images/preset-minimal.png"); }
+.preset-image--standard { background-image: url("Images/preset-standard.png"); }
+.preset-image--extended { background-image: url("Images/preset-extended.png"); }
+.preset-title { margin-top: 10px; color: white; font-size: 18px; -unity-font-style: bold; white-space: normal; }
+.preset-copy { flex-grow: 1; min-height: 42px; margin-top: 6px; color: var(--muted); font-size: 12px; white-space: normal; }
+.preset-select { margin-top: 10px; border-color: var(--blue); }
+.custom-grid > * { width: 48%; margin-right: 2%; margin-bottom: 5px; }
+.workspace-grid { flex-grow: 1; flex-direction: row; }
+.workspace-panel { margin-right: 12px; }
+.navigation-panel { width: 27%; }
+.diagram-panel { width: 43%; min-width: 360px; }
+.monitor-panel { width: 30%; margin-right: 0; }
+.button-stack { margin-top: 16px; }
+.button-stack > Button { margin-bottom: 8px; }
+.kit-diagram {
+    flex-grow: 1;
+    min-height: 420px;
+    position: relative;
+    background-image: url("Images/guided-kit.png");
+    -unity-background-scale-mode: scale-to-fit;
+    background-color: rgb(3, 8, 14);
+    border-width: 1px;
+    border-color: rgba(61, 213, 255, 0.28);
+}
+.drum-piece {
+    position: absolute;
+    background-color: rgba(6, 16, 23, 0.18);
+    border-width: 1px;
+    border-color: rgba(61, 213, 255, 0.18);
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    transition-property: background-color, border-color, scale;
+    transition-duration: 0.1s;
+}
+.drum-piece > Label { padding: 4px 6px; color: white; font-size: 12px; -unity-font-style: bold; -unity-text-align: middle-center; white-space: normal; background-color: rgba(3, 8, 14, 0.88); opacity: 0; }
+.drum-piece--active { background-color: rgba(239, 164, 65, 0.34); border-width: 4px; border-color: var(--amber); scale: 1.08; }
+.drum-piece--active > Label { opacity: 1; }
+.drum-piece--ready { background-color: rgba(50, 205, 145, 0.4); border-color: var(--green); }
+.guided-target { align-self: flex-start; margin-top: 12px; padding: 5px 9px; color: rgb(3, 8, 14); background-color: var(--amber); font-size: 10px; -unity-font-style: bold; letter-spacing: 1px; }
+.hit-progress { min-height: 34px; margin-top: 16px; }
+.hit-progress .unity-progress-bar__background { background-color: rgb(5, 12, 18); border-width: 1px; border-color: rgba(61, 213, 255, 0.42); }
+.hit-progress .unity-progress-bar__progress { background-color: var(--blue); }
+.hit-progress .unity-progress-bar__title { color: white; -unity-font-style: bold; }
+.capture-cta { min-height: 52px; font-size: 17px; }
+.capture-cta--ready { background-color: rgb(21, 121, 87); border-width: 3px; border-color: var(--green); }
+.event-list { flex-grow: 1; min-height: 260px; margin-top: 10px; background-color: rgb(7, 12, 20); padding: 10px; }
+.event-list Label { font-size: 12px; color: rgb(199, 220, 241); white-space: normal; }
+.connection-status { color: var(--green); margin-top: 8px; }
+.capture-status { color: var(--blue); white-space: normal; margin-top: 8px; }
+.candidate-hint { color: var(--orange); white-space: normal; margin-top: 10px; }
+.status--error { color: var(--red); }
+.conflict-list, .review-list { flex-grow: 1; margin-top: 12px; }
+.conflict-list Label, .review-list Label { white-space: normal; margin-bottom: 8px; }
+.test-help { flex-grow: 1; align-items: center; justify-content: center; }
+
+@media (max-width: 1050px) {
+    .main-menu-button { min-width: 92px; padding-left: 10px; padding-right: 10px; }
+    .workspace-grid { flex-direction: column; }
+    .workspace-panel, .navigation-panel, .diagram-panel, .monitor-panel { width: auto; margin-right: 0; margin-bottom: 10px; }
+    .kit-diagram { min-height: 300px; }
+    .preset-card { width: 100%; min-height: 260px; margin-right: 0; }
+    .preset-image { min-height: 150px; height: 150px; }
+    .device-selection-workspace { flex-direction: column; }
+    .device-list-panel, .soundcheck-panel { width: auto; min-width: 0; margin-right: 0; margin-bottom: 10px; }
+    .soundcheck-kit-visual { min-height: 190px; }
+}

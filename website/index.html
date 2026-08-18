@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070d">
+  <meta name="description" content="HitTheKit è il rhythm game open source per batteria elettronica: timing deterministico, lezioni progressive e supporto CoreMIDI su macOS.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://codewriter90x.github.io/HitTheKit/">
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link rel="preload" href="assets/images/hero-drum-kit.jpg" as="image" fetchpriority="high">
+  <link rel="stylesheet" href="assets/css/styles.css">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="HitTheKit">
+  <meta property="og:title" content="HitTheKit — Sali sul palco, colpisci il tempo">
+  <meta property="og:description" content="Un rhythm game open source costruito per imparare davvero a suonare la batteria elettronica.">
+  <meta property="og:url" content="https://codewriter90x.github.io/HitTheKit/">
+  <meta property="og:image" content="https://codewriter90x.github.io/HitTheKit/assets/images/hitthekit-social-preview.jpg">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="640">
+  <meta property="og:image:alt" content="Il palco neon di HitTheKit con una batteria elettronica">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="HitTheKit — Rhythm game per batteria elettronica">
+  <meta name="twitter:description" content="Timing preciso, lezioni progressive e una vera batteria elettronica.">
+  <meta name="twitter:image" content="https://codewriter90x.github.io/HitTheKit/assets/images/hitthekit-social-preview.jpg">
+
+  <title>HitTheKit — Rhythm game per batteria elettronica</title>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "HitTheKit",
+    "url": "https://codewriter90x.github.io/HitTheKit/",
+    "image": "https://codewriter90x.github.io/HitTheKit/assets/images/hitthekit-social-preview.jpg",
+    "description": "Open-source rhythm game for electronic drum kits.",
+    "applicationCategory": "Game",
+    "operatingSystem": "macOS, Windows, Linux",
+    "license": "https://github.com/Codewriter90x/HitTheKit/blob/main/LICENSE",
+    "codeRepository": "https://github.com/Codewriter90x/HitTheKit"
+  }
+  </script>
+  <script src="assets/js/site.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Vai al contenuto</a>
+
+  <header class="site-header" data-header>
+    <div class="header-inner">
+      <a class="brand" href="#home" aria-label="HitTheKit — home">
+        <img class="brand-logo" src="assets/images/logo-original.png" width="512" height="512" alt="">
+        <span class="brand-name">HIT THE KIT</span>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-menu-toggle>
+        <span class="sr-only" data-i18n="menuOpen">Apri il menu</span>
+        <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Navigazione principale" data-nav>
+        <a href="#how" data-i18n="navHow">Come funziona</a>
+        <a href="#themes" data-i18n="navThemes">Temi</a>
+        <a href="#learn" data-i18n="navLearn">Impara</a>
+        <a href="#songs" data-i18n="navSongs">Brani</a>
+        <a href="#roadmap" data-i18n="navRoadmap">Roadmap</a>
+        <a class="nav-download" href="#download" data-i18n="navDownload">Download</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="language-toggle" type="button" data-language aria-label="Switch to English">EN</button>
+        <a class="github-link" href="https://github.com/Codewriter90x/HitTheKit" target="_blank" rel="noopener noreferrer" aria-label="HitTheKit su GitHub">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .7a11.5 11.5 0 0 0-3.64 22.4c.58.1.79-.25.79-.56v-2.2c-3.22.7-3.9-1.36-3.9-1.36-.52-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.57-.29-5.27-1.28-5.27-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.16 1.18a10.9 10.9 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.71 5.39-5.29 5.68.42.36.78 1.07.78 2.16v3.2c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .7Z"/></svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="home" aria-labelledby="hero-title">
+      <div class="hero-light hero-light-cyan" aria-hidden="true"></div>
+      <div class="hero-light hero-light-pink" aria-hidden="true"></div>
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="hero-version" data-i18n="version">v0.5.x · PRE-RELEASE OPEN SOURCE</p>
+          <h1 id="hero-title"><span data-i18n="heroLine1">SALI SUL PALCO,</span><strong data-i18n="heroLine2">COLPISCI IL TEMPO.</strong></h1>
+          <p class="hero-lead" data-i18n="heroLead">Il rhythm game costruito per chi vuole imparare davvero a suonare: timing preciso, lezioni progressive e la tua batteria elettronica al centro dell’esperienza.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#how"><span data-i18n="heroCta">Scopri come funziona</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+            <a class="button button-secondary" href="https://github.com/Codewriter90x/HitTheKit" target="_blank" rel="noopener noreferrer" data-i18n="repoCta">Vedi il codice</a>
+          </div>
+          <ul class="hero-facts" aria-label="Caratteristiche principali">
+            <li><span aria-hidden="true"></span><strong data-i18n="factKeyboard">Tastiera cross-platform</strong></li>
+            <li><span aria-hidden="true"></span><strong data-i18n="factMidi">CoreMIDI su macOS</strong></li>
+            <li><span aria-hidden="true"></span><strong data-i18n="factLessons">12 lezioni giocabili</strong></li>
+          </ul>
+        </div>
+        <figure class="hero-media">
+          <img src="assets/images/hero-drum-kit.jpg" width="1600" height="901" alt="Batteria completa illuminata da luci blu e ambra" fetchpriority="high">
+          <figcaption data-i18n="heroCaption">Otto elementi leggibili, una sola timeline musicale.</figcaption>
+        </figure>
+      </div>
+      <a class="scroll-cue" href="#how"><span data-i18n="scroll">SCOPRI</span><i aria-hidden="true"></i></a>
+    </section>
+
+    <section class="section section-dark" id="how" aria-labelledby="how-title">
+      <div class="section-inner">
+        <div class="section-heading reveal">
+          <p class="section-index">01 / 07</p>
+          <div><p class="section-label" data-i18n="howLabel">COME FUNZIONA</p><h2 id="how-title" data-i18n="howTitle">Un gioco ritmico costruito per imparare</h2><p data-i18n="howIntro">Ogni colpo passa dallo stesso motore deterministico, che tu stia usando la tastiera o un vero kit MIDI.</p></div>
+        </div>
+        <div class="feature-grid">
+          <article class="feature reveal"><span class="feature-number">01</span><div class="feature-icon cyan" aria-hidden="true">±</div><h3 data-i18n="featureTimingTitle">Timing deterministico</h3><p data-i18n="featureTimingBody">Il motore di hit-matching vive in una libreria .NET indipendente da Unity, con test automatici sulle finestre di giudizio.</p></article>
+          <article class="feature reveal"><span class="feature-number">02</span><div class="feature-icon pink" aria-hidden="true">●</div><h3 data-i18n="featureKitTitle">Batteria elettronica reale</h3><p data-i18n="featureKitBody">Configurazione guidata del kit, feedback visivo sul pezzo richiesto e fallback da tastiera sempre disponibile.</p></article>
+          <article class="feature reveal"><span class="feature-number">03</span><div class="feature-icon amber" aria-hidden="true">↗</div><h3 data-i18n="featureLearnTitle">Percorso strutturato</h3><p data-i18n="featureLearnBody">Lezioni progressive con obiettivi, velocità di studio e valutazioni trasparenti: niente difficoltà artificiale.</p></article>
+        </div>
+        <div class="flow-line reveal" aria-label="Flusso di gioco">
+          <div><span>1</span><strong data-i18n="flowConnect">Collega o configura</strong></div><i aria-hidden="true"></i>
+          <div><span>2</span><strong data-i18n="flowChoose">Scegli lezione o brano</strong></div><i aria-hidden="true"></i>
+          <div><span>3</span><strong data-i18n="flowPlay">Suona e migliora</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-stage" id="themes" aria-labelledby="themes-title">
+      <div class="stage-backdrop" aria-hidden="true"></div>
+      <div class="section-inner">
+        <div class="section-heading reveal">
+          <p class="section-index">02 / 07</p>
+          <div><p class="section-label" data-i18n="themesLabel">AMBIENTI</p><h2 id="themes-title" data-i18n="themesTitle">Tre ambienti, lo stesso gioco</h2><p data-i18n="themesIntro">Cambia il linguaggio visivo senza alterare timing, note o punteggio.</p></div>
+        </div>
+        <div class="theme-list">
+          <article class="theme theme-cyan reveal"><p>THEME 01</p><h3>Arcade Neon</h3><span data-i18n="themeArcade">Runway olografico, note a diamante e una palette ciano/viola.</span></article>
+          <article class="theme theme-amber reveal"><p>THEME 02</p><h3>Concert Stage</h3><span data-i18n="themeConcert">Un’arena dal vivo vista da dietro un kit elettronico completo.</span></article>
+          <article class="theme theme-steel reveal"><p>THEME 03</p><h3>Precision Grid</h3><span data-i18n="themeGrid">Geometria tecnica, prospettiva piatta e massima leggibilità.</span></article>
+        </div>
+        <figure class="stage-preview reveal">
+          <img src="assets/images/stage-command.jpg" width="1600" height="901" loading="lazy" alt="Schermata Stage Command di HitTheKit su un palco neon">
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section-learn" id="learn" aria-labelledby="learn-title">
+      <div class="section-inner split-layout">
+        <div class="split-copy reveal">
+          <p class="section-label" data-i18n="learnLabel">PERCORSO GUIDATO</p>
+          <h2 id="learn-title" data-i18n="learnTitle">24 lezioni, sei moduli</h2>
+          <p data-i18n="learnIntro">Il primo semestre è già giocabile: da una pulsazione di grancassa a 64 BPM fino a un groove completo in sedicesimi. Il secondo resta visibile come programma, senza fingere di valutare ciò che il motore non supporta ancora.</p>
+          <div class="learning-metrics"><div><strong>12</strong><span data-i18n="metricPlayable">lezioni giocabili</span></div><div><strong>80%</strong><span data-i18n="metricPass">soglia di superamento</span></div><div><strong>90%</strong><span data-i18n="metricMastery">padronanza</span></div></div>
+        </div>
+        <ol class="module-list reveal">
+          <li class="available"><span>01</span><div><strong data-i18n="module1">Fondamenta</strong><small data-i18n="lessons14">Giocabile · lezioni 1–4</small></div><b data-i18n="ready">PRONTO</b></li>
+          <li class="available"><span>02</span><div><strong data-i18n="module2">Tecnica di base</strong><small data-i18n="lessons58">Giocabile · lezioni 5–8</small></div><b data-i18n="ready">PRONTO</b></li>
+          <li class="available"><span>03</span><div><strong data-i18n="module3">Coordinazione</strong><small data-i18n="lessons912">Giocabile · lezioni 9–12</small></div><b data-i18n="ready">PRONTO</b></li>
+          <li><span>04</span><div><strong data-i18n="module4">Controllo e dinamiche</strong><small data-i18n="planned">In programma</small></div></li>
+          <li><span>05</span><div><strong data-i18n="module5">Stili musicali</strong><small data-i18n="planned">In programma</small></div></li>
+          <li><span>06</span><div><strong data-i18n="module6">Musicista da palco</strong><small data-i18n="planned">In programma</small></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section section-songs" id="songs" aria-labelledby="songs-title">
+      <div class="section-inner">
+        <div class="section-heading reveal"><p class="section-index">04 / 07</p><div><p class="section-label" data-i18n="songsLabel">LIBRERIA</p><h2 id="songs-title" data-i18n="songsTitle">Musica pulita, chart verificabili</h2><p data-i18n="songsIntro">Il repository non distribuisce musica commerciale: include soltanto una demo originale e il confine per i contenuti posseduti dal giocatore.</p></div></div>
+        <div class="song-rail">
+          <article class="song-primary reveal"><div class="song-art" aria-hidden="true"><span></span><i></i></div><div><p data-i18n="included">INCLUSO</p><h3>Neon Circuit</h3><span data-i18n="neonDescription">Demo originale · 8 battute · senza batteria preregistrata</span></div><b>▶</b></article>
+          <article class="song-secondary reveal"><span aria-hidden="true">＋</span><div><p data-i18n="yourMusic">LA TUA MUSICA</p><h3>Local Song Example</h3><small data-i18n="localDescription">Esempio del formato di importazione, senza contenuti di terzi.</small></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-roadmap" id="roadmap" aria-labelledby="roadmap-title">
+      <div class="section-inner">
+        <div class="section-heading reveal"><p class="section-index">05 / 07</p><div><p class="section-label">ROADMAP</p><h2 id="roadmap-title" data-i18n="roadmapTitle">Onesto su ciò che funziona oggi</h2><p data-i18n="roadmapIntro">Lo stato pubblico distingue ciò che è giocabile da ciò che è ancora in sviluppo.</p></div></div>
+        <div class="roadmap-grid">
+          <article class="roadmap-card now reveal"><span data-i18n="now">ORA · v0.5.x</span><h3 data-i18n="nowTitle">Vertical slice giocabile</h3><ul><li data-i18n="now1">Gameplay completo da tastiera</li><li data-i18n="now2">CoreMIDI su macOS</li><li data-i18n="now3">12 lezioni e demo originale</li><li data-i18n="now4">Configurazione guidata del kit</li></ul></article>
+          <article class="roadmap-card next reveal"><span data-i18n="next">PROSSIMO</span><h3 data-i18n="nextTitle">Ampliare il supporto</h3><ul><li data-i18n="next1">Backend MIDI per Windows e Linux</li><li data-i18n="next2">Più profili di batterie verificati</li><li data-i18n="next3">Secondo semestre del percorso</li><li data-i18n="next4">Packaging pubblico ripetibile</li></ul></article>
+          <article class="roadmap-card later reveal"><span data-i18n="later">PIÙ AVANTI</span><h3 data-i18n="laterTitle">Ecosistema della community</h3><ul><li data-i18n="later1">Editor e validazione dei chart</li><li data-i18n="later2">Condivisione di contenuti rights-clean</li><li data-i18n="later3">Più ambienti e modalità pratica</li><li data-i18n="later4">Supporto hardware più ampio</li></ul></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-download" id="download" aria-labelledby="download-title">
+      <div class="section-inner download-panel reveal">
+        <div><p class="section-label" data-i18n="downloadLabel">SOURCE PREVIEW</p><h2 id="download-title" data-i18n="downloadTitle">Studialo, compilalo, contribuisci</h2><p data-i18n="downloadBody">La prima pubblicazione contiene soltanto sorgenti e sito. Non è ancora disponibile un binario Unity pubblico approvato; sviluppatori e tester possono seguire la procedura di build documentata.</p><div class="download-actions"><a class="button button-primary" href="https://github.com/Codewriter90x/HitTheKit/archive/refs/heads/main.zip" data-i18n="sourceDownload">Scarica i sorgenti</a><a class="button button-secondary" href="https://github.com/Codewriter90x/HitTheKit#quick-source-setup" target="_blank" rel="noopener noreferrer" data-i18n="viewReleases">Guida alla build</a><a class="button button-secondary" href="https://github.com/Codewriter90x/HitTheKit/blob/main/FUNDING.md" target="_blank" rel="noopener noreferrer" data-i18n="supportProject">Supporta il progetto</a></div></div>
+        <aside><span>v0.5.x</span><strong data-i18n="preRelease">SOLO SORGENTI</strong><ul><li data-i18n="platformKeyboard">Codice tastiera: macOS, Windows, Linux</li><li data-i18n="platformMidi">Codice MIDI: macOS CoreMIDI</li><li>Unity 6000.5.6f1</li></ul></aside>
+      </div>
+    </section>
+
+    <section class="section section-info" id="license" aria-labelledby="license-title">
+      <div class="section-inner info-grid">
+        <article class="license-block reveal"><p class="section-label" data-i18n="licenseLabel">LICENZA</p><h2 id="license-title" data-i18n="licenseTitle">Open source, con regole chiare</h2><p data-i18n="licenseBody">Il codice originale del progetto è distribuito con licenza GPL-3.0-only. Un percorso di licenza commerciale separata è in preparazione e resta soggetto a revisione legale.</p><div><a href="https://github.com/Codewriter90x/HitTheKit/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" data-i18n="readGpl">Leggi la GPL-3.0</a><a href="https://github.com/Codewriter90x/HitTheKit/blob/main/LICENSING.md" target="_blank" rel="noopener noreferrer" data-i18n="licenseDetails">Dettagli sul percorso commerciale</a></div></article>
+        <div class="faq-block reveal" id="faq"><p class="section-label">FAQ</p><h2 data-i18n="faqTitle">Domande frequenti</h2>
+          <details><summary data-i18n="faq1q">Serve una batteria elettronica?</summary><p data-i18n="faq1a">No. La tastiera è sempre disponibile; un kit MIDI rende però l’esperienza più vicina allo strumento reale.</p></details>
+          <details><summary data-i18n="faq2q">Il MIDI funziona su tutti i sistemi?</summary><p data-i18n="faq2a">Non ancora. Il backend di produzione usa CoreMIDI su macOS; Windows e Linux supportano oggi il gameplay da tastiera.</p></details>
+          <details><summary data-i18n="faq3q">Ci sono canzoni commerciali incluse?</summary><p data-i18n="faq3a">No. Il repository contiene solo musica originale rights-clean e un esempio per i contenuti locali del giocatore.</p></details>
+          <details><summary data-i18n="faq4q">È già una versione stabile?</summary><p data-i18n="faq4a">No. La prima pubblicazione è source-only: nessun binario Unity è ancora approvato per la distribuzione pubblica.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div><a class="brand footer-brand" href="#home"><img class="brand-logo" src="assets/images/logo-original.png" width="512" height="512" alt=""><span class="brand-name">HIT THE KIT</span></a><p data-i18n="footerTagline">Rhythm game open source per batteria elettronica. In sviluppo attivo.</p></div>
+      <nav aria-label="Link del progetto"><a href="#how" data-i18n="navHow">Come funziona</a><a href="#learn" data-i18n="navLearn">Impara</a><a href="#roadmap">Roadmap</a><a href="#license" data-i18n="licenseLabel">Licenza</a><a href="#faq">FAQ</a></nav>
+      <nav aria-label="Link esterni"><a href="https://github.com/Codewriter90x/HitTheKit" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://github.com/Codewriter90x/HitTheKit/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer" data-i18n="contribute">Contribuisci</a><a href="https://github.com/Codewriter90x/HitTheKit/blob/main/FUNDING.md" target="_blank" rel="noopener noreferrer" data-i18n="supportProject">Supporta il progetto</a><a href="https://github.com/Codewriter90x/HitTheKit/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">Privacy</a><a href="https://github.com/Codewriter90x/HitTheKit/blob/main/SECURITY.md" target="_blank" rel="noopener noreferrer">Security</a></nav>
+    </div>
+    <div class="footer-bottom"><span>© 2026 HitTheKit</span><span data-i18n="footerLicense">GPL-3.0-only · sorgenti pubblici, binari non distribuiti</span></div>
+    <div class="footer-bottom"><span data-i18n="footerTrademark">Progetto indipendente; Unity, Apple, macOS, CoreMIDI e i nomi hardware appartengono ai rispettivi titolari.</span><a href="https://github.com/Codewriter90x/HitTheKit/blob/main/NOTICE" target="_blank" rel="noopener noreferrer">NOTICE</a></div>
+  </footer>
+</body>
+</html>

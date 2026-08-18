@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "offsetSeconds": 0.0,
+  "difficulties": {
+    "beginner": [
+      { "time": 1.0, "pad": "kick" },
+      { "time": 1.5, "pad": "snare" },
+      { "time": 2.0, "pad": "hiHat" }
+    ]
+  }
+}

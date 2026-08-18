@@ -1,0 +1,52 @@
+name: Proposta funzionalità
+description: Proponi un miglioramento coerente con la roadmap, senza inviare codice o asset sostanziali.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Descrivi il problema prima della soluzione. Una proposta non autorizza
+        automaticamente un pull request sostanziale: leggi CONTRIBUTING.md.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema da risolvere
+      description: Chi incontra il problema, in quale situazione e con quale impatto?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Risultato desiderato
+      description: Descrivi il comportamento osservabile, non solo l'implementazione tecnica.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative considerate
+      description: Soluzioni temporanee o approcci diversi già provati.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Gameplay e timing
+        - Percorso didattico
+        - Configurazione batteria MIDI
+        - Accessibilità
+        - Compatibilità e packaging
+        - Sito e documentazione
+        - Altro
+    validations:
+      required: true
+  - type: checkboxes
+    id: rights
+    attributes:
+      label: Contenuti
+      options:
+        - label: La proposta non include musica, chart, registrazioni o asset di terzi non autorizzati.
+          required: true
+        - label: Ho letto ROADMAP.md e CONTRIBUTING.md.
+          required: true

@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/HitTheKit/Scenes/MainMenuPrototype.unity
+    guid: 33be347d8ea3b4ec9b1e08e262f85708
+  - enabled: 1
+    path: Assets/HitTheKit/Scenes/GameplayPrototype.unity
+    guid: d60928b252e1245598d033e1765e1f9c
+  - enabled: 1
+    path: Assets/HitTheKit/Scenes/DeviceSetupPrototype.unity
+    guid: a220edd9f7d3f4e3da674172665eee7b
+  m_configObjects: {}

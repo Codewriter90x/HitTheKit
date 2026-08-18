@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "offsetSeconds": 0.0,
+  "difficulties": {
+    "easy": [
+      { "time": 0.71, "pad": "kick" }, { "time": 0.71, "pad": "hiHat" },
+      { "time": 1.43, "pad": "snare" }, { "time": 1.43, "pad": "hiHat" },
+      { "time": 2.14, "pad": "kick" }, { "time": 2.14, "pad": "hiHat" },
+      { "time": 2.86, "pad": "snare" }, { "time": 2.86, "pad": "hiHat" },
+      { "time": 3.57, "pad": "kick" }, { "time": 3.57, "pad": "hiHat" },
+      { "time": 4.29, "pad": "snare" }, { "time": 4.29, "pad": "hiHat" },
+      { "time": 5.00, "pad": "kick" }, { "time": 5.00, "pad": "hiHat" },
+      { "time": 5.71, "pad": "snare" }, { "time": 5.71, "pad": "hiHat" },
+      { "time": 6.43, "pad": "kick" }, { "time": 6.43, "pad": "hiHat" },
+      { "time": 7.14, "pad": "snare" }, { "time": 7.14, "pad": "hiHat" },
+      { "time": 7.86, "pad": "kick" }, { "time": 7.86, "pad": "hiHat" },
+      { "time": 8.57, "pad": "snare" }, { "time": 8.57, "pad": "hiHat" },
+      { "time": 9.29, "pad": "kick" }, { "time": 9.29, "pad": "hiHat" },
+      { "time": 10.00, "pad": "snare" }, { "time": 10.00, "pad": "hiHat" }
+    ]
+  }
+}

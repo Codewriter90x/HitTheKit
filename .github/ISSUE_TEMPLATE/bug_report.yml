@@ -1,0 +1,37 @@
+name: Segnalazione bug
+description: Segnala un problema riproducibile senza allegare musica o dati MIDI privati.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Problema
+      description: Cosa è successo e cosa ti aspettavi?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passi per riprodurre
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Ambiente
+      placeholder: macOS, build/versione, tastiera o modello batteria
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostica
+      description: Inserisci log sanitizzati. Non allegare brani commerciali, credenziali o catture MIDI identificabili.
+  - type: checkboxes
+    id: rights
+    attributes:
+      label: Contenuti
+      options:
+        - label: Confermo di non aver incluso contenuti protetti o dati personali non necessari.
+          required: true

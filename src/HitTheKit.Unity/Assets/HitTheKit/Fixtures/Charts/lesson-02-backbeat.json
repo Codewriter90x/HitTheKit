@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "offsetSeconds": 0.0,
+  "difficulties": {
+    "easy": [
+      { "time": 0.75, "pad": "kick" },
+      { "time": 1.50, "pad": "snare" },
+      { "time": 2.25, "pad": "kick" },
+      { "time": 3.00, "pad": "snare" },
+      { "time": 3.75, "pad": "kick" },
+      { "time": 4.50, "pad": "snare" },
+      { "time": 5.25, "pad": "kick" },
+      { "time": 6.00, "pad": "snare" },
+      { "time": 6.75, "pad": "kick" },
+      { "time": 7.50, "pad": "snare" },
+      { "time": 8.25, "pad": "kick" },
+      { "time": 9.00, "pad": "snare" },
+      { "time": 9.75, "pad": "kick" },
+      { "time": 10.50, "pad": "snare" }
+    ]
+  }
+}

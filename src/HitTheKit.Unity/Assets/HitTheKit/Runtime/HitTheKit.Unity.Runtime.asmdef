@@ -1,0 +1,16 @@
+{
+  "name": "HitTheKit.Unity.Runtime",
+  "rootNamespace": "HitTheKit.Unity",
+  "references": [],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "HitTheKit.Core.dll"
+  ],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

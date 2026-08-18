@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "profileId": "generic-gm-drums-v1",
+  "profileVersion": 1,
+  "manufacturer": "Generic",
+  "model": "General MIDI Drums",
+  "displayName": "Generic General MIDI starting profile",
+  "aliases": [
+    "General MIDI Drums"
+  ],
+  "portNamePatterns": [],
+  "capabilities": [
+    "multiZoneSnare",
+    "hiHatPedalNote",
+    "rideBell"
+  ],
+  "notes": "Generic starting profile; not guaranteed device identification; user confirmation required.",
+  "elements": [
+    { "id": "kick.default", "piece": "kick", "articulation": "default", "displayName": "Kick", "isOptional": false },
+    { "id": "snare.head", "piece": "snare", "articulation": "head", "displayName": "Snare head", "isOptional": false },
+    { "id": "snare.rim", "piece": "snare", "articulation": "rim", "displayName": "Snare rim", "isOptional": true },
+    { "id": "hihat.closed", "piece": "hiHat", "articulation": "closed", "displayName": "Closed hi-hat", "isOptional": false },
+    { "id": "hihat.pedal", "piece": "hiHat", "articulation": "pedal", "displayName": "Hi-hat pedal", "isOptional": true },
+    { "id": "hihat.open", "piece": "hiHat", "articulation": "open", "displayName": "Open hi-hat", "isOptional": false },
+    { "id": "floortom.head", "piece": "floorTom", "articulation": "head", "displayName": "Floor tom", "isOptional": true },
+    { "id": "tom2.head", "piece": "tom2", "articulation": "head", "displayName": "Tom 2", "isOptional": true },
+    { "id": "tom1.head", "piece": "tom1", "articulation": "head", "displayName": "Tom 1", "isOptional": true },
+    { "id": "crash1.bow", "piece": "crash1", "articulation": "bow", "displayName": "Crash 1", "isOptional": true },
+    { "id": "ride.bow", "piece": "ride", "articulation": "bow", "displayName": "Ride bow", "isOptional": true },
+    { "id": "ride.bell", "piece": "ride", "articulation": "bell", "displayName": "Ride bell", "isOptional": true }
+  ],
+  "mappings": [
+    { "id": "gm.note.36", "elementId": "kick.default", "kind": "noteOn", "channel": -1, "data1": 36, "minimumValue": 1, "maximumValue": 127, "priority": 0, "source": "builtInProfile", "enabled": true },
+    { "id": "gm.note.38", "elementId": "snare.head", "kind": "noteOn", "channel": -1, "data1": 38, "minimumValue": 1, "maximumValue": 127, "priority": 0, "source": "builtInProfile", "enabled": true },
+    { "id": "gm.note.40", "elementId": "snare.rim", "kind": "noteOn", "channel": -1, "data1": 40, "minimumValue": 1, "maximumValue": 127, "priority": 0, "source": "builtInProfile", "enabled": true },
+    { "id": "gm.note.42", "elementId": "hihat.closed", "kind": "noteOn", "channel": -1, "data1": 42, "minimumValue": 1, "maximumValue": 127, "priority": 0, "source": "builtInProfile", "enabled": true },
+    { "id": "gm.note.44", "elementId": "hihat.pedal", "kind": "noteOn", "channel": -1, "data1": 44, "minimumValue": 1, "maximumValue": 127, "priority": 0, "source": "builtInProfile", "enabled": true },
+    { "id": "gm.note.46", "elementId": "hihat.open", "kind": "noteOn", "channel": -1, "data1": 46, "minimumValue": 1, "maximumValue": 127, "priority": 0, "source": "builtInProfile", "enabled": true },
+    { "id": "gm.note.41", "elementId": "floortom.head", "kind": "noteOn", "channel": -1, "data1": 41, "minimumValue": 1, "maximumValue": 127, "priority": 0, "source": "builtInProfile", "enabled": true },
+    { "id": "gm.note.43", "elementId": "floortom.head", "kind": "noteOn", "channel": -1, "data1": 43, "minimumValue": 1, "maximumValue": 127, "priority": 0, "source": "builtInProfile", "enabled": true },
+    { "id": "gm.note.45", "elementId": "tom2.head", "kind": "noteOn", "channel": -1, "data1": 45, "minimumValue": 1, "maximumValue": 127, "priority": 0, "source": "builtInProfile", "enabled": true },
+    { "id": "gm.note.47", "elementId": "tom2.head", "kind": "noteOn", "channel": -1, "data1": 47, "minimumValue": 1, "maximumValue": 127, "priority": 0, "source": "builtInProfile", "enabled": true },
+    { "id": "gm.note.48", "elementId": "tom1.head", "kind": "noteOn", "channel": -1, "data1": 48, "minimumValue": 1, "maximumValue": 127, "priority": 0, "source": "builtInProfile", "enabled": true },
+    { "id": "gm.note.50", "elementId": "tom1.head", "kind": "noteOn", "channel": -1, "data1": 50, "minimumValue": 1, "maximumValue": 127, "priority": 0, "source": "builtInProfile", "enabled": true },
+    { "id": "gm.note.49", "elementId": "crash1.bow", "kind": "noteOn", "channel": -1, "data1": 49, "minimumValue": 1, "maximumValue": 127, "priority": 0, "source": "builtInProfile", "enabled": true },
+    { "id": "gm.note.51", "elementId": "ride.bow", "kind": "noteOn", "channel": -1, "data1": 51, "minimumValue": 1, "maximumValue": 127, "priority": 0, "source": "builtInProfile", "enabled": true },
+    { "id": "gm.note.53", "elementId": "ride.bell", "kind": "noteOn", "channel": -1, "data1": 53, "minimumValue": 1, "maximumValue": 127, "priority": 0, "source": "builtInProfile", "enabled": true }
+  ]
+}

@@ -1,0 +1,10 @@
+/src/HitTheKit.Unity/ProjectSettings/ProjectAuditorSettings.asset -whitespace
+/src/HitTheKit.Unity/ProjectSettings/ProjectSettings.asset -whitespace
+/src/HitTheKit.Unity/Assets/HitTheKit/Runtime/Visuals.meta -whitespace
+/src/HitTheKit.Unity/Assets/HitTheKit/Runtime/Input.meta -whitespace
+/src/HitTheKit.Unity/Assets/HitTheKit/Runtime/Matching.meta -whitespace
+/src/HitTheKit.Unity/Assets/HitTheKit/Visuals.meta -whitespace
+/src/HitTheKit.Unity/Assets/HitTheKit/Visuals/Materials.meta -whitespace
+/src/HitTheKit.Unity/Assets/HitTheKit/Visuals/Materials/PadBase.mat -whitespace
+/src/HitTheKit.Unity/Assets/HitTheKit/Visuals/Materials/PadBase.mat.meta -whitespace
+/src/HitTheKit.Unity/Assets/HitTheKit/Scenes/GameplayPrototype.unity -whitespace
