@@ -25,8 +25,10 @@ namespace HitTheKit.Unity.Gameplay
             // A physical electronic kit already renders its own drum voice. Layering the
             // generated practice kit on top causes doubled hits and a white-noise hi-hat
             // (heard as a recurring "tsss"). Keyboard play still needs audible drums.
-            bool playGeneratedDrum = input.Source != DrumInputSource.Midi;
-            return new GameplayAudioFeedbackDecision(playGeneratedDrum, result == null);
+            bool playSyntheticFeedback = input.Source != DrumInputSource.Midi;
+            return new GameplayAudioFeedbackDecision(
+                playSyntheticFeedback,
+                playSyntheticFeedback && result == null);
         }
 
         public static bool ShouldPlayMiss(HitResult result) => result != null && result.Grade == HitGrade.Miss;

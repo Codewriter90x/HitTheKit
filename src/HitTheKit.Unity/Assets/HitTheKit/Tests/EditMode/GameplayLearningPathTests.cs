@@ -229,6 +229,9 @@ namespace HitTheKit.Unity.Tests
             GameplayAudioFeedbackDecision midi = GameplayAudioFeedbackPolicy.ForInput(
                 new DrumInputEvent(DrumPad.Kick, 100, 1, DrumInputSource.Midi),
                 matchedResult);
+            GameplayAudioFeedbackDecision wrongMidi = GameplayAudioFeedbackPolicy.ForInput(
+                new DrumInputEvent(DrumPad.Snare, 100, 1, DrumInputSource.Midi),
+                null);
 
             Assert.That(matched.PlayDrum, Is.True);
             Assert.That(matched.PlayMistake, Is.False);
@@ -236,6 +239,9 @@ namespace HitTheKit.Unity.Tests
             Assert.That(wrong.PlayMistake, Is.True);
             Assert.That(midi.PlayDrum, Is.False);
             Assert.That(midi.PlayMistake, Is.False);
+            Assert.That(wrongMidi.PlayDrum, Is.False);
+            Assert.That(wrongMidi.PlayMistake, Is.False,
+                "A wrong MIDI hit must not trigger synthetic audio over the physical drum kit.");
             Assert.That(miss, Is.Not.Null);
             Assert.That(GameplayAudioFeedbackPolicy.ShouldPlayMiss(miss), Is.True);
         }

@@ -443,20 +443,10 @@ namespace HitTheKit.Unity.Tests
                 Assert.That(manifest, Does.Not.Contain("://"), song.Id);
                 Assert.That(manifest, Does.Not.Contain("/Users/"), song.Id);
 
-                if (isHighwayLearningTrack)
-                {
-                    Assert.That(manifest, Does.Contain("\"bpm\": 116"), song.Id);
-                    Assert.That(manifest, Does.Contain("\"bars\": 100"), song.Id);
-                    Assert.That(manifest, Does.Contain("\"beatsPerBar\": 4"), song.Id);
-                    Assert.That(manifest, Does.Contain("\"chartFile\": \"notes.json\""), song.Id);
-                }
-                else
-                {
-                    Assert.That(manifest, Does.Not.Contain("\"bpm\""), song.Id);
-                    Assert.That(manifest, Does.Not.Contain("\"bars\""), song.Id);
-                    Assert.That(manifest, Does.Not.Contain("\"beatsPerBar\""), song.Id);
-                    Assert.That(manifest, Does.Not.Contain("\"chartFile\""), song.Id);
-                }
+                Assert.That(manifest, Does.Not.Contain("\"bpm\""), song.Id);
+                Assert.That(manifest, Does.Not.Contain("\"bars\""), song.Id);
+                Assert.That(manifest, Does.Not.Contain("\"beatsPerBar\""), song.Id);
+                Assert.That(manifest, Does.Not.Contain("\"chartFile\""), song.Id);
 
                 string[] commercialAssets = Directory.GetFiles(song.FolderPath)
                     .Where(path =>

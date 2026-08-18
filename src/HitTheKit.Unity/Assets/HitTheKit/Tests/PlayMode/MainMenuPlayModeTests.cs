@@ -354,6 +354,7 @@ namespace HitTheKit.Unity.Tests
         [UnityTest]
         public IEnumerator Learn_is_a_full_section_and_double_kick_confirms_the_selected_destination()
         {
+            PlayerPreferencesRuntime.Current.SetFirstRunCompleted(true);
             MainMenuController controller = null;
             yield return LoadMainMenu(value => controller = value);
             controller.SelectDestination(MainMenuDestination.Learn);
