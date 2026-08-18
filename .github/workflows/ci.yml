@@ -40,7 +40,7 @@ jobs:
         run: find src/HitTheKit.Unity/Assets/StreamingAssets/Songs -name song.json -print0 | xargs -0 -n1 jq empty
       - name: Reject commercial catalog metadata
         run: |
-          if rg -i 'AC/DC|Highway to Hell|Nirvana|Audioslave|Van Halen|Ozzy Osbourne|Thirty Seconds to Mars|Hot Milk' \
+          if grep -R -i -E 'AC/DC|Highway to Hell|Nirvana|Audioslave|Van Halen|Ozzy Osbourne|Thirty Seconds to Mars|Hot Milk' \
             src/HitTheKit.Unity/Assets/StreamingAssets/Songs; then
             echo 'Commercial artist/title metadata must not be bundled.' >&2
             exit 1

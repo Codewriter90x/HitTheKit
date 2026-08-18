@@ -16,7 +16,7 @@ case "$VERSION_VALUE" in
   *) fail "VERSION is not a semantic version: $VERSION_VALUE" ;;
 esac
 
-rg -q "^[[:space:]]*bundleVersion: $VERSION_VALUE$" \
+grep -Eq "^[[:space:]]*bundleVersion: $VERSION_VALUE$" \
   src/HitTheKit.Unity/ProjectSettings/ProjectSettings.asset || \
   fail "Unity bundleVersion does not match VERSION $VERSION_VALUE"
 
@@ -56,7 +56,7 @@ case "$PUBLICATION_STATE" in
     done
     [ -s .github/FUNDING.yml ] ||
       fail "approved GitHub Sponsors profile must have an active FUNDING.yml"
-    rg -q '^[[:space:]]*-[[:space:]]*Codewriter90x[[:space:]]*$' .github/FUNDING.yml ||
+    grep -Eq '^[[:space:]]*-[[:space:]]*Codewriter90x[[:space:]]*$' .github/FUNDING.yml ||
       fail "FUNDING.yml must identify the approved Codewriter90x profile"
     [ ! -e .github/FUNDING.yml.example ] ||
       fail "remove obsolete funding template after Sponsors approval"
@@ -85,19 +85,19 @@ done
 find src/HitTheKit.Unity/Assets/StreamingAssets/Songs \
   -name song.json -print0 | xargs -0 -n1 jq empty
 
-if rg -i 'AC/DC|Highway to Hell|Nirvana|Audioslave|Van Halen|Ozzy Osbourne|Thirty Seconds to Mars|Hot Milk' \
+if grep -R -i -E 'AC/DC|Highway to Hell|Nirvana|Audioslave|Van Halen|Ozzy Osbourne|Thirty Seconds to Mars|Hot Milk' \
   src/HitTheKit.Unity/Assets/StreamingAssets/Songs; then
   fail "commercial artist or title metadata is bundled"
 fi
 
-if rg -q 'commercial license (is|è) available|licenza commerciale (è )?disponibile' \
+if grep -R -Eiq 'commercial license (is|è) available|licenza commerciale (è )?disponibile' \
   website README.md; then
   fail "public copy presents the pending commercial-license path as active"
 fi
 
-rg -q 'MIDI.*macOS|macOS.*MIDI' README.md || \
+grep -Eq 'MIDI.*macOS|macOS.*MIDI' README.md || \
   fail "README must state the current macOS MIDI boundary"
-rg -q 'DO NOT PUBLISH YET' docs/release/0.5.0-release-notes-draft.md || \
+grep -Eq 'DO NOT PUBLISH YET' docs/release/0.5.0-release-notes-draft.md || \
   fail "draft release notes must retain the publication gate"
 
 bash tests/scripts/asset-provenance-contract-tests.sh
