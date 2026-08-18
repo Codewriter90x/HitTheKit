@@ -259,10 +259,11 @@ for schema, timing boundaries, validation rules, and test instructions.
 `GameplayPrototype` now turns the chart, DSP clock, and deterministic matcher
 into a complete rhythm-game highway. Eight readable targets cover Hi-Hat,
 Snare, two rack toms, Floor Tom, Crash, Ride, and a separate full-width
-Kick / Grancassa track. The same live gameplay can be viewed as Arcade Neon,
-Concert Stage, or Precision Grid; use the on-screen selector or keys `1`–`3`
-without restarting the song. All three directions are original HitTheKit art
-and UI, not copied assets from another rhythm game. See the
+Kick / Grancassa track. The same gameplay is available as Arcade Neon,
+Concert Stage, or Precision Grid. Choose the theme under **Settings** before
+starting a session; gameplay does not bind the `1`–`3` keys to presentation
+changes. All three directions are original HitTheKit art and UI, not copied
+assets from another rhythm game. See the
 [gameplay highway design](docs/design/gameplay-highway-themes.md).
 
 The playable vertical slice now includes a countdown, keyboard and CoreMIDI

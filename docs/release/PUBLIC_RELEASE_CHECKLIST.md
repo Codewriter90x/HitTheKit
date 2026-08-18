@@ -53,13 +53,13 @@ non modifica né riscrive quello privato.
 - [x] Template issue/PR e scansione automatica presenti.
 - [x] Roadmap, supporto, governance, maintainer e CODEOWNERS documentati.
 - [x] Processo release, bozza note 0.5.0 e runbook del nuovo repository preparati.
-- [x] Workflow GitHub Pages preparato come template inattivo.
-- [x] Workflow snapshot sorgente con attestazione preparato come template inattivo.
-- [ ] Protezione di `main`, required checks e private vulnerability reporting abilitati su GitHub.
+- [x] Workflow GitHub Pages attivo nel repository pubblico.
+- [x] Workflow snapshot sorgente con attestazione attivo e vincolato alla versione richiesta.
+- [x] Protezione di `main`, required checks e private vulnerability reporting abilitati su GitHub.
 - [ ] Screenshot e video finali acquisiti dalla build candidata, senza asset di terzi.
 - [ ] Release notes coerenti con limiti reali e piattaforme testate.
-- [ ] Workflow Pages attivato solo nel nuovo repository e sito verificato da sessione non autenticata.
-- [ ] Workflow snapshot attivato nel nuovo repository e attestazione verificata con `gh`.
+- [x] Workflow Pages attivato solo nel nuovo repository e sito verificato da sessione non autenticata.
+- [ ] Prima esecuzione del workflow snapshot completata e attestazione verificata con `gh`.
 
 ## Sostenibilità
 

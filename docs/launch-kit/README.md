@@ -16,9 +16,9 @@ brand asset.
 
 | Format | Asset | Recommended use |
 | --- | --- | --- |
-| Landscape, 1200 × 628 | [`website/assets/images/hitthekit-social-preview.jpg`](../../website/assets/images/hitthekit-social-preview.jpg) | LinkedIn link preview, repository and website sharing |
+| Landscape, 1280 × 640 | [`website/assets/images/hitthekit-social-preview.jpg`](../../website/assets/images/hitthekit-social-preview.jpg) | LinkedIn link preview, repository and website sharing |
 | Square, 1254 × 1254 | [`website/assets/images/hitthekit-launch-square.png`](../../website/assets/images/hitthekit-launch-square.png) | LinkedIn image post, community post, profile update |
-| Wide hero, 1600 × 800 | [`website/assets/images/hitthekit-readme-hero.jpg`](../../website/assets/images/hitthekit-readme-hero.jpg) | Long-form post, README, project introduction |
+| Wide hero, 1600 × 686 | [`website/assets/images/hitthekit-readme-hero.jpg`](../../website/assets/images/hitthekit-readme-hero.jpg) | Long-form post, README, project introduction |
 
 The square image was generated specifically for HitTheKit from project-authored
 direction: a fictional modern electronic drum kit, an original cyan/magenta

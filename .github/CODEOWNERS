@@ -7,9 +7,9 @@
 /SECURITY.md @Codewriter90x
 /LICENSING.md @Codewriter90x
 /FUNDING.md @Codewriter90x
-/.github/FUNDING.yml.example @Codewriter90x
-/.github/workflows/pages.yml.example @Codewriter90x
-/.github/workflows/source-release.yml.example @Codewriter90x
+/.github/FUNDING.yml @Codewriter90x
+/.github/workflows/pages.yml @Codewriter90x
+/.github/workflows/source-release.yml @Codewriter90x
 /GOVERNANCE.md @Codewriter90x
 /PUBLICATION_STATUS @Codewriter90x
 /docs/legal/ @Codewriter90x

@@ -95,9 +95,9 @@ The release record must include:
 - refreshed notices and provenance; and
 - screenshots or video captured from the candidate itself.
 
-In the approved public repository, activate
-`.github/workflows/source-release.yml.example` and use it to create an
-attested, rights-clean source snapshot. Verify the downloaded artifact with:
+In the public repository, dispatch `.github/workflows/source-release.yml` for
+the approved exact version to create an attested, rights-clean source snapshot.
+Verify the downloaded artifact with:
 
 ```sh
 gh attestation verify HitTheKit-source-0.5.0.tar.gz -R Codewriter90x/HitTheKit
@@ -108,11 +108,11 @@ legal, content, or binary validation.
 
 ## 8. Publish only after approval
 
-The clean public repository is intentionally the final step. Follow
-[PUBLICATION_RUNBOOK.md](PUBLICATION_RUNBOOK.md), publish the source snapshot
-and approved binaries, mark `0.5.0` as a pre-release, and immediately verify
-links, checksums, issue forms, security reporting, and branch protection from
-an unauthenticated session.
+The clean public repository and source-only preview are already active. Follow
+[PUBLICATION_RUNBOOK.md](PUBLICATION_RUNBOOK.md), publish the approved source
+snapshot, and immediately verify links, checksums, issue forms, security
+reporting, and branch protection from an unauthenticated session. Public Unity
+binaries remain a separate, later gate.
 
 If any claim cannot be supported by evidence, weaken or remove the claim; do
 not waive the gate silently.
