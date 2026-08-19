@@ -85,6 +85,22 @@ namespace HitTheKit.Unity.Charts
             return result.AsReadOnly();
         }
 
+        public IReadOnlyList<TimelineNote> GetRange(double startSeconds, double endSeconds)
+        {
+            ValidateFinite(startSeconds, nameof(startSeconds));
+            ValidateFinite(endSeconds, nameof(endSeconds));
+            if (startSeconds < 0 || endSeconds <= startSeconds)
+                throw new ArgumentOutOfRangeException(nameof(endSeconds), "Range end must be after a non-negative start.");
+
+            var result = new List<TimelineNote>();
+            foreach (TimelineNote note in notes)
+            {
+                if (note.EffectiveTimeSeconds >= startSeconds && note.EffectiveTimeSeconds < endSeconds)
+                    result.Add(note);
+            }
+            return result.AsReadOnly();
+        }
+
         private static void ValidateFinite(double value, string parameterName)
         {
             if (!IsFinite(value))

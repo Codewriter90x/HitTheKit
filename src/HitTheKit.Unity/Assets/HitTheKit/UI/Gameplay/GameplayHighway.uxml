@@ -100,9 +100,24 @@
         </ui:VisualElement>
 
         <ui:VisualElement name="pause-overlay" class="run-overlay" style="display: none;">
-            <ui:VisualElement class="run-dialog">
+            <ui:VisualElement class="run-dialog practice-dialog">
                 <ui:Label text="IN PAUSA" class="run-dialog-title" />
                 <ui:Label text="La traccia e il timing sono fermi." class="run-dialog-copy" />
+                <ui:VisualElement class="practice-panel">
+                    <ui:Label text="PRACTICE LAB" class="practice-kicker" />
+                    <ui:Label name="practice-section-label" text="BATTUTE 1–4" class="practice-section-label" />
+                    <ui:VisualElement class="practice-row">
+                        <ui:Button name="practice-previous-section" text="‹ SEZIONE" class="practice-button" />
+                        <ui:Button name="practice-loop-section" text="LOOP SEZIONE" class="practice-button practice-button--primary" />
+                        <ui:Button name="practice-next-section" text="SEZIONE ›" class="practice-button" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="practice-row">
+                        <ui:Button name="practice-set-a" text="IMPOSTA A" class="practice-button" />
+                        <ui:Button name="practice-set-b" text="IMPOSTA B" class="practice-button" />
+                        <ui:Button name="practice-clear" text="BRANO INTERO" class="practice-button" />
+                    </ui:VisualElement>
+                    <ui:Label name="practice-status" text="Loop disattivato · scegli una sezione o imposta A e B" class="practice-status" />
+                </ui:VisualElement>
                 <ui:Button name="resume-button" text="RIPRENDI" class="run-primary-button" />
                 <ui:Button name="restart-button" text="RICOMINCIA" class="run-secondary-button" />
             </ui:VisualElement>

@@ -25,6 +25,7 @@ namespace HitTheKit.Unity.Audio
         private string externalAudioPath;
         private double audioPlaybackSpeed = 1.0;
         private UnityWebRequest audioRequest;
+        private bool seekedWhilePaused;
 
         public DspSongClock Clock { get; private set; }
         public double StartDspTime => Clock != null && Clock.IsScheduled ? Clock.StartDspTime : double.NaN;
@@ -141,7 +142,15 @@ namespace HitTheKit.Unity.Audio
         {
             if (Clock == null || !Clock.IsPaused) return;
             Clock.Resume();
-            audioSource.UnPause();
+            if (seekedWhilePaused)
+            {
+                audioSource.Play();
+                seekedWhilePaused = false;
+            }
+            else
+            {
+                audioSource.UnPause();
+            }
         }
 
         public void RestartPlayback()
@@ -150,6 +159,35 @@ namespace HitTheKit.Unity.Audio
             audioSource.Stop();
             SchedulePlayback();
             startedLogged = false;
+            completedLogged = false;
+        }
+
+        public void SeekPlayback(double positionSeconds)
+        {
+            if (generatedClip == null || Clock == null || !Clock.IsScheduled)
+                throw new InvalidOperationException("Song playback must be scheduled before seeking.");
+            if (double.IsNaN(positionSeconds) || double.IsInfinity(positionSeconds) ||
+                positionSeconds < 0 || positionSeconds >= Clock.DurationSeconds)
+                throw new ArgumentOutOfRangeException(nameof(positionSeconds));
+
+            bool wasPaused = Clock.IsPaused;
+            double clipPosition = Math.Min(
+                generatedClip.length - (1.0 / Math.Max(1, generatedClip.frequency)),
+                positionSeconds * audioPlaybackSpeed);
+
+            audioSource.Stop();
+            audioSource.time = (float)Math.Max(0, clipPosition);
+            Clock.Seek(positionSeconds);
+            if (wasPaused)
+            {
+                seekedWhilePaused = true;
+            }
+            else
+            {
+                audioSource.Play();
+                seekedWhilePaused = false;
+            }
+            startedLogged = positionSeconds >= 0;
             completedLogged = false;
         }
 
@@ -162,6 +200,7 @@ namespace HitTheKit.Unity.Audio
             Clock = new DspSongClock(timeSource);
             Clock.Schedule(startDspTime, generatedClip.length / audioPlaybackSpeed);
             audioSource.PlayScheduled(startDspTime);
+            seekedWhilePaused = false;
         }
 
         private void Update()
