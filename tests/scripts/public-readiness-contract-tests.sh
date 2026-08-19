@@ -30,6 +30,7 @@ for path in \
   NOTICE \
   PRIVACY.md \
   README.md \
+  docs/README.md \
   ROADMAP.md \
   SECURITY.md \
   SUPPORT.md \
