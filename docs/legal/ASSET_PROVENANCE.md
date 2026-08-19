@@ -57,6 +57,13 @@ captures retained in the private development archive.
 | --- | --- | --- |
 | `website/assets/images/screenshots/main-menu.jpg` | `7f00a1b51d05b327c279f0bf199b646bc9899dac5b76a798d0932f7d0e41338a` | README application preview: main menu |
 | `website/assets/images/screenshots/gameplay-concert-stage.jpg` | `246771f958d41adc02cf7ef15533ea977f9d0a35676bd9c9edf197eec37f510d` | README application preview: synthetic Concert Stage gameplay |
+| `website/assets/images/screenshots/hitthekit-real-tour-poster.jpg` | `e2c9d678a9fe05d12c83070019a03620f50c532a0fc3f490fef5b2ceff9399bb` | Poster for the first-party gameplay tour |
+
+The gameplay tour was captured from a maintainer-built HitTheKit application.
+It shows only the project-owned interface, environments, lesson content, and
+synthetic gameplay. The instrumental soundtrack was synthesized specifically
+for the tour from deterministic oscillators and noise sources; it does not
+sample or reproduce a third-party recording.
 
 ## Programmatically generated branding
 
