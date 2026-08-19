@@ -59,7 +59,7 @@ non modifica né riscrive quello privato.
 - [ ] Screenshot e video finali acquisiti dalla build candidata, senza asset di terzi.
 - [ ] Release notes coerenti con limiti reali e piattaforme testate.
 - [x] Workflow Pages attivato solo nel nuovo repository e sito verificato da sessione non autenticata.
-- [ ] Prima esecuzione del workflow snapshot completata e attestazione verificata con `gh`.
+- [x] Prima esecuzione del workflow snapshot completata e attestazione verificata con `gh` (`v0.5.0-source-preview.2`, run `32234078583`, attestazione `41563124`).
 
 ## Sostenibilità
 
