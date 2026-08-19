@@ -41,6 +41,16 @@ automatically tested hit-matching core.
 The same gameplay session powers Play and Learn. Charts, the DSP song clock,
 hit matching and MIDI input are shared rather than reimplemented per mode.
 
+## See it in action
+
+These are real captures of the current Unity application running the original,
+rights-clean demo content—not promotional mockups.
+
+| Main menu | Concert Stage gameplay |
+| --- | --- |
+| [![HitTheKit main menu with Play, Learn and electronic-drum setup](website/assets/images/screenshots/main-menu.jpg)](website/assets/images/screenshots/main-menu.jpg) | [![HitTheKit Concert Stage gameplay with the perspective drum highway and countdown](website/assets/images/screenshots/gameplay-concert-stage.jpg)](website/assets/images/screenshots/gameplay-concert-stage.jpg) |
+| Choose Play, Learn or configure an electronic drum kit. | Follow the perspective highway using a keyboard or a supported CoreMIDI kit. |
+
 ## Project status
 
 > [!IMPORTANT]

@@ -45,6 +45,19 @@ The tracked `HitTheKit-MainMenuStage.fbx` is project-owned procedural geometry
 created for the menu scene. Website scene images, the FBX, older variants, and
 design evidence are individually hashed in the machine-readable inventory.
 
+## First-party application captures
+
+These screenshots were captured directly from the HitTheKit Unity application
+using only project-owned interface, environment and synthetic demo content.
+They contain no commercial song, recording, chart, artwork or performer
+likeness. The JPEG files are publication derivatives of the original PNG
+captures retained in the private development archive.
+
+| Asset | SHA-256 | Purpose |
+| --- | --- | --- |
+| `website/assets/images/screenshots/main-menu.jpg` | `7f00a1b51d05b327c279f0bf199b646bc9899dac5b76a798d0932f7d0e41338a` | README application preview: main menu |
+| `website/assets/images/screenshots/gameplay-concert-stage.jpg` | `246771f958d41adc02cf7ef15533ea977f9d0a35676bd9c9edf197eec37f510d` | README application preview: synthetic Concert Stage gameplay |
+
 ## Programmatically generated branding
 
 `branding/app-icon/master/HitTheKit-Icon-Source-1254.png` has SHA-256
