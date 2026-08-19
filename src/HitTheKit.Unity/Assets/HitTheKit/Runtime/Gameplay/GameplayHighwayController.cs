@@ -65,6 +65,7 @@ namespace HitTheKit.Unity.Gameplay
         private Button resultRestartButton;
         private Button resultMenuButton;
         private Button resultApplyCalibrationButton;
+        private Button resultPracticeWeakestButton;
         private Button practicePreviousSectionButton;
         private Button practiceNextSectionButton;
         private Button practiceLoopSectionButton;
@@ -82,6 +83,7 @@ namespace HitTheKit.Unity.Gameplay
         private Label resultBreakdownLabel;
         private Label resultPracticeLabel;
         private Label resultCalibrationLabel;
+        private Label resultErrorMapLabel;
         private Label practiceSectionLabel;
         private Label practiceStatusLabel;
         private GameplayHighwaySurface surface;
@@ -93,6 +95,8 @@ namespace HitTheKit.Unity.Gameplay
         private readonly TimingCalibrationAdvisor keyboardCalibration = new TimingCalibrationAdvisor();
         private readonly TimingCalibrationAdvisor midiCalibration = new TimingCalibrationAdvisor();
         private readonly PracticePerformanceAnalyzer performanceAnalyzer = new PracticePerformanceAnalyzer();
+        private PracticeErrorMapAnalyzer errorMapAnalyzer;
+        private PracticeErrorCell weakestPracticeError;
         private DrumInputSource lastCalibrationSource = DrumInputSource.Keyboard;
         private DrumPad? latestPulsePad;
         private bool invalidConfigurationLogged;
@@ -129,6 +133,7 @@ namespace HitTheKit.Unity.Gameplay
         public double CurrentAttemptPracticeSeconds => practiceTimer.CurrentAttemptSeconds;
         public GameplayPracticeRange ActivePracticeRange => practiceLoop.Range;
         public IReadOnlyList<GameplayPracticeRange> PracticeSections => practiceSections;
+        public PracticeErrorCell WeakestPracticeError => weakestPracticeError;
 
         private void Awake()
         {
@@ -270,6 +275,7 @@ namespace HitTheKit.Unity.Gameplay
             resultRestartButton = root.Q<Button>("result-restart-button");
             resultMenuButton = root.Q<Button>("result-menu-button");
             resultApplyCalibrationButton = root.Q<Button>("result-apply-calibration");
+            resultPracticeWeakestButton = root.Q<Button>("result-practice-weakest");
             practicePreviousSectionButton = root.Q<Button>("practice-previous-section");
             practiceNextSectionButton = root.Q<Button>("practice-next-section");
             practiceLoopSectionButton = root.Q<Button>("practice-loop-section");
@@ -287,6 +293,7 @@ namespace HitTheKit.Unity.Gameplay
             resultBreakdownLabel = root.Q<Label>("result-breakdown");
             resultPracticeLabel = root.Q<Label>("result-practice");
             resultCalibrationLabel = root.Q<Label>("result-calibration");
+            resultErrorMapLabel = root.Q<Label>("result-error-map");
             practiceSectionLabel = root.Q<Label>("practice-section-label");
             practiceStatusLabel = root.Q<Label>("practice-status");
             PlayerPreferencesSnapshot preferences = PlayerPreferencesRuntime.Current.Snapshot;
@@ -452,6 +459,7 @@ namespace HitTheKit.Unity.Gameplay
         {
             if (result == null) return;
             performanceAnalyzer.Record(result.Note.Pad, result.Grade);
+            errorMapAnalyzer?.Record(result);
             scoreTracker.Apply(result);
             if (result.Grade == HitGrade.Miss)
             {
@@ -530,6 +538,8 @@ namespace HitTheKit.Unity.Gameplay
             keyboardCalibration.Reset();
             midiCalibration.Reset();
             performanceAnalyzer.Reset();
+            errorMapAnalyzer?.Reset();
+            weakestPracticeError = null;
             if (metronomeSource != null) metronomeSource.Stop();
             metronomeScheduled = false;
             pulseDeadlines.Clear();
@@ -608,6 +618,17 @@ namespace HitTheKit.Unity.Gameplay
         {
             GameplaySessionDefinition session = CurrentSession;
             practiceSections = GameplayPracticeSections.Create(session.Bars, session.BeatsPerBar, session.Bpm);
+            var analysisSections = new PracticeSectionDefinition[practiceSections.Count];
+            for (int index = 0; index < practiceSections.Count; index++)
+            {
+                GameplayPracticeRange section = practiceSections[index];
+                analysisSections[index] = new PracticeSectionDefinition(
+                    index,
+                    section.Label,
+                    section.StartSeconds,
+                    section.EndSeconds);
+            }
+            errorMapAnalyzer = new PracticeErrorMapAnalyzer(analysisSections);
             selectedPracticeSectionIndex = 0;
             RefreshPracticeStatus();
         }
@@ -631,6 +652,8 @@ namespace HitTheKit.Unity.Gameplay
             keyboardCalibration.Reset();
             midiCalibration.Reset();
             performanceAnalyzer.Reset();
+            errorMapAnalyzer?.Reset();
+            weakestPracticeError = null;
             pulseDeadlines.Clear();
             latestPulsePad = null;
             matching.RestartSession(range.StartSeconds, range.EndSeconds);
@@ -731,6 +754,7 @@ namespace HitTheKit.Unity.Gameplay
                 $"PERFECT {matchingSnapshot.PerfectCount}   GOOD {matchingSnapshot.GoodCount}   " +
                 $"EARLY/LATE {matchingSnapshot.EarlyCount + matchingSnapshot.LateCount}   MISS {matchingSnapshot.MissCount}";
             RenderPracticeRecommendation();
+            RenderErrorMap();
             RenderCalibrationRecommendation();
             SetDisplayed(resultsOverlay, true);
         }
@@ -837,6 +861,7 @@ namespace HitTheKit.Unity.Gameplay
             if (resultRestartButton != null) resultRestartButton.clicked += RestartRun;
             if (resultMenuButton != null) resultMenuButton.clicked += ReturnToMainMenu;
             if (resultApplyCalibrationButton != null) resultApplyCalibrationButton.clicked += ApplyCalibrationRecommendation;
+            if (resultPracticeWeakestButton != null) resultPracticeWeakestButton.clicked += PracticeWeakestArea;
             if (practicePreviousSectionButton != null) practicePreviousSectionButton.clicked += SelectPreviousPracticeSection;
             if (practiceNextSectionButton != null) practiceNextSectionButton.clicked += SelectNextPracticeSection;
             if (practiceLoopSectionButton != null) practiceLoopSectionButton.clicked += LoopSelectedPracticeSection;
@@ -853,6 +878,7 @@ namespace HitTheKit.Unity.Gameplay
             if (resultRestartButton != null) resultRestartButton.clicked -= RestartRun;
             if (resultMenuButton != null) resultMenuButton.clicked -= ReturnToMainMenu;
             if (resultApplyCalibrationButton != null) resultApplyCalibrationButton.clicked -= ApplyCalibrationRecommendation;
+            if (resultPracticeWeakestButton != null) resultPracticeWeakestButton.clicked -= PracticeWeakestArea;
             if (practicePreviousSectionButton != null) practicePreviousSectionButton.clicked -= SelectPreviousPracticeSection;
             if (practiceNextSectionButton != null) practiceNextSectionButton.clicked -= SelectNextPracticeSection;
             if (practiceLoopSectionButton != null) practiceLoopSectionButton.clicked -= LoopSelectedPracticeSection;
@@ -902,6 +928,45 @@ namespace HitTheKit.Unity.Gameplay
                     : "TIMING BILANCIATO";
             resultPracticeLabel.text =
                 $"FOCUS PROSSIMO: {PadLabel(weakest.Pad)} · {weakest.Accuracy:0.0}% · {tendency}";
+        }
+
+        private void RenderErrorMap()
+        {
+            if (resultErrorMapLabel == null || resultPracticeWeakestButton == null) return;
+            weakestPracticeError = errorMapAnalyzer?.Weakest();
+            if (weakestPracticeError == null)
+            {
+                resultErrorMapLabel.text = "NESSUN RISULTATO DISPONIBILE";
+                resultPracticeWeakestButton.SetEnabled(false);
+                return;
+            }
+
+            var cells = new List<PracticeErrorCell>(errorMapAnalyzer.Snapshot());
+            cells.Sort((left, right) =>
+            {
+                int byAccuracy = left.Accuracy.CompareTo(right.Accuracy);
+                if (byAccuracy != 0) return byAccuracy;
+                int bySection = left.Section.Index.CompareTo(right.Section.Index);
+                return bySection != 0 ? bySection : left.Pad.CompareTo(right.Pad);
+            });
+            int count = Math.Min(4, cells.Count);
+            var entries = new string[count];
+            for (int index = 0; index < count; index++)
+            {
+                PracticeErrorCell cell = cells[index];
+                entries[index] = $"{cell.Section.Label}: {PadLabel(cell.Pad)} {cell.Accuracy:0}%";
+            }
+            resultErrorMapLabel.text = string.Join("   ·   ", entries);
+            resultPracticeWeakestButton.SetEnabled(true);
+            resultPracticeWeakestButton.text =
+                $"ALLENA {weakestPracticeError.Section.Label} · {PadLabel(weakestPracticeError.Pad)}";
+        }
+
+        public void PracticeWeakestArea()
+        {
+            if (weakestPracticeError == null || weakestPracticeError.Section.Index >= practiceSections.Count) return;
+            selectedPracticeSectionIndex = weakestPracticeError.Section.Index;
+            LoopSelectedPracticeSection();
         }
 
         private static string PadLabel(DrumPad pad)

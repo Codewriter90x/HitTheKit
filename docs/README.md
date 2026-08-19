@@ -45,6 +45,7 @@ without creating an unreviewed second source of truth.
 - [DSP song clock](development/dsp-song-clock.md)
 - [Chart timeline](development/chart-timeline.md)
 - [Practice Lab](development/practice-lab.md)
+- [Performance error map](development/performance-error-map.md)
 - [Demo-song vertical slice](development/demo-song-vertical-slice.md)
 - [Keyboard hit matching](development/keyboard-hit-matching.md)
 - [Pad visuals](development/pad-visuals.md)
