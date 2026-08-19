@@ -72,7 +72,8 @@ namespace HitTheKit.Unity.Gameplay
             GameplayLessonId? lessonId = null,
             string songId = null,
             string chartFilePath = null,
-            string audioFilePath = null)
+            string audioFilePath = null,
+            bool isChartCreator = false)
         {
             if (!Enum.IsDefined(typeof(GameplaySessionKind), kind)) throw new ArgumentOutOfRangeException(nameof(kind));
             if (!Enum.IsDefined(typeof(GameplaySessionChart), chart)) throw new ArgumentOutOfRangeException(nameof(chart));
@@ -121,6 +122,8 @@ namespace HitTheKit.Unity.Gameplay
 
             if (!string.IsNullOrWhiteSpace(songId) && !GameplaySongSpeeds.IsSupported(chartPlaybackSpeed))
                 throw new ArgumentOutOfRangeException(nameof(chartPlaybackSpeed));
+            if (isChartCreator && (kind != GameplaySessionKind.FreePlay || string.IsNullOrWhiteSpace(songId)))
+                throw new ArgumentException("Chart Creator requires a selected free-play song.", nameof(isChartCreator));
 
             Kind = kind;
             Chart = chart;
@@ -142,6 +145,7 @@ namespace HitTheKit.Unity.Gameplay
             SongId = songId;
             ChartFilePath = chartFilePath;
             AudioFilePath = audioFilePath;
+            IsChartCreator = isChartCreator;
         }
 
         public GameplaySessionKind Kind { get; }
@@ -165,6 +169,7 @@ namespace HitTheKit.Unity.Gameplay
         public string SongId { get; }
         public string ChartFilePath { get; }
         public string AudioFilePath { get; }
+        public bool IsChartCreator { get; }
 
         private static bool IsFinite(double value) => !double.IsNaN(value) && !double.IsInfinity(value);
     }
@@ -241,6 +246,37 @@ namespace HitTheKit.Unity.Gameplay
                 song.Id,
                 song.ChartPath,
                 song.AudioPath);
+        }
+
+        public static GameplaySessionDefinition ChartCreator(
+            SongLibraryEntry song,
+            GameplayPresentationTheme theme,
+            double speedMultiplier = 1.0,
+            string difficulty = null)
+        {
+            GameplaySessionDefinition source = Song(song, theme, speedMultiplier, difficulty);
+            return new GameplaySessionDefinition(
+                source.Kind,
+                source.Chart,
+                source.Difficulty,
+                source.ChartPlaybackSpeed,
+                source.Bpm,
+                source.Bars,
+                source.BeatsPerBar,
+                source.CountInBeats,
+                source.UseGeneratedSong,
+                source.Theme,
+                source.ReturnTarget,
+                source.Title,
+                source.Subtitle,
+                source.Metadata,
+                "CHART CREATOR · SUONA LIBERAMENTE: OGNI COLPO DIVENTA UNA NOTA",
+                source.ReturnButtonLabel,
+                source.LessonId,
+                source.SongId,
+                source.ChartFilePath,
+                source.AudioFilePath,
+                true);
         }
 
         public static int SongCountInBeats(double effectiveBpm)
@@ -320,6 +356,16 @@ namespace HitTheKit.Unity.Gameplay
             double speedMultiplier = 1.0,
             string difficulty = null) =>
             Select(GameplaySessionFactory.Song(
+                song,
+                GameplaySettingsRuntime.Current.Theme,
+                speedMultiplier,
+                difficulty));
+
+        public static void SelectChartCreator(
+            SongLibraryEntry song,
+            double speedMultiplier = 1.0,
+            string difficulty = null) =>
+            Select(GameplaySessionFactory.ChartCreator(
                 song,
                 GameplaySettingsRuntime.Current.Theme,
                 speedMultiplier,

@@ -534,6 +534,13 @@
 .result-practice { margin-top: 2px; margin-bottom: 8px; color: rgb(255, 202, 103); font-size: 12px; -unity-font-style: bold; -unity-text-align: middle-center; white-space: normal; }
 .result-calibration { min-height: 32px; color: rgb(91, 224, 255); font-size: 12px; -unity-font-style: bold; -unity-text-align: middle-center; white-space: normal; }
 .result-calibration-button { align-self: center; width: 300px; min-height: 38px; margin-top: 8px; margin-bottom: 10px; }
+.chart-creator-results { width: 100%; margin-top: 8px; padding: 12px; background-color: rgba(4, 22, 30, 0.96); border-width: 1px; border-color: rgba(65, 219, 255, 0.72); border-radius: 6px; }
+.chart-creator-eyebrow { color: rgb(91, 224, 255); }
+.chart-creator-summary { margin-top: 6px; color: white; font-size: 19px; -unity-font-style: bold; -unity-text-align: middle-center; }
+.chart-creator-copy { margin-top: 6px; color: rgb(171, 196, 211); font-size: 10px; white-space: normal; -unity-text-align: middle-center; }
+.chart-creator-actions { margin-top: 10px; flex-direction: row; justify-content: center; }
+.chart-save-button { width: 170px; min-height: 38px; margin: 0 4px; }
+.chart-creator-status { min-height: 20px; margin-top: 8px; color: rgb(78, 221, 137); font-size: 10px; -unity-font-style: bold; white-space: normal; -unity-text-align: middle-center; }
 .gameplay--high-contrast .highway-shell,
 .gameplay--high-contrast .results-dialog,
 .gameplay--high-contrast .run-dialog { border-color: white; background-color: rgba(0, 0, 0, 0.97); }

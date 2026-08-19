@@ -66,6 +66,7 @@ namespace HitTheKit.Unity.MainMenu
         private Button songSpeedNinetyButton;
         private Button songSpeedFullButton;
         private Button songPlayButton;
+        private Button songRecordButton;
         private Button songRefreshButton;
         private Button songFolderButton;
         private Button songBackButton;
@@ -420,6 +421,7 @@ namespace HitTheKit.Unity.MainMenu
             songSpeedNinetyButton = Required<Button>(root, "song-speed-ninety");
             songSpeedFullButton = Required<Button>(root, "song-speed-full");
             songPlayButton = Required<Button>(root, "song-play-button");
+            songRecordButton = Required<Button>(root, "song-record-button");
             songRefreshButton = Required<Button>(root, "song-refresh-button");
             songFolderButton = Required<Button>(root, "song-folder-button");
             songBackButton = Required<Button>(root, "song-back-button");
@@ -516,6 +518,7 @@ namespace HitTheKit.Unity.MainMenu
             songSpeedNinetyButton.clicked += SelectNinetySongSpeed;
             songSpeedFullButton.clicked += SelectFullSongSpeed;
             songPlayButton.clicked += StartSelectedSongFromButton;
+            songRecordButton.clicked += StartChartCreatorFromButton;
             songRefreshButton.clicked += RefreshSongLibrary;
             songFolderButton.clicked += OpenUserSongFolder;
             songBackButton.clicked += CloseSongLibrary;
@@ -624,6 +627,7 @@ namespace HitTheKit.Unity.MainMenu
             songSpeedNinetyButton.clicked -= SelectNinetySongSpeed;
             songSpeedFullButton.clicked -= SelectFullSongSpeed;
             songPlayButton.clicked -= StartSelectedSongFromButton;
+            songRecordButton.clicked -= StartChartCreatorFromButton;
             songRefreshButton.clicked -= RefreshSongLibrary;
             songFolderButton.clicked -= OpenUserSongFolder;
             songBackButton.clicked -= CloseSongLibrary;
@@ -740,6 +744,22 @@ namespace HitTheKit.Unity.MainMenu
         }
 
         private void StartSelectedSongFromButton() => StartSelectedSong();
+
+        public bool StartChartCreator()
+        {
+            SongLibraryEntry song = SelectedSong();
+            if (song == null || !song.IsPlayable)
+            {
+                RenderSongLibrary();
+                return false;
+            }
+
+            GameplaySessionContext.SelectChartCreator(song, selectedSongSpeed, selectedSongDifficulty);
+            Navigate(MainMenuRoutes.GameplayScene, MainMenuDestination.Play);
+            return IsNavigationPending;
+        }
+
+        private void StartChartCreatorFromButton() => StartChartCreator();
 
         public void SelectSongSpeed(double speedMultiplier)
         {
@@ -1228,7 +1248,9 @@ namespace HitTheKit.Unity.MainMenu
                     ? "AGGIUNGI UNA CARTELLA CON song.json."
                     : "ADD A FOLDER CONTAINING song.json.";
                 songPlayButton.SetEnabled(false);
+                songRecordButton.SetEnabled(false);
                 songPlayButton.text = italian ? "NESSUN BRANO" : "NO SONGS";
+                songRecordButton.text = italian ? "REGISTRA CHART" : "RECORD CHART";
                 SetSongSpeedControlsEnabled(false);
                 RenderSongSpeedSelection();
                 return;
@@ -1274,6 +1296,8 @@ namespace HitTheKit.Unity.MainMenu
                 songPlayButton.text = italian ? "CONTENUTI NON DISPONIBILI" : "CONTENT UNAVAILABLE";
             }
             songPlayButton.SetEnabled(selected.IsPlayable);
+            songRecordButton.SetEnabled(selected.IsPlayable);
+            songRecordButton.text = italian ? "REGISTRA CHART" : "RECORD CHART";
             songRefreshButton.text = italian ? "AGGIORNA LIBRERIA" : "REFRESH LIBRARY";
             songFolderButton.text = italian ? "APRI CARTELLA BRANI" : "OPEN SONG FOLDER";
             songBackButton.text = italian ? "INDIETRO" : "BACK";

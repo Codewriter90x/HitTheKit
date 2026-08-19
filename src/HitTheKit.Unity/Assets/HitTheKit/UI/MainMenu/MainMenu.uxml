@@ -113,7 +113,10 @@
                             <ui:Label name="song-detail-readiness" class="song-detail-readiness" />
                         </ui:ScrollView>
                         <ui:VisualElement class="song-play-actions">
-                            <ui:Button name="song-play-button" text="SUONA ORA" class="song-play-button" />
+                            <ui:VisualElement class="song-primary-actions">
+                                <ui:Button name="song-play-button" text="SUONA ORA" class="song-play-button" />
+                                <ui:Button name="song-record-button" text="REGISTRA CHART" class="song-record-button" />
+                            </ui:VisualElement>
                             <ui:Label text="INVIO O DOPPIO KICK" class="song-play-hint" />
                         </ui:VisualElement>
                     </ui:VisualElement>

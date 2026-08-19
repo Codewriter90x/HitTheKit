@@ -75,6 +75,12 @@ namespace HitTheKit.Unity.Gameplay
         private Label resultBreakdownLabel;
         private Label resultPracticeLabel;
         private Label resultCalibrationLabel;
+        private VisualElement chartCreatorResults;
+        private Label chartCreatorSummaryLabel;
+        private Label chartCreatorStatusLabel;
+        private Button chartSaveRawButton;
+        private Button chartSaveEighthButton;
+        private Button chartSaveSixteenthButton;
         private GameplayHighwaySurface surface;
         private GameplayKitSurface kitSurface;
         private bool showInstructionalKit;
@@ -93,6 +99,8 @@ namespace HitTheKit.Unity.Gameplay
         private AudioClip metronomeClip;
         private bool metronomeScheduled;
         private bool resultRecorded;
+        private ChartRecordingSession chartRecording;
+        private ChartRecordingDraft chartDraft;
 
         public event Action<GameplayPresentationTheme> ThemeChanged;
 
@@ -114,6 +122,8 @@ namespace HitTheKit.Unity.Gameplay
         public GameplaySessionDefinition CurrentSession =>
             sessionCoordinator?.Session ?? GameplaySessionContext.Current;
         public double CurrentAttemptPracticeSeconds => practiceTimer.CurrentAttemptSeconds;
+        public int RecordedChartHitCount => chartRecording?.HitCount ?? chartDraft?.Hits.Count ?? 0;
+        public string LastChartExportPath { get; private set; }
 
         private void Awake()
         {
@@ -141,6 +151,7 @@ namespace HitTheKit.Unity.Gameplay
             BindNavigation();
             Subscribe();
             InitializeAudioFeedback();
+            InitializeChartCreator();
             SetTheme(CurrentSession.Theme);
             RefreshSessionCopy();
         }
@@ -264,6 +275,12 @@ namespace HitTheKit.Unity.Gameplay
             resultBreakdownLabel = root.Q<Label>("result-breakdown");
             resultPracticeLabel = root.Q<Label>("result-practice");
             resultCalibrationLabel = root.Q<Label>("result-calibration");
+            chartCreatorResults = root.Q<VisualElement>("chart-creator-results");
+            chartCreatorSummaryLabel = root.Q<Label>("chart-creator-summary");
+            chartCreatorStatusLabel = root.Q<Label>("chart-creator-status");
+            chartSaveRawButton = root.Q<Button>("chart-save-raw");
+            chartSaveEighthButton = root.Q<Button>("chart-save-eighth");
+            chartSaveSixteenthButton = root.Q<Button>("chart-save-sixteenth");
             PlayerPreferencesSnapshot preferences = PlayerPreferencesRuntime.Current.Snapshot;
             root.EnableInClassList("gameplay--high-contrast", preferences.HighContrast);
             root.EnableInClassList("gameplay--reduced-motion", preferences.ReducedMotion);
@@ -392,6 +409,7 @@ namespace HitTheKit.Unity.Gameplay
 
         private void HandleInputProcessed(DrumInputEvent input, HitResult result)
         {
+            if (CurrentSession.IsChartCreator) chartRecording?.Record(input);
             latestPulsePad = input.Pad;
             pulseDeadlines[input.Pad] = Time.unscaledTime + PulseDurationSeconds;
             lastCalibrationSource = input.Source == DrumInputSource.Midi
@@ -488,6 +506,9 @@ namespace HitTheKit.Unity.Gameplay
             FlushPracticeTime();
             practiceTimer.ResetAttempt();
             resultRecorded = false;
+            chartDraft = null;
+            LastChartExportPath = null;
+            chartRecording?.Restart();
             scoreTracker.Reset();
             keyboardCalibration.Reset();
             midiCalibration.Reset();
@@ -531,17 +552,47 @@ namespace HitTheKit.Unity.Gameplay
             RunState = GameplayRunState.Results;
             FlushPracticeTime();
             GameplayScoreSnapshot score = scoreTracker.Snapshot;
-            RecordCompletedSession(matchingSnapshot, score);
+            if (CurrentSession.IsChartCreator)
+            {
+                chartDraft = chartRecording?.Finish();
+            }
+            else
+            {
+                RecordCompletedSession(matchingSnapshot, score);
+            }
             resultRecorded = true;
-            resultRankLabel.text = score.Rank;
-            resultScoreLabel.text = score.Score.ToString("N0", CultureInfo.InvariantCulture);
-            resultAccuracyLabel.text = $"{score.Accuracy:0.0}%";
-            resultComboLabel.text = score.MaxCombo.ToString(CultureInfo.InvariantCulture);
-            resultBreakdownLabel.text =
-                $"PERFECT {matchingSnapshot.PerfectCount}   GOOD {matchingSnapshot.GoodCount}   " +
-                $"EARLY/LATE {matchingSnapshot.EarlyCount + matchingSnapshot.LateCount}   MISS {matchingSnapshot.MissCount}";
-            RenderPracticeRecommendation();
-            RenderCalibrationRecommendation();
+            if (CurrentSession.IsChartCreator)
+            {
+                int hitCount = chartDraft?.Hits.Count ?? 0;
+                resultRankLabel.text = "REC";
+                resultScoreLabel.text = hitCount.ToString("N0", CultureInfo.InvariantCulture);
+                resultAccuracyLabel.text = "TAKE";
+                resultComboLabel.text = "—";
+                resultBreakdownLabel.text = $"{hitCount} COLPI CATTURATI · TIMELINE DSP · AUDIO ESCLUSO";
+                resultPracticeLabel.text = "RIVEDI LA TAKE E SCEGLI LA QUANTIZZAZIONE";
+                resultCalibrationLabel.text = "RAW conserva il timing; 1/8 e 1/16 allineano alla griglia.";
+                resultApplyCalibrationButton.SetEnabled(false);
+                if (chartCreatorSummaryLabel != null)
+                    chartCreatorSummaryLabel.text = $"{hitCount} COLPI REGISTRATI · {CurrentSession.Difficulty.ToUpperInvariant()}";
+                if (chartCreatorStatusLabel != null) chartCreatorStatusLabel.text = string.Empty;
+                chartSaveRawButton?.SetEnabled(hitCount > 0);
+                chartSaveEighthButton?.SetEnabled(hitCount > 0);
+                chartSaveSixteenthButton?.SetEnabled(hitCount > 0);
+                SetDisplayed(chartCreatorResults, true);
+            }
+            else
+            {
+                resultRankLabel.text = score.Rank;
+                resultScoreLabel.text = score.Score.ToString("N0", CultureInfo.InvariantCulture);
+                resultAccuracyLabel.text = $"{score.Accuracy:0.0}%";
+                resultComboLabel.text = score.MaxCombo.ToString(CultureInfo.InvariantCulture);
+                resultBreakdownLabel.text =
+                    $"PERFECT {matchingSnapshot.PerfectCount}   GOOD {matchingSnapshot.GoodCount}   " +
+                    $"EARLY/LATE {matchingSnapshot.EarlyCount + matchingSnapshot.LateCount}   MISS {matchingSnapshot.MissCount}";
+                RenderPracticeRecommendation();
+                RenderCalibrationRecommendation();
+                SetDisplayed(chartCreatorResults, false);
+            }
             SetDisplayed(resultsOverlay, true);
         }
 
@@ -552,6 +603,66 @@ namespace HitTheKit.Unity.Gameplay
             if (trackMetaLabel != null) trackMetaLabel.text = sessionCoordinator.Metadata;
             if (resultMenuButton != null) resultMenuButton.text = sessionCoordinator.Session.ReturnButtonLabel;
             if (sessionKickerLabel != null) sessionKickerLabel.text = sessionCoordinator.Session.Kicker;
+            SetDisplayed(chartCreatorResults, sessionCoordinator.Session.IsChartCreator && RunState == GameplayRunState.Results);
+        }
+
+        private void InitializeChartCreator()
+        {
+            if (!CurrentSession.IsChartCreator)
+            {
+                chartRecording = null;
+                chartDraft = null;
+                return;
+            }
+
+            double playbackDuration = CurrentSession.Bars * CurrentSession.BeatsPerBar * 60.0 / CurrentSession.Bpm;
+            chartRecording = new ChartRecordingSession(playbackDuration, CurrentSession.SpeedMultiplier);
+            chartDraft = null;
+        }
+
+        public ChartCreatorExportResult SaveChartRecording(ChartQuantization quantization)
+        {
+            if (!CurrentSession.IsChartCreator)
+                throw new InvalidOperationException("The current session is not recording a chart.");
+            if (chartDraft == null)
+                throw new InvalidOperationException("Finish the take before saving its chart.");
+
+            double originalBpm = CurrentSession.Bpm / CurrentSession.SpeedMultiplier;
+            var metadata = new ChartCreatorMetadata(
+                CurrentSession.SongId,
+                CurrentSession.Title,
+                CurrentSession.Subtitle,
+                CurrentSession.Difficulty,
+                originalBpm,
+                CurrentSession.Bars,
+                CurrentSession.BeatsPerBar);
+            ChartCreatorExportResult result = new ChartCreatorExporter().ExportChartOnly(
+                chartDraft,
+                metadata,
+                quantization,
+                SongLibraryRuntime.UserRoot,
+                DateTimeOffset.UtcNow);
+            LastChartExportPath = result.FolderPath;
+            if (chartCreatorStatusLabel != null)
+                chartCreatorStatusLabel.text = $"SALVATO · {result.SongId} · AGGIUNGI SOLO AUDIO AUTORIZZATO";
+            return result;
+        }
+
+        private void SaveRawChart() => TrySaveChart(ChartQuantization.None);
+        private void SaveEighthChart() => TrySaveChart(ChartQuantization.EighthNote);
+        private void SaveSixteenthChart() => TrySaveChart(ChartQuantization.SixteenthNote);
+
+        private void TrySaveChart(ChartQuantization quantization)
+        {
+            try
+            {
+                SaveChartRecording(quantization);
+            }
+            catch (Exception exception)
+            {
+                if (chartCreatorStatusLabel != null)
+                    chartCreatorStatusLabel.text = $"SALVATAGGIO NON RIUSCITO · {exception.Message}";
+            }
         }
 
         private void InitializeAudioFeedback()
@@ -646,6 +757,9 @@ namespace HitTheKit.Unity.Gameplay
             if (resultRestartButton != null) resultRestartButton.clicked += RestartRun;
             if (resultMenuButton != null) resultMenuButton.clicked += ReturnToMainMenu;
             if (resultApplyCalibrationButton != null) resultApplyCalibrationButton.clicked += ApplyCalibrationRecommendation;
+            if (chartSaveRawButton != null) chartSaveRawButton.clicked += SaveRawChart;
+            if (chartSaveEighthButton != null) chartSaveEighthButton.clicked += SaveEighthChart;
+            if (chartSaveSixteenthButton != null) chartSaveSixteenthButton.clicked += SaveSixteenthChart;
         }
 
         private void UnbindRunControls()
@@ -656,6 +770,9 @@ namespace HitTheKit.Unity.Gameplay
             if (resultRestartButton != null) resultRestartButton.clicked -= RestartRun;
             if (resultMenuButton != null) resultMenuButton.clicked -= ReturnToMainMenu;
             if (resultApplyCalibrationButton != null) resultApplyCalibrationButton.clicked -= ApplyCalibrationRecommendation;
+            if (chartSaveRawButton != null) chartSaveRawButton.clicked -= SaveRawChart;
+            if (chartSaveEighthButton != null) chartSaveEighthButton.clicked -= SaveEighthChart;
+            if (chartSaveSixteenthButton != null) chartSaveSixteenthButton.clicked -= SaveSixteenthChart;
         }
 
         private TimingCalibrationAdvisor AdvisorFor(DrumInputSource source) =>

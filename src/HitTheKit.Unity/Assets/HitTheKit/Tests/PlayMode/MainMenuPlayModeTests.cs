@@ -151,6 +151,7 @@ namespace HitTheKit.Unity.Tests
             Assert.That(root.Q<Label>("song-detail-title").text, Is.EqualTo("LOCAL SONG EXAMPLE"));
             Assert.That(root.Q<Label>("song-detail-artist").text, Is.EqualTo("YOUR LIBRARY"));
             Assert.That(root.Q<Button>("song-play-button").enabledSelf, Is.False);
+            Assert.That(root.Q<Button>("song-record-button").enabledSelf, Is.False);
             Assert.That(root.Q<Button>("song-speed-sixty").enabledSelf, Is.False);
             Assert.That(root.Q<VisualElement>("song-difficulty-buttons").childCount, Is.Zero);
             Assert.That(controller.StartSelectedSong(), Is.False,
@@ -159,6 +160,7 @@ namespace HitTheKit.Unity.Tests
             controller.SelectSong("neon-circuit");
             Assert.That(controller.SelectedSongId, Is.EqualTo("neon-circuit"));
             Assert.That(root.Q<Button>("song-play-button").enabledSelf, Is.True);
+            Assert.That(root.Q<Button>("song-record-button").enabledSelf, Is.True);
             Assert.That(root.Q<VisualElement>("song-difficulty-buttons").Query<Button>().ToList(), Has.Count.EqualTo(1));
             Assert.That(root.Q<Button>("song-difficulty-easy"), Is.Not.Null);
             controller.SelectSongSpeed(0.6);
@@ -177,6 +179,28 @@ namespace HitTheKit.Unity.Tests
             Assert.That(gameplay.CurrentSession.CountInBeats * 60.0 / gameplay.CurrentSession.Bpm,
                 Is.GreaterThanOrEqualTo(6.0));
             Assert.That(gameplay.CurrentSession.ReturnTarget, Is.EqualTo(GameplayReturnTarget.SongLibrary));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator Chart_creator_launches_the_real_gameplay_session_for_the_selected_playable_song()
+        {
+            MainMenuController controller = null;
+            yield return LoadMainMenu(value => controller = value);
+            controller.ShowSongLibrary();
+            controller.SelectSong("neon-circuit");
+            controller.SelectSongSpeed(0.6);
+
+            Assert.That(controller.StartChartCreator(), Is.True);
+            yield return WaitForScene(MainMenuRoutes.GameplayScene);
+
+            GameplayHighwayController gameplay = Object.FindFirstObjectByType<GameplayHighwayController>();
+            Assert.That(gameplay, Is.Not.Null);
+            Assert.That(gameplay.CurrentSession.IsChartCreator, Is.True);
+            Assert.That(gameplay.CurrentSession.SongId, Is.EqualTo("neon-circuit"));
+            Assert.That(gameplay.CurrentSession.SpeedMultiplier, Is.EqualTo(0.6));
+            Assert.That(gameplay.GetComponent<UIDocument>().rootVisualElement
+                .Q<VisualElement>("chart-creator-results"), Is.Not.Null);
             LogAssert.NoUnexpectedReceived();
         }
 

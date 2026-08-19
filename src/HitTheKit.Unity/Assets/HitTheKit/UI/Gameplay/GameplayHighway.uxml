@@ -121,6 +121,17 @@
                 <ui:Label name="result-practice" text="FOCUS: COMPLETA UNA SESSIONE" class="result-practice" />
                 <ui:Label name="result-calibration" text="CALIBRAZIONE: SERVONO 8 COLPI VALIDI" class="result-calibration" />
                 <ui:Button name="result-apply-calibration" text="APPLICA CALIBRAZIONE" class="run-secondary-button result-calibration-button" />
+                <ui:VisualElement name="chart-creator-results" class="chart-creator-results" style="display: none;">
+                    <ui:Label text="REVISIONE TAKE" class="eyebrow chart-creator-eyebrow" />
+                    <ui:Label name="chart-creator-summary" text="0 COLPI REGISTRATI" class="chart-creator-summary" />
+                    <ui:Label text="L'audio non viene copiato. Scegli quanto allineare i colpi alla griglia e salva una bozza in Documents/HTKSongs." class="chart-creator-copy" />
+                    <ui:VisualElement class="chart-creator-actions">
+                        <ui:Button name="chart-save-raw" text="SALVA RAW" class="run-secondary-button chart-save-button" />
+                        <ui:Button name="chart-save-eighth" text="SALVA 1/8" class="run-secondary-button chart-save-button" />
+                        <ui:Button name="chart-save-sixteenth" text="SALVA 1/16" class="run-primary-button chart-save-button" />
+                    </ui:VisualElement>
+                    <ui:Label name="chart-creator-status" class="chart-creator-status" />
+                </ui:VisualElement>
                 <ui:VisualElement class="result-actions">
                     <ui:Button name="result-restart-button" text="SUONA ANCORA" class="run-primary-button" />
                     <ui:Button name="result-menu-button" text="MENU PRINCIPALE" class="run-secondary-button" />

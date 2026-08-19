@@ -950,7 +950,9 @@
 .song-detail-readiness { margin-top: 10px; padding: 7px 8px; flex-shrink: 0; color: rgb(78, 221, 137); background-color: rgba(6, 45, 28, 0.74); border-left-width: 3px; border-left-color: rgb(78, 221, 137); font-size: 9px; -unity-font-style: bold; white-space: normal; }
 .song-detail-readiness--missing { color: rgb(244, 182, 86); background-color: rgba(52, 29, 8, 0.78); border-left-color: rgb(231, 151, 56); }
 .song-play-actions { flex-shrink: 0; margin-top: 9px; padding-top: 9px; background-color: rgb(8, 13, 18); border-top-width: 1px; border-top-color: rgba(76, 130, 160, 0.48); }
+.song-primary-actions { flex-direction: row; }
 .song-play-button {
+    flex-grow: 1;
     height: 50px;
     min-height: 50px;
     border-width: 2px;
@@ -962,6 +964,23 @@
     -unity-font-style: bold;
     letter-spacing: 0.7px;
 }
+.song-record-button {
+    width: 22%;
+    min-width: 80px;
+    height: 50px;
+    min-height: 50px;
+    margin-left: 5px;
+    border-width: 1px;
+    border-color: rgb(236, 167, 73);
+    border-radius: 5px;
+    background-color: rgb(49, 28, 10);
+    color: rgb(255, 206, 130);
+    font-size: 8px;
+    -unity-font-style: bold;
+    letter-spacing: 0.5px;
+}
+.song-record-button:hover, .song-record-button:focus { background-color: rgb(101, 54, 12); border-color: white; }
+.song-record-button:disabled { opacity: 0.42; }
 .song-play-button:hover, .song-play-button:focus { background-color: rgb(8, 132, 171); border-color: white; scale: 1.025; }
 .song-play-button:disabled { opacity: 0.42; scale: 1; }
 .song-play-hint { margin-top: 7px; color: rgb(115, 182, 203); font-size: 8px; -unity-font-style: bold; -unity-text-align: middle-center; }
@@ -1018,5 +1037,6 @@
 .main-menu--short .song-speed-button { height: 27px; min-height: 27px; }
 .main-menu--short .song-detail-readiness { margin-top: 7px; padding: 6px; }
 .main-menu--short .song-play-actions { margin-top: 6px; padding-top: 6px; }
-.main-menu--short .song-play-button { height: 43px; min-height: 43px; }
+.main-menu--short .song-play-button,
+.main-menu--short .song-record-button { height: 43px; min-height: 43px; }
 .main-menu--short .song-library-footer { height: 50px; min-height: 50px; margin-top: 7px; }
