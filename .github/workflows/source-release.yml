@@ -39,7 +39,8 @@ jobs:
         run: |
           mkdir -p artifacts/source
           ./scripts/create-public-source-snapshot.sh "artifacts/source/HitTheKit-source-$RELEASE_VERSION.tar.gz"
-          sha256sum "artifacts/source/HitTheKit-source-$RELEASE_VERSION.tar.gz" > artifacts/source/SHA256SUMS
+          cd artifacts/source
+          sha256sum "HitTheKit-source-$RELEASE_VERSION.tar.gz" > SHA256SUMS
       - name: Verify source snapshot checksum
         working-directory: artifacts/source
         run: sha256sum --check SHA256SUMS
