@@ -218,5 +218,57 @@ namespace HitTheKit.Unity.Tests
             Assert.That(GameplayHighwaySurface.ImpactZoneHalfHeight, Is.GreaterThanOrEqualTo(8f));
             Assert.That(GameplayHighwaySurface.NoteGlowPasses, Is.InRange(2, 4));
         }
+
+        [Test]
+        public void Reactive_stage_builds_energy_from_combo_and_success_without_unbounded_flashes()
+        {
+            GameplayReactiveStageState calm = GameplayReactiveStageCalculator.Calculate(
+                0, null, null, 0, false, false, false);
+            GameplayReactiveStageState peak = GameplayReactiveStageCalculator.Calculate(
+                60, HitGrade.Perfect, DrumPad.Crash, 1, false, false, false);
+
+            Assert.That(calm.Band, Is.EqualTo(GameplayStageEnergyBand.Calm));
+            Assert.That(peak.Band, Is.EqualTo(GameplayStageEnergyBand.Peak));
+            Assert.That(peak.Pattern, Is.EqualTo(GameplayStagePattern.Chevrons));
+            Assert.That(peak.Intensity, Is.GreaterThan(calm.Intensity));
+            Assert.That(peak.Intensity, Is.LessThanOrEqualTo(GameplayReactiveStageCalculator.MaximumIntensity));
+            Assert.That(peak.AccentPad, Is.EqualTo(DrumPad.Crash));
+            Assert.That(GameplayReactiveStageCalculator.MinimumPulseDurationSeconds, Is.GreaterThanOrEqualTo(0.18f));
+        }
+
+        [Test]
+        public void Reactive_stage_uses_text_and_pattern_for_misses_and_respects_accessibility_preferences()
+        {
+            GameplayReactiveStageState recovery = GameplayReactiveStageCalculator.Calculate(
+                22, HitGrade.Miss, DrumPad.Snare, 1, false, true, true);
+
+            Assert.That(recovery.Band, Is.EqualTo(GameplayStageEnergyBand.Recovery));
+            Assert.That(recovery.Pattern, Is.EqualTo(GameplayStagePattern.Warning));
+            Assert.That(recovery.Label, Does.Contain("RIPRENDI IL GROOVE"));
+            Assert.That(recovery.Intensity, Is.LessThanOrEqualTo(
+                GameplayReactiveStageCalculator.ReducedMotionMaximumIntensity));
+            Assert.That(recovery.ReducedMotion, Is.True);
+            Assert.That(recovery.HighContrast, Is.True);
+
+            GameplayReactiveStageState afterPulse = GameplayReactiveStageCalculator.Calculate(
+                0, HitGrade.Miss, DrumPad.Snare, 0, false, true, true);
+            Assert.That(afterPulse.Band, Is.EqualTo(GameplayStageEnergyBand.Calm),
+                "Recovery feedback must not remain stuck after its bounded pulse.");
+        }
+
+        [Test]
+        public void Reactive_stage_calculation_is_deterministic_and_rejects_invalid_combo()
+        {
+            GameplayReactiveStageState first = GameplayReactiveStageCalculator.Calculate(
+                12, HitGrade.Good, DrumPad.Kick, 0.5f, false, false, false);
+            GameplayReactiveStageState second = GameplayReactiveStageCalculator.Calculate(
+                12, HitGrade.Good, DrumPad.Kick, 0.5f, false, false, false);
+
+            Assert.That(second.Band, Is.EqualTo(first.Band));
+            Assert.That(second.Pattern, Is.EqualTo(first.Pattern));
+            Assert.That(second.Intensity, Is.EqualTo(first.Intensity));
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                GameplayReactiveStageCalculator.Calculate(-1, null, null, 0, false, false, false));
+        }
     }
 }

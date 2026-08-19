@@ -46,6 +46,7 @@ namespace HitTheKit.Unity.Tests
             Assert.That(controller.TargetCount, Is.EqualTo(8));
             Assert.That(controller.Surface, Is.Not.Null);
             Assert.That(controller.KitSurface, Is.Not.Null);
+            Assert.That(controller.ReactiveStageSurface, Is.Not.Null);
             Assert.That(controller.KitSurface.PieceCount, Is.EqualTo(8));
             Assert.That(controller.IsInstructionalKitVisible, Is.False);
             Assert.That(controller.KitSurface.resolvedStyle.display, Is.EqualTo(DisplayStyle.None));
@@ -55,6 +56,8 @@ namespace HitTheKit.Unity.Tests
             Assert.That(app, Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<VisualElement>("target-kick"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<VisualElement>("gameplay-kit-surface"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<VisualElement>("gameplay-reactive-stage-surface"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Label>("reactive-stage-status"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<Label>("kit-guidance-label"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<VisualElement>("results-overlay"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<Label>("result-error-map"), Is.Not.Null);
@@ -102,6 +105,29 @@ namespace HitTheKit.Unity.Tests
             Assert.That(controller.ScoreSnapshot.Score, Is.Zero,
                 "Ghost markers must never feed the matcher or scoring engine.");
             Assert.That(controller.CurrentGhostTakeHitCount, Is.Zero);
+        }
+
+        [UnityTest]
+        public IEnumerator Reactive_stage_respects_reduced_motion_and_high_contrast_in_the_real_scene()
+        {
+            PlayerPreferencesRuntime.Current.SetReducedMotion(true);
+            PlayerPreferencesRuntime.Current.SetHighContrast(true);
+            AsyncOperation load = SceneManager.LoadSceneAsync("GameplayPrototype", LoadSceneMode.Single);
+            while (!load.isDone) yield return null;
+            yield return null;
+
+            GameplayHighwayController controller = Object.FindAnyObjectByType<GameplayHighwayController>();
+            Assert.That(controller, Is.Not.Null);
+            Assert.That(controller.ReactiveStageSurface, Is.Not.Null);
+            Assert.That(controller.ReactiveStageState.ReducedMotion, Is.True);
+            Assert.That(controller.ReactiveStageState.HighContrast, Is.True);
+            Assert.That(controller.ReactiveStageState.Intensity, Is.LessThanOrEqualTo(
+                GameplayReactiveStageCalculator.ReducedMotionMaximumIntensity));
+
+            UIDocument gameplayDocument = controller.GetComponent<UIDocument>();
+            VisualElement app = gameplayDocument.rootVisualElement.Q<VisualElement>("gameplay-app");
+            Assert.That(app.ClassListContains("gameplay--reduced-motion"), Is.True);
+            Assert.That(app.ClassListContains("gameplay--high-contrast"), Is.True);
         }
 
         [UnityTest]
