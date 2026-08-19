@@ -135,6 +135,11 @@
                     </ui:VisualElement>
                     <ui:Label name="result-breakdown" text="PERFECT 0   GOOD 0   EARLY/LATE 0   MISS 0" class="result-breakdown" />
                     <ui:Label name="result-practice" text="FOCUS: COMPLETA UNA SESSIONE" class="result-practice" />
+                    <ui:VisualElement class="error-map-panel">
+                        <ui:Label text="MAPPA ERRORI" class="error-map-kicker" />
+                        <ui:Label name="result-error-map" text="Completa il brano per analizzare sezioni e pezzi." class="result-error-map" />
+                        <ui:Button name="result-practice-weakest" text="ALLENA IL PUNTO DEBOLE" class="run-secondary-button result-practice-weakest" />
+                    </ui:VisualElement>
                     <ui:Label name="result-calibration" text="CALIBRAZIONE: SERVONO 8 COLPI VALIDI" class="result-calibration" />
                     <ui:Button name="result-apply-calibration" text="APPLICA CALIBRAZIONE" class="run-secondary-button result-calibration-button" />
                 </ui:VisualElement>
