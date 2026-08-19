@@ -116,6 +116,7 @@
                             <ui:VisualElement class="song-primary-actions">
                                 <ui:Button name="song-play-button" text="SUONA ORA" class="song-play-button" />
                                 <ui:Button name="song-record-button" text="REGISTRA CHART" class="song-record-button" />
+                                <ui:Button name="song-bind-audio-button" text="ASSOCIA AUDIO LOCALE" class="song-record-button song-bind-audio-button" style="display: none;" />
                             </ui:VisualElement>
                             <ui:Label text="INVIO O DOPPIO KICK" class="song-play-hint" />
                         </ui:VisualElement>
@@ -168,6 +169,21 @@
                 <ui:VisualElement class="modal-actions chart-audio-actions">
                     <ui:Button name="chart-audio-cancel" text="ANNULLA" class="modal-secondary" />
                     <ui:Button name="chart-audio-start" text="IMPORTA E REGISTRA" class="modal-primary" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="song-audio-binding-overlay" class="modal-layer chart-audio-import-layer" style="display: none;">
+            <ui:VisualElement class="modal-panel song-audio-binding-panel">
+                <ui:Label text="PACCHETTO .HTKSONG" class="modal-eyebrow" />
+                <ui:Label text="ASSOCIA LA TUA COPIA AUDIO" class="chart-audio-import-title" />
+                <ui:Label name="song-audio-binding-song" class="song-audio-binding-song" />
+                <ui:Label name="song-audio-binding-file" class="chart-audio-file" />
+                <ui:Label text="Il file viene copiato nella cartella locale del brano. Non viene aggiunto né al pacchetto .htksong né al repository." class="chart-audio-import-copy" />
+                <ui:Label name="song-audio-binding-error" class="chart-audio-error" />
+                <ui:VisualElement class="modal-actions chart-audio-actions">
+                    <ui:Button name="song-audio-binding-cancel" text="ANNULLA" class="modal-secondary" />
+                    <ui:Button name="song-audio-binding-confirm" text="ASSOCIA E VERIFICA" class="modal-primary" />
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -76,12 +77,21 @@ namespace HitTheKit.Unity.Gameplay
         private Label resultBreakdownLabel;
         private Label resultPracticeLabel;
         private Label resultCalibrationLabel;
+        private VisualElement resultPerformancePanel;
         private VisualElement chartCreatorResults;
         private Label chartCreatorSummaryLabel;
         private Label chartCreatorStatusLabel;
         private Button chartSaveRawButton;
         private Button chartSaveEighthButton;
         private Button chartSaveSixteenthButton;
+        private ListView chartNoteList;
+        private Label chartNoteSelectionLabel;
+        private TextField chartNoteTimeField;
+        private DropdownField chartNotePadField;
+        private Button chartNoteAddButton;
+        private Button chartNoteApplyButton;
+        private Button chartNoteDeleteButton;
+        private Label chartNoteStatusLabel;
         private GameplayHighwaySurface surface;
         private GameplayKitSurface kitSurface;
         private bool showInstructionalKit;
@@ -102,6 +112,7 @@ namespace HitTheKit.Unity.Gameplay
         private bool resultRecorded;
         private ChartRecordingSession chartRecording;
         private ChartRecordingDraft chartDraft;
+        private ChartDraftEditor chartDraftEditor;
 
         public event Action<GameplayPresentationTheme> ThemeChanged;
 
@@ -126,6 +137,7 @@ namespace HitTheKit.Unity.Gameplay
         public int RecordedChartHitCount => chartRecording?.HitCount ?? chartDraft?.Hits.Count ?? 0;
         public string LastChartExportPath { get; private set; }
         public string LastChartPackagePath { get; private set; }
+        public int EditableChartNoteCount => chartDraftEditor?.Notes.Count ?? 0;
 
         private void Awake()
         {
@@ -277,12 +289,22 @@ namespace HitTheKit.Unity.Gameplay
             resultBreakdownLabel = root.Q<Label>("result-breakdown");
             resultPracticeLabel = root.Q<Label>("result-practice");
             resultCalibrationLabel = root.Q<Label>("result-calibration");
+            resultPerformancePanel = root.Q<VisualElement>("result-performance-panel");
             chartCreatorResults = root.Q<VisualElement>("chart-creator-results");
             chartCreatorSummaryLabel = root.Q<Label>("chart-creator-summary");
             chartCreatorStatusLabel = root.Q<Label>("chart-creator-status");
             chartSaveRawButton = root.Q<Button>("chart-save-raw");
             chartSaveEighthButton = root.Q<Button>("chart-save-eighth");
             chartSaveSixteenthButton = root.Q<Button>("chart-save-sixteenth");
+            chartNoteList = root.Q<ListView>("chart-note-list");
+            chartNoteSelectionLabel = root.Q<Label>("chart-note-selection");
+            chartNoteTimeField = root.Q<TextField>("chart-note-time");
+            chartNotePadField = root.Q<DropdownField>("chart-note-pad");
+            chartNoteAddButton = root.Q<Button>("chart-note-add");
+            chartNoteApplyButton = root.Q<Button>("chart-note-apply");
+            chartNoteDeleteButton = root.Q<Button>("chart-note-delete");
+            chartNoteStatusLabel = root.Q<Label>("chart-note-status");
+            ConfigureChartNoteEditorView();
             PlayerPreferencesSnapshot preferences = PlayerPreferencesRuntime.Current.Snapshot;
             root.EnableInClassList("gameplay--high-contrast", preferences.HighContrast);
             root.EnableInClassList("gameplay--reduced-motion", preferences.ReducedMotion);
@@ -516,6 +538,8 @@ namespace HitTheKit.Unity.Gameplay
             practiceTimer.ResetAttempt();
             resultRecorded = false;
             chartDraft = null;
+            chartDraftEditor = null;
+            if (chartNoteList != null) chartNoteList.itemsSource = null;
             LastChartExportPath = null;
             LastChartPackagePath = null;
             chartRecording?.Restart();
@@ -565,6 +589,7 @@ namespace HitTheKit.Unity.Gameplay
             if (CurrentSession.IsChartCreator)
             {
                 chartDraft = chartRecording?.Finish();
+                chartDraftEditor = chartDraft == null ? null : new ChartDraftEditor(chartDraft);
             }
             else
             {
@@ -573,7 +598,8 @@ namespace HitTheKit.Unity.Gameplay
             resultRecorded = true;
             if (CurrentSession.IsChartCreator)
             {
-                int hitCount = chartDraft?.Hits.Count ?? 0;
+                int hitCount = chartDraftEditor?.Notes.Count ?? 0;
+                SetDisplayed(resultPerformancePanel, false);
                 resultRankLabel.text = "REC";
                 resultScoreLabel.text = hitCount.ToString("N0", CultureInfo.InvariantCulture);
                 resultAccuracyLabel.text = "TAKE";
@@ -588,10 +614,12 @@ namespace HitTheKit.Unity.Gameplay
                 chartSaveRawButton?.SetEnabled(hitCount > 0);
                 chartSaveEighthButton?.SetEnabled(hitCount > 0);
                 chartSaveSixteenthButton?.SetEnabled(hitCount > 0);
+                RefreshChartNoteEditor(hitCount > 0 ? 0 : -1);
                 SetDisplayed(chartCreatorResults, true);
             }
             else
             {
+                SetDisplayed(resultPerformancePanel, true);
                 resultRankLabel.text = score.Rank;
                 resultScoreLabel.text = score.Score.ToString("N0", CultureInfo.InvariantCulture);
                 resultAccuracyLabel.text = $"{score.Accuracy:0.0}%";
@@ -622,12 +650,14 @@ namespace HitTheKit.Unity.Gameplay
             {
                 chartRecording = null;
                 chartDraft = null;
+                chartDraftEditor = null;
                 return;
             }
 
             double playbackDuration = CurrentSession.Bars * CurrentSession.BeatsPerBar * 60.0 / CurrentSession.Bpm;
             chartRecording = new ChartRecordingSession(playbackDuration, CurrentSession.SpeedMultiplier);
             chartDraft = null;
+            chartDraftEditor = null;
         }
 
         public ChartCreatorExportResult SaveChartRecording(ChartQuantization quantization)
@@ -646,8 +676,9 @@ namespace HitTheKit.Unity.Gameplay
                 originalBpm,
                 CurrentSession.Bars,
                 CurrentSession.BeatsPerBar);
+            ChartRecordingDraft editedDraft = chartDraftEditor?.BuildDraft() ?? chartDraft;
             ChartCreatorExportResult result = new ChartCreatorExporter().ExportChartOnly(
-                chartDraft,
+                editedDraft,
                 metadata,
                 quantization,
                 SongLibraryRuntime.UserRoot,
@@ -666,6 +697,29 @@ namespace HitTheKit.Unity.Gameplay
         private void SaveRawChart() => TrySaveChart(ChartQuantization.None);
         private void SaveEighthChart() => TrySaveChart(ChartQuantization.EighthNote);
         private void SaveSixteenthChart() => TrySaveChart(ChartQuantization.SixteenthNote);
+
+        public int EditChartNote(int index, double timeSeconds, DrumPad pad)
+        {
+            if (chartDraftEditor == null) throw new InvalidOperationException("Finish a Chart Creator take first.");
+            int selected = chartDraftEditor.Update(index, timeSeconds, pad);
+            RefreshChartNoteEditor(selected);
+            return selected;
+        }
+
+        public int AddChartNote(double timeSeconds, DrumPad pad)
+        {
+            if (chartDraftEditor == null) throw new InvalidOperationException("Finish a Chart Creator take first.");
+            int selected = chartDraftEditor.Add(timeSeconds, pad);
+            RefreshChartNoteEditor(selected);
+            return selected;
+        }
+
+        public void DeleteChartNote(int index)
+        {
+            if (chartDraftEditor == null) throw new InvalidOperationException("Finish a Chart Creator take first.");
+            chartDraftEditor.Delete(index);
+            RefreshChartNoteEditor(Math.Min(index, chartDraftEditor.Notes.Count - 1));
+        }
 
         private void TrySaveChart(ChartQuantization quantization)
         {
@@ -775,6 +829,9 @@ namespace HitTheKit.Unity.Gameplay
             if (chartSaveRawButton != null) chartSaveRawButton.clicked += SaveRawChart;
             if (chartSaveEighthButton != null) chartSaveEighthButton.clicked += SaveEighthChart;
             if (chartSaveSixteenthButton != null) chartSaveSixteenthButton.clicked += SaveSixteenthChart;
+            if (chartNoteAddButton != null) chartNoteAddButton.clicked += AddChartNoteFromView;
+            if (chartNoteApplyButton != null) chartNoteApplyButton.clicked += ApplyChartNoteFromView;
+            if (chartNoteDeleteButton != null) chartNoteDeleteButton.clicked += DeleteChartNoteFromView;
         }
 
         private void UnbindRunControls()
@@ -788,6 +845,136 @@ namespace HitTheKit.Unity.Gameplay
             if (chartSaveRawButton != null) chartSaveRawButton.clicked -= SaveRawChart;
             if (chartSaveEighthButton != null) chartSaveEighthButton.clicked -= SaveEighthChart;
             if (chartSaveSixteenthButton != null) chartSaveSixteenthButton.clicked -= SaveSixteenthChart;
+            if (chartNoteAddButton != null) chartNoteAddButton.clicked -= AddChartNoteFromView;
+            if (chartNoteApplyButton != null) chartNoteApplyButton.clicked -= ApplyChartNoteFromView;
+            if (chartNoteDeleteButton != null) chartNoteDeleteButton.clicked -= DeleteChartNoteFromView;
+        }
+
+        private void ConfigureChartNoteEditorView()
+        {
+            if (chartNoteList == null || chartNotePadField == null) return;
+            chartNotePadField.choices = new List<string>();
+            foreach (DrumPad pad in Enum.GetValues(typeof(DrumPad)))
+                chartNotePadField.choices.Add(GameplayHighwayLanes.Find(pad).Label);
+            chartNotePadField.index = 0;
+            chartNoteList.fixedItemHeight = 30;
+            chartNoteList.virtualizationMethod = CollectionVirtualizationMethod.FixedHeight;
+            chartNoteList.selectionType = SelectionType.Single;
+            chartNoteList.makeItem = () =>
+            {
+                var label = new Label();
+                label.AddToClassList("chart-note-row");
+                return label;
+            };
+            chartNoteList.bindItem = (element, index) =>
+            {
+                var label = (Label)element;
+                if (chartDraftEditor == null || index < 0 || index >= chartDraftEditor.Notes.Count)
+                {
+                    label.text = string.Empty;
+                    return;
+                }
+                EditableChartNote note = chartDraftEditor.Notes[index];
+                label.text = $"{index + 1:000}   {note.TimeSeconds:0.000}s   {GameplayHighwayLanes.Find(note.Pad).Label}";
+            };
+            chartNoteList.selectionChanged -= HandleChartNoteSelectionChanged;
+            chartNoteList.selectionChanged += HandleChartNoteSelectionChanged;
+        }
+
+        private void HandleChartNoteSelectionChanged(IEnumerable<object> _) => RenderSelectedChartNote();
+
+        private void RefreshChartNoteEditor(int selectedIndex)
+        {
+            if (chartNoteList == null) return;
+            chartNoteList.itemsSource = chartDraftEditor?.Notes as IList;
+            chartNoteList.RefreshItems();
+            int count = chartDraftEditor?.Notes.Count ?? 0;
+            bool hasNotes = count > 0;
+            chartSaveRawButton?.SetEnabled(hasNotes);
+            chartSaveEighthButton?.SetEnabled(hasNotes);
+            chartSaveSixteenthButton?.SetEnabled(hasNotes);
+            chartNoteApplyButton?.SetEnabled(hasNotes);
+            chartNoteDeleteButton?.SetEnabled(hasNotes);
+            if (chartCreatorSummaryLabel != null)
+                chartCreatorSummaryLabel.text = $"{count} NOTE · {CurrentSession.Difficulty.ToUpperInvariant()}";
+            if (selectedIndex >= 0 && selectedIndex < count)
+            {
+                chartNoteList.SetSelection(selectedIndex);
+                chartNoteList.ScrollToItem(selectedIndex);
+            }
+            else
+            {
+                chartNoteList.ClearSelection();
+                RenderSelectedChartNote();
+            }
+        }
+
+        private void RenderSelectedChartNote()
+        {
+            int index = chartNoteList?.selectedIndex ?? -1;
+            if (chartDraftEditor == null || index < 0 || index >= chartDraftEditor.Notes.Count)
+            {
+                if (chartNoteSelectionLabel != null) chartNoteSelectionLabel.text = "SELEZIONA UNA NOTA";
+                if (chartNoteTimeField != null) chartNoteTimeField.value = string.Empty;
+                return;
+            }
+            EditableChartNote note = chartDraftEditor.Notes[index];
+            chartNoteSelectionLabel.text = $"NOTA {index + 1:000} · VELOCITY {note.Velocity}";
+            chartNoteTimeField.value = note.TimeSeconds.ToString("0.000", CultureInfo.InvariantCulture);
+            chartNotePadField.index = (int)note.Pad;
+        }
+
+        private void ApplyChartNoteFromView()
+        {
+            try
+            {
+                int index = chartNoteList?.selectedIndex ?? -1;
+                int selected = EditChartNote(index, ParseChartNoteTime(), SelectedChartNotePad());
+                chartNoteStatusLabel.text = $"NOTA {selected + 1:000} AGGIORNATA";
+            }
+            catch (Exception exception) { SetChartNoteError(exception); }
+        }
+
+        private void AddChartNoteFromView()
+        {
+            try
+            {
+                int selected = AddChartNote(ParseChartNoteTime(), SelectedChartNotePad());
+                chartNoteStatusLabel.text = $"NOTA {selected + 1:000} AGGIUNTA";
+            }
+            catch (Exception exception) { SetChartNoteError(exception); }
+        }
+
+        private void DeleteChartNoteFromView()
+        {
+            try
+            {
+                int index = chartNoteList?.selectedIndex ?? -1;
+                DeleteChartNote(index);
+                chartNoteStatusLabel.text = "NOTA ELIMINATA";
+            }
+            catch (Exception exception) { SetChartNoteError(exception); }
+        }
+
+        private double ParseChartNoteTime()
+        {
+            string value = chartNoteTimeField?.value;
+            if (double.TryParse(value, NumberStyles.Float, CultureInfo.CurrentCulture, out double current)) return current;
+            if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double invariant)) return invariant;
+            throw new InvalidOperationException("Inserisci un tempo valido in secondi.");
+        }
+
+        private DrumPad SelectedChartNotePad()
+        {
+            int index = chartNotePadField?.index ?? -1;
+            if (index < 0 || index >= Enum.GetValues(typeof(DrumPad)).Length)
+                throw new InvalidOperationException("Seleziona uno strumento valido.");
+            return (DrumPad)index;
+        }
+
+        private void SetChartNoteError(Exception exception)
+        {
+            if (chartNoteStatusLabel != null) chartNoteStatusLabel.text = "MODIFICA NON RIUSCITA · " + exception.Message;
         }
 
         private TimingCalibrationAdvisor AdvisorFor(DrumInputSource source) =>

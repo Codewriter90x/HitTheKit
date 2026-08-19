@@ -101,6 +101,53 @@ namespace HitTheKit.Unity.Tests
         }
 
         [Test]
+        public void Visual_editor_updates_adds_and_deletes_individual_notes_without_mutating_the_raw_take()
+        {
+            var session = new ChartRecordingSession(8);
+            session.Record(Input(DrumPad.Kick, 1));
+            session.Record(Input(DrumPad.Snare, 2));
+            ChartRecordingDraft raw = session.Finish();
+            var editor = new ChartDraftEditor(raw);
+
+            int moved = editor.Update(0, 2.5, DrumPad.Ride);
+            int added = editor.Add(1.5, DrumPad.HiHat, 88);
+            editor.Delete(0);
+            ChartRecordingDraft edited = editor.BuildDraft();
+
+            Assert.That(moved, Is.EqualTo(1), "Moving the first note after the snare must re-sort the visual timeline.");
+            Assert.That(added, Is.EqualTo(0));
+            Assert.That(raw.Hits.Select(hit => (hit.TimeSeconds, hit.Pad)), Is.EqualTo(new[]
+            {
+                (1d, DrumPad.Kick),
+                (2d, DrumPad.Snare)
+            }), "The captured raw take is immutable.");
+            Assert.That(edited.Hits.Select(hit => (hit.TimeSeconds, hit.Pad)), Is.EqualTo(new[]
+            {
+                (2d, DrumPad.Snare),
+                (2.5d, DrumPad.Ride)
+            }));
+            Assert.That(new ChartLoader().Load(
+                ChartCreatorJson.Serialize(edited, "easy", 120, ChartQuantization.None), "easy").Notes,
+                Has.Count.EqualTo(2));
+        }
+
+        [Test]
+        public void Visual_editor_rejects_invalid_indices_times_pads_and_velocity()
+        {
+            var session = new ChartRecordingSession(4);
+            session.Record(Input(DrumPad.Kick, 1));
+            var editor = new ChartDraftEditor(session.Finish());
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => editor.Update(-1, 1, DrumPad.Kick));
+            Assert.Throws<ArgumentOutOfRangeException>(() => editor.Update(0, -0.01, DrumPad.Kick));
+            Assert.Throws<ArgumentOutOfRangeException>(() => editor.Update(0, 4.01, DrumPad.Kick));
+            Assert.Throws<ArgumentOutOfRangeException>(() => editor.Update(0, 1, (DrumPad)999));
+            Assert.Throws<ArgumentOutOfRangeException>(() => editor.Add(1, DrumPad.Snare, 128));
+            Assert.Throws<ArgumentOutOfRangeException>(() => editor.Delete(2));
+            Assert.That(editor.Notes, Has.Count.EqualTo(1));
+        }
+
+        [Test]
         public void Export_is_atomic_chart_only_and_discovered_as_unavailable_until_audio_is_bound()
         {
             var session = new ChartRecordingSession(10);

@@ -17,8 +17,11 @@ timeline.
    current chart only as a playback reference.
 4. Play during the normal count-in and backing track. Hits before song time zero
    or beyond the declared song duration are ignored.
-5. At the result screen, review the captured-hit count and save the raw timing,
-   or quantize non-destructively to an eighth- or sixteenth-note grid.
+5. At the result screen, review the captured notes in the visual editor. Select
+   a note to change its time or drum pad, add missing notes, or delete unwanted
+   notes. The original recorded take remains unchanged in memory.
+6. Save the edited timing as recorded, or quantize the edited draft
+   non-destructively to an eighth- or sixteenth-note grid.
 
 Keyboard and MIDI events reach the recorder through `HitMatchingPrototype`'s
 `InputProcessed` boundary. Consequently, the existing per-source timing offset
@@ -44,7 +47,10 @@ entries:
 To transfer a take, copy only the `.htksong` file into
 `Documents/HTKSongs` on the other computer and refresh the Song Library. The
 game validates and atomically imports it. Existing song folders are never
-overwritten.
+overwritten. Select the imported entry, choose **Bind local audio**, select
+your own authorized WAV/OGG copy, and confirm the local-only binding. The game
+copies that audio into the imported song folder and makes the entry playable;
+the source file and portable package are not modified.
 
 The publish is atomic and both documents are parsed by the production loaders
 before the folder or package becomes visible. When the recording used a local
@@ -65,13 +71,14 @@ not a claim of authoritative transcription.
 
 ## Current foundation limits
 
-- Editing individual notes is not yet available. Raw/1/8/1/16 save choices are
-  the initial review tools.
+- The visual editor supports individual note time/pad changes, additions and
+  deletions. Waveform scrubbing and articulation/velocity authoring are future
+  editing tools.
 - The schema currently stores pad and time. Velocity and articulation remain in
   the in-memory take but schema v1 does not serialize them.
 - The native picker currently targets macOS. WAV and OGG are supported; MP3 is
   intentionally rejected by the production loader.
 - The author must enter BPM, bars and meter explicitly. Unknown timing never
   receives a hidden default.
-- Portable packages remain chart-only; imported packages require an authorized
-  local audio binding on the receiving computer.
+- Portable packages remain chart-only; the receiving computer must explicitly
+  bind an authorized local WAV/OGG copy before the imported chart is playable.

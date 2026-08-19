@@ -51,6 +51,8 @@ namespace HitTheKit.Unity.Tests
             Assert.That(document.rootVisualElement.Q<Button>("menu-play").focusable, Is.True);
             Assert.That(document.rootVisualElement.Q<Button>("menu-learn").focusable, Is.True);
             Assert.That(document.rootVisualElement.Q<Button>("menu-setup").focusable, Is.True);
+            Assert.That(document.rootVisualElement.Q<Button>("song-bind-audio-button"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<VisualElement>("song-audio-binding-overlay"), Is.Not.Null);
             Assert.That(controller.IsLearnOverlayVisible, Is.False);
             Assert.That(controller.IsSettingsOverlayVisible, Is.False);
             MainMenuStageEnvironment stage = controller.StageEnvironment;
@@ -201,6 +203,13 @@ namespace HitTheKit.Unity.Tests
             Assert.That(gameplay.CurrentSession.SpeedMultiplier, Is.EqualTo(0.6));
             Assert.That(gameplay.GetComponent<UIDocument>().rootVisualElement
                 .Q<VisualElement>("chart-creator-results"), Is.Not.Null);
+            VisualElement gameplayRoot = gameplay.GetComponent<UIDocument>().rootVisualElement;
+            Assert.That(gameplayRoot.Q<ListView>("chart-note-list"), Is.Not.Null);
+            Assert.That(gameplayRoot.Q<TextField>("chart-note-time"), Is.Not.Null);
+            Assert.That(gameplayRoot.Q<DropdownField>("chart-note-pad"), Is.Not.Null);
+            Assert.That(gameplayRoot.Q<Button>("chart-note-add"), Is.Not.Null);
+            Assert.That(gameplayRoot.Q<Button>("chart-note-apply"), Is.Not.Null);
+            Assert.That(gameplayRoot.Q<Button>("chart-note-delete"), Is.Not.Null);
             LogAssert.NoUnexpectedReceived();
         }
 

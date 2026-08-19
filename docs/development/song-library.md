@@ -121,6 +121,12 @@ copied to another computer; subsequent refreshes are idempotent.
 Package schema version 1 contains no audio and rejects any audio declaration or
 extra archive entry. Imports are bounded to 5 MiB, reject links, duplicate or
 case-colliding names, malformed ZIP/JSON/chart data, unsupported versions and
-path traversal, and never replace an existing song folder. An imported chart is
-therefore visible but unavailable until the player explicitly supplies audio
-they are entitled to use through the ordinary local song binding.
+path traversal, and never replace an existing song folder.
+
+An imported chart is therefore visible but unavailable until the player
+selects **Bind local audio** and supplies a WAV/OGG file they are entitled to
+use. The confirmation panel identifies the selected song and local filename;
+on confirmation the game copies the audio into that song's direct user-library
+folder, atomically updates its manifest, and refreshes the entry as playable.
+The source audio and `.htksong` package are never modified, and no absolute
+machine path is persisted.

@@ -1044,6 +1044,9 @@
 .chart-audio-error { min-height: 34px; margin-top: 12px; color: rgb(255, 178, 70); font-size: 11px; white-space: normal; }
 .chart-audio-actions { flex-direction: row; justify-content: flex-end; }
 .chart-audio-actions .modal-secondary, .chart-audio-actions .modal-primary { min-width: 190px; }
+.song-bind-audio-button { border-color: rgb(230, 145, 48); color: rgb(255, 191, 105); }
+.song-audio-binding-panel { width: 680px; min-height: 390px; padding: 30px 40px; }
+.song-audio-binding-song { margin-top: 18px; color: white; font-size: 18px; -unity-font-style: bold; white-space: normal; }
 
 .main-menu--compact .song-library-section { left: 6px; top: 8px; right: 6px; }
 .main-menu--compact .song-library-rail { width: 104px; min-width: 104px; }

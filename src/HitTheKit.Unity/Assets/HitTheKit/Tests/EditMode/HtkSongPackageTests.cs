@@ -58,6 +58,60 @@ namespace HitTheKit.Unity.Tests
         }
 
         [Test]
+        public void Imported_chart_can_bind_an_authorized_local_audio_copy_without_changing_the_package_or_source()
+        {
+            ChartCreatorExportResult exported = ExportTake();
+            string incoming = Path.Combine(importRoot, Path.GetFileName(exported.PackagePath));
+            File.Copy(exported.PackagePath, incoming);
+            new HtkSongPackageService().ImportChartOnlyPackage(incoming, importRoot);
+            SongLibraryEntry imported = DiscoverImportedSong();
+            string source = Path.Combine(root, "authorized.wav");
+            WriteWave(source);
+            byte[] sourceBefore = File.ReadAllBytes(source);
+            byte[] packageBefore = File.ReadAllBytes(incoming);
+
+            SongAudioBindingResult result = new SongAudioBindingService().Bind(imported, source, importRoot);
+            SongLibraryEntry rebound = DiscoverImportedSong();
+
+            Assert.That(imported.CanBindAudio, Is.True);
+            Assert.That(result.Song.IsPlayable, Is.True);
+            Assert.That(rebound.IsPlayable, Is.True);
+            Assert.That(rebound.CanBindAudio, Is.False);
+            Assert.That(Path.GetFileName(rebound.AudioPath), Is.EqualTo("source-audio.wav"));
+            Assert.That(Directory.GetFiles(rebound.FolderPath).Select(Path.GetFileName), Is.EquivalentTo(new[]
+            {
+                "song.json", "notes.json", "source-audio.wav"
+            }));
+            Assert.That(File.ReadAllBytes(source), Is.EqualTo(sourceBefore));
+            Assert.That(File.ReadAllBytes(incoming), Is.EqualTo(packageBefore),
+                "Local binding must never rewrite the portable chart-only package.");
+            Assert.That(File.ReadAllText(Path.Combine(rebound.FolderPath, "song.json")),
+                Does.Not.Contain(Path.GetFullPath(source)));
+            Assert.That(Directory.GetFiles(rebound.FolderPath, ".hitthekit-bind-*"), Is.Empty);
+        }
+
+        [Test]
+        public void Audio_binding_rejects_a_song_outside_the_declared_user_root_without_partial_files()
+        {
+            ChartCreatorExportResult exported = ExportTake();
+            string incoming = Path.Combine(importRoot, Path.GetFileName(exported.PackagePath));
+            File.Copy(exported.PackagePath, incoming);
+            new HtkSongPackageService().ImportChartOnlyPackage(incoming, importRoot);
+            SongLibraryEntry imported = DiscoverImportedSong();
+            string source = Path.Combine(root, "authorized.wav");
+            WriteWave(source);
+            string differentRoot = Path.Combine(root, "different-root");
+            Directory.CreateDirectory(differentRoot);
+
+            SongAudioBindingException error = Assert.Throws<SongAudioBindingException>(() =>
+                new SongAudioBindingService().Bind(imported, source, differentRoot));
+
+            Assert.That(error.Message, Does.Contain("outside"));
+            Assert.That(Directory.GetFiles(imported.FolderPath).Select(Path.GetFileName),
+                Is.EquivalentTo(new[] { "song.json", "notes.json" }));
+        }
+
+        [Test]
         public void Inbox_import_is_deterministic_idempotent_and_preserves_the_portable_file()
         {
             ChartCreatorExportResult exported = ExportTake();
@@ -172,6 +226,25 @@ namespace HitTheKit.Unity.Tests
                 ChartQuantization.None,
                 exportRoot,
                 new DateTimeOffset(2026, 8, 19, 12, 0, 0, TimeSpan.Zero));
+        }
+
+        private SongLibraryEntry DiscoverImportedSong() => new SongLibraryDiscovery().Discover(new[]
+        {
+            new SongLibraryRoot(importRoot, SongLibraryOrigin.UserFolder)
+        }).Songs.Single();
+
+        private static void WriteWave(string path)
+        {
+            byte[] wave =
+            {
+                0x52, 0x49, 0x46, 0x46, 0x26, 0x00, 0x00, 0x00,
+                0x57, 0x41, 0x56, 0x45, 0x66, 0x6d, 0x74, 0x20,
+                0x10, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00,
+                0x40, 0x1f, 0x00, 0x00, 0x80, 0x3e, 0x00, 0x00,
+                0x02, 0x00, 0x10, 0x00, 0x64, 0x61, 0x74, 0x61,
+                0x02, 0x00, 0x00, 0x00, 0x00, 0x00
+            };
+            File.WriteAllBytes(path, wave);
         }
 
         private static string ValidManifest(string id) =>
