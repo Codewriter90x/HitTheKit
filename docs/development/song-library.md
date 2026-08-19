@@ -94,3 +94,19 @@ machine-specific path into bundled `song.json`.
 The refresh button performs an explicit rescan. Discovery does not watch the
 filesystem continuously, allocate every frame, or access folders outside the
 two configured roots.
+
+## Portable `.htksong` chart packages
+
+Chart Creator writes a portable chart-only package next to each recorded take.
+Copy a `.htksong` file directly into `~/Documents/HTKSongs` and select
+**Refresh library**. Before normal folder discovery, the game validates the
+container and atomically installs its `song.json` and `notes.json` into a folder
+named after the validated song ID. The package remains in place so it can be
+copied to another computer; subsequent refreshes are idempotent.
+
+Package schema version 1 contains no audio and rejects any audio declaration or
+extra archive entry. Imports are bounded to 5 MiB, reject links, duplicate or
+case-colliding names, malformed ZIP/JSON/chart data, unsupported versions and
+path traversal, and never replace an existing song folder. An imported chart is
+therefore visible but unavailable until the player explicitly supplies audio
+they are entitled to use through the ordinary local song binding.

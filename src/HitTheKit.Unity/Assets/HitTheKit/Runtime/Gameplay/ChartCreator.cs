@@ -263,17 +263,24 @@ namespace HitTheKit.Unity.Gameplay
 
     public sealed class ChartCreatorExportResult
     {
-        internal ChartCreatorExportResult(string songId, string folderPath, string chartPath, string manifestPath)
+        internal ChartCreatorExportResult(
+            string songId,
+            string folderPath,
+            string chartPath,
+            string manifestPath,
+            string packagePath)
         {
             SongId = songId;
             FolderPath = folderPath;
             ChartPath = chartPath;
             ManifestPath = manifestPath;
+            PackagePath = packagePath;
         }
         public string SongId { get; }
         public string FolderPath { get; }
         public string ChartPath { get; }
         public string ManifestPath { get; }
+        public string PackagePath { get; }
     }
 
     public sealed class ChartCreatorExporter
@@ -300,8 +307,10 @@ namespace HitTheKit.Unity.Gameplay
             string baseId = $"{prefix}-take-{createdAtUtc:yyyyMMdd-HHmmss}";
             string songId = UniqueSongId(root, baseId);
             string destination = Path.Combine(root, songId);
+            string packagePath = Path.Combine(root, songId + HtkSongPackageService.Extension);
             string temporary = Path.Combine(root, $".hitthekit-chart-{Guid.NewGuid():N}");
             Directory.CreateDirectory(temporary);
+            bool destinationPublished = false;
             try
             {
                 string chartJson = ChartCreatorJson.Serialize(draft, metadata.Difficulty, metadata.Bpm, quantization);
@@ -314,15 +323,19 @@ namespace HitTheKit.Unity.Gameplay
                 new ChartLoader().Load(chartJson, metadata.Difficulty);
                 new SongLibraryDiscovery().Parse(File.ReadAllText(manifestPath), temporary, SongLibraryOrigin.UserFolder);
                 Directory.Move(temporary, destination);
+                destinationPublished = true;
+                new HtkSongPackageService().CreateChartOnlyPackage(destination, packagePath);
                 return new ChartCreatorExportResult(
                     songId,
                     destination,
                     Path.Combine(destination, "notes.json"),
-                    Path.Combine(destination, "song.json"));
+                    Path.Combine(destination, "song.json"),
+                    packagePath);
             }
             catch
             {
                 if (Directory.Exists(temporary)) Directory.Delete(temporary, true);
+                if (destinationPublished && Directory.Exists(destination)) Directory.Delete(destination, true);
                 throw;
             }
         }
@@ -331,7 +344,9 @@ namespace HitTheKit.Unity.Gameplay
         {
             string value = baseId;
             int suffix = 2;
-            while (Directory.Exists(Path.Combine(root, value))) value = $"{baseId}-{suffix++}";
+            while (Directory.Exists(Path.Combine(root, value)) ||
+                   File.Exists(Path.Combine(root, value + HtkSongPackageService.Extension)))
+                value = $"{baseId}-{suffix++}";
             ChartCreatorMetadata.ValidateIdentifier(value, nameof(baseId));
             return value;
         }

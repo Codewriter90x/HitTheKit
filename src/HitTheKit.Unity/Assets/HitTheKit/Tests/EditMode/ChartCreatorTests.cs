@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using HitTheKit.Core;
 using HitTheKit.Unity.Charts;
@@ -118,8 +119,19 @@ namespace HitTheKit.Unity.Tests
             Assert.That(result.SongId, Is.EqualTo("my-local-song-take-20260819-103000"));
             Assert.That(File.Exists(result.ChartPath), Is.True);
             Assert.That(File.Exists(result.ManifestPath), Is.True);
+            Assert.That(File.Exists(result.PackagePath), Is.True);
             Assert.That(Directory.GetFiles(result.FolderPath).Select(Path.GetFileName),
                 Is.EquivalentTo(new[] { "notes.json", "song.json" }));
+            using (var packageStream = File.OpenRead(result.PackagePath))
+            using (var package = new ZipArchive(packageStream, ZipArchiveMode.Read))
+            {
+                Assert.That(package.Entries.Select(entry => entry.FullName), Is.EqualTo(new[]
+                {
+                    HtkSongPackageService.VersionEntryName,
+                    HtkSongPackageService.ManifestEntryName,
+                    HtkSongPackageService.ChartEntryName
+                }));
+            }
             Assert.That(Directory.GetDirectories(root, ".hitthekit-chart-*"), Is.Empty);
             Assert.That(snapshot.Diagnostics, Is.Empty);
             Assert.That(snapshot.Songs.Single().IsPlayable, Is.False);
@@ -144,6 +156,7 @@ namespace HitTheKit.Unity.Tests
             Assert.That(first.SongId, Is.EqualTo("song-take-20260819-103000"));
             Assert.That(second.SongId, Is.EqualTo("song-take-20260819-103000-2"));
             Assert.That(Directory.GetDirectories(root), Has.Length.EqualTo(2));
+            Assert.That(Directory.GetFiles(root, "*.htksong"), Has.Length.EqualTo(2));
         }
 
         [Test]

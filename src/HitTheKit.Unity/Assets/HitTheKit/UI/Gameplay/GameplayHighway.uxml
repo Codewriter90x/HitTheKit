@@ -124,7 +124,7 @@
                 <ui:VisualElement name="chart-creator-results" class="chart-creator-results" style="display: none;">
                     <ui:Label text="REVISIONE TAKE" class="eyebrow chart-creator-eyebrow" />
                     <ui:Label name="chart-creator-summary" text="0 COLPI REGISTRATI" class="chart-creator-summary" />
-                    <ui:Label text="L'audio non viene copiato. Scegli quanto allineare i colpi alla griglia e salva una bozza in Documents/HTKSongs." class="chart-creator-copy" />
+                    <ui:Label text="L'audio non viene copiato. Salva la chart e usa il file .htksong per trasferirla su un altro computer." class="chart-creator-copy" />
                     <ui:VisualElement class="chart-creator-actions">
                         <ui:Button name="chart-save-raw" text="SALVA RAW" class="run-secondary-button chart-save-button" />
                         <ui:Button name="chart-save-eighth" text="SALVA 1/8" class="run-secondary-button chart-save-button" />

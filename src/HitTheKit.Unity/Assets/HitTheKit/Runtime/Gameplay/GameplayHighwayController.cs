@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using HitTheKit.Core;
 using HitTheKit.Unity.Audio;
 using HitTheKit.Unity.Charts;
@@ -124,6 +125,7 @@ namespace HitTheKit.Unity.Gameplay
         public double CurrentAttemptPracticeSeconds => practiceTimer.CurrentAttemptSeconds;
         public int RecordedChartHitCount => chartRecording?.HitCount ?? chartDraft?.Hits.Count ?? 0;
         public string LastChartExportPath { get; private set; }
+        public string LastChartPackagePath { get; private set; }
 
         private void Awake()
         {
@@ -508,6 +510,7 @@ namespace HitTheKit.Unity.Gameplay
             resultRecorded = false;
             chartDraft = null;
             LastChartExportPath = null;
+            LastChartPackagePath = null;
             chartRecording?.Restart();
             scoreTracker.Reset();
             keyboardCalibration.Reset();
@@ -643,8 +646,10 @@ namespace HitTheKit.Unity.Gameplay
                 SongLibraryRuntime.UserRoot,
                 DateTimeOffset.UtcNow);
             LastChartExportPath = result.FolderPath;
+            LastChartPackagePath = result.PackagePath;
             if (chartCreatorStatusLabel != null)
-                chartCreatorStatusLabel.text = $"SALVATO · {result.SongId} · AGGIUNGI SOLO AUDIO AUTORIZZATO";
+                chartCreatorStatusLabel.text =
+                    $"SALVATO · {Path.GetFileName(result.PackagePath)} · COPIA IL PACCHETTO SU UN ALTRO MAC";
             return result;
         }
 

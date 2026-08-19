@@ -28,11 +28,30 @@ The exporter creates a new, never-overwritten folder under
 - `song.json`;
 - `notes.json`.
 
+It also creates one portable `<song-id>.htksong` file alongside the folder.
+The package is a ZIP-compatible, chart-only container with exactly three
+entries:
+
+- `htksong-version` (`1`);
+- `song.json`;
+- `notes.json`.
+
+To transfer a take, copy only the `.htksong` file into
+`Documents/HTKSongs` on the other computer and refresh the Song Library. The
+game validates and atomically imports it. Existing song folders are never
+overwritten.
+
 The publish is atomic and both documents are parsed by the production loaders
-before the folder becomes visible. The manifest declares chart availability but
+before the folder or package becomes visible. The manifest declares chart availability but
 keeps audio as `missing`. Chart Creator never copies, embeds, downloads, or
 redistributes the source audio. To play or share the take, the user must add an
 audio file they are entitled to use and update the local binding explicitly.
+
+Import is fail-closed. Unknown/archive entries, audio declarations, symbolic
+links, duplicate names, unsupported versions, malformed JSON, invalid charts,
+oversized data and path traversal are rejected before extraction. Version 1 is
+intentionally chart-only; adding optional distributable audio requires a future
+explicit package version and rights-aware UX.
 
 The exported title is marked `Recorded Take` and the difficulty hint says that
 the performance must be reviewed before sharing. This is a captured performance,

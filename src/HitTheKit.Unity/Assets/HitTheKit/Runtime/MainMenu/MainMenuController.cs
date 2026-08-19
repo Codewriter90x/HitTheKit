@@ -147,6 +147,7 @@ namespace HitTheKit.Unity.MainMenu
         private int learnOpenedFrame = -1;
         private int playOpenedFrame = -1;
         private SongLibrarySnapshot songLibrary;
+        private HtkSongInboxResult packageInbox;
         private string selectedSongId;
         private string selectedSongDifficulty;
         private double selectedSongSpeed = 1.0;
@@ -702,10 +703,27 @@ namespace HitTheKit.Unity.MainMenu
 
         public void RefreshSongLibrary()
         {
+            try
+            {
+                packageInbox = new HtkSongPackageService().ImportInbox(SongLibraryRuntime.UserRoot);
+            }
+            catch (Exception exception)
+            {
+                packageInbox = null;
+                Debug.LogWarning($"Could not scan .htksong packages ({exception.GetType().Name}).", this);
+            }
             songLibrary = SongLibraryRuntime.Discover();
+            string importedSongId = packageInbox?.ImportedSongIds.Count > 0
+                ? packageInbox.ImportedSongIds[packageInbox.ImportedSongIds.Count - 1]
+                : null;
             if (songLibrary.Songs.Count == 0)
             {
                 selectedSongId = null;
+            }
+            else if (!string.IsNullOrEmpty(importedSongId) &&
+                     songLibrary.Songs.Any(song => string.Equals(song.Id, importedSongId, StringComparison.Ordinal)))
+            {
+                selectedSongId = importedSongId;
             }
             else if (string.IsNullOrEmpty(selectedSongId) ||
                      songLibrary.Songs.All(song => !string.Equals(song.Id, selectedSongId, StringComparison.Ordinal)))
@@ -1301,11 +1319,26 @@ namespace HitTheKit.Unity.MainMenu
             songRefreshButton.text = italian ? "AGGIORNA LIBRERIA" : "REFRESH LIBRARY";
             songFolderButton.text = italian ? "APRI CARTELLA BRANI" : "OPEN SONG FOLDER";
             songBackButton.text = italian ? "INDIETRO" : "BACK";
-            songLibraryDiagnostic.text = songLibrary.Diagnostics.Count == 0
-                ? (italian
-                    ? "CATALOGO: song.json · BINDING LOCALI OPZIONALI"
-                    : "CATALOG: song.json · OPTIONAL LOCAL BINDINGS")
-                : $"{songLibrary.Diagnostics.Count} " + (italian ? "CARTELLE IGNORATE" : "FOLDERS IGNORED");
+            if (packageInbox?.ImportedSongIds.Count > 0)
+            {
+                songLibraryDiagnostic.text = italian
+                    ? $"PACCHETTO .htksong IMPORTATO · {packageInbox.ImportedSongIds.Count}"
+                    : $".htksong PACKAGE IMPORTED · {packageInbox.ImportedSongIds.Count}";
+            }
+            else if (packageInbox?.Diagnostics.Count > 0)
+            {
+                songLibraryDiagnostic.text = italian
+                    ? $"{packageInbox.Diagnostics.Count} PACCHETTI .htksong IGNORATI"
+                    : $"{packageInbox.Diagnostics.Count} .htksong PACKAGES IGNORED";
+            }
+            else
+            {
+                songLibraryDiagnostic.text = songLibrary.Diagnostics.Count == 0
+                    ? (italian
+                        ? "CATALOGO: CARTELLE + PACCHETTI .htksong"
+                        : "CATALOG: FOLDERS + .htksong PACKAGES")
+                    : $"{songLibrary.Diagnostics.Count} " + (italian ? "CARTELLE IGNORATE" : "FOLDERS IGNORED");
+            }
         }
 
         private void SetSongSpeedControlsEnabled(bool enabled)
