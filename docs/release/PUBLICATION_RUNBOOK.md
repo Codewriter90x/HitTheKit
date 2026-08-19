@@ -3,7 +3,8 @@
 Status: **clean source-only repository published on 2026-08-18**. This document
 is retained as the historical runbook and as a verification checklist. Public
 Unity binaries remain out of scope pending their separate legal and release
-gates; the first attested source-snapshot workflow run is also still pending.
+gates. The first attested source snapshot was published as the source-only
+prerelease `v0.5.0-source-preview.2` on 2026-08-19.
 
 The existing private repository contains historical playtest tags and releases.
 The preferred non-destructive publication path is a new repository initialized
@@ -85,6 +86,14 @@ The public repository also contains `.github/workflows/source-release.yml`.
 Run it only for an approved exact version, then verify the downloaded source
 snapshot's SHA-256 and GitHub artifact attestation before attaching it to a
 release.
+
+The first completed run is recorded at
+<https://github.com/Codewriter90x/HitTheKit/actions/runs/32234078583>. It built
+commit `512e02734a1dc78f986f5b80a1dd8362b9906479`; the published source archive
+has SHA-256
+`b715d6d3b96dbd23c66e01e8ec652b66c9492d0237d0ea6537123ee9990d3c25`,
+and its GitHub artifact attestation is
+<https://github.com/Codewriter90x/HitTheKit/attestations/41563124>.
 
 The reviewed publication commit changed `PUBLICATION_STATUS` from
 `private-preparation` to `public`. The public-readiness contract deliberately
