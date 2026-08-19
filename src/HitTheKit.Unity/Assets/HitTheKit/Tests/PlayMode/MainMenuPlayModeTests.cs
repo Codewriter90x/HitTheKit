@@ -99,6 +99,45 @@ namespace HitTheKit.Unity.Tests
         }
 
         [UnityTest]
+        public IEnumerator Guided_sound_check_keeps_sources_separate_and_applies_local_recommendation()
+        {
+            MainMenuController controller = null;
+            yield return LoadMainMenu(value => controller = value);
+            controller.ToggleSettings();
+            VisualElement root = controller.GetComponent<UIDocument>().rootVisualElement;
+
+            Assert.That(root.Q<Button>("sound-check-audio"), Is.Not.Null);
+            Assert.That(root.Q<Button>("sound-check-keyboard"), Is.Not.Null);
+            Assert.That(root.Q<Button>("sound-check-midi"), Is.Not.Null);
+            Assert.That(root.Q<Button>("sound-check-start"), Is.Not.Null);
+            Assert.That(root.Q<Button>("sound-check-apply").enabledSelf, Is.False);
+
+            controller.BeginSoundCheck(DrumInputSource.Keyboard, 100);
+            for (int index = 0; index < GuidedLatencySoundCheck.DefaultTargetCount; index++)
+            {
+                Assert.That(controller.RecordSoundCheckHit(
+                    DrumInputSource.Midi,
+                    100 + index * GuidedLatencySoundCheck.DefaultIntervalSeconds + 0.02), Is.False);
+                Assert.That(controller.RecordSoundCheckHit(
+                    DrumInputSource.Keyboard,
+                    100 + index * GuidedLatencySoundCheck.DefaultIntervalSeconds + 0.02), Is.True);
+            }
+
+            Assert.That(controller.SoundCheckSnapshot.State, Is.EqualTo(GuidedSoundCheckState.Complete));
+            Assert.That(root.Q<Button>("sound-check-apply").enabledSelf, Is.True);
+            Assert.That(root.Q<Label>("sound-check-status").text, Does.Contain("COMPLETO"));
+            Assert.That(controller.ApplySoundCheckRecommendation(), Is.True);
+            Assert.That(PlayerPreferencesRuntime.Current.Snapshot.KeyboardOffsetSeconds,
+                Is.EqualTo(0.02).Within(0.000001));
+            Assert.That(PlayerPreferencesRuntime.Current.Snapshot.MidiOffsetSeconds, Is.Zero);
+            Assert.That(controller.ApplySoundCheckRecommendation(), Is.False,
+                "The same recommendation must not be applied more than once.");
+            Assert.That(PlayerPreferencesRuntime.Current.Snapshot.KeyboardOffsetSeconds,
+                Is.EqualTo(0.02).Within(0.000001));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
         public IEnumerator Gameplay_theme_is_selected_in_settings_and_applied_to_the_next_session()
         {
             MainMenuController controller = null;

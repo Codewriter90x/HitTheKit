@@ -321,6 +321,21 @@
                         <ui:Button name="midi-offset-reset" text="RESET" class="compact-setting-reset" />
                     </ui:VisualElement>
                     <ui:Label name="calibration-help" text="Valori positivi compensano un input registrato in ritardo." class="theme-settings-description" />
+                    <ui:VisualElement class="sound-check-panel">
+                        <ui:Label name="sound-check-title" text="SOUND CHECK GUIDATO" class="sound-check-title" />
+                        <ui:Label name="sound-check-instructions" text="1. Prova il click. 2. Scegli l'input. 3. Ascolta 4 colpi, poi suona sui 12 successivi." class="theme-settings-description" />
+                        <ui:Button name="sound-check-audio" text="1 · PROVA AUDIO" class="setting-row setting-row--compact" />
+                        <ui:VisualElement class="compact-setting-row">
+                            <ui:Button name="sound-check-keyboard" text="2 · TASTIERA" class="sound-check-source sound-check-source--selected" />
+                            <ui:Button name="sound-check-midi" text="2 · MIDI" class="sound-check-source" />
+                        </ui:VisualElement>
+                        <ui:Button name="sound-check-start" text="3 · AVVIA CALIBRAZIONE" class="setting-row sound-check-start" />
+                        <ui:Label name="sound-check-status" text="PRONTO · nessun dato viene inviato o registrato online" class="sound-check-status" />
+                        <ui:VisualElement class="compact-setting-row">
+                            <ui:Button name="sound-check-apply" text="APPLICA SUGGERIMENTO" class="sound-check-action" />
+                            <ui:Button name="sound-check-cancel" text="ANNULLA" class="sound-check-action" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement class="player-settings-block">
                     <ui:Label text="TASTIERA" class="modal-eyebrow" />
