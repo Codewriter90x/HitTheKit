@@ -71,9 +71,57 @@ jobs:
 
   native-coremidi:
     runs-on: macos-15
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Build and test the macOS arm64 CoreMIDI plug-in
         run: ./scripts/build-coremidi-plugin-macos-arm64.sh
+
+  unity-tests:
+    name: Unity ${{ matrix.test-mode }}
+    if: >-
+      vars.UNITY_CI_ENABLED == 'true' &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      checks: write
+    strategy:
+      fail-fast: false
+      matrix:
+        test-mode: [editmode, playmode]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+      - name: Synchronize tested Core assembly into Unity
+        run: ./scripts/sync-core-to-unity.sh
+      - name: Run Unity tests
+        id: unity-tests
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: src/HitTheKit.Unity
+          unityVersion: 6000.5.6f1
+          testMode: ${{ matrix.test-mode }}
+          artifactsPath: artifacts/unity-${{ matrix.test-mode }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: Unity ${{ matrix.test-mode }} results
+      - name: Upload Unity test evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unity-${{ matrix.test-mode }}-results
+          path: ${{ steps.unity-tests.outputs.artifactsPath }}
+          if-no-files-found: warn
+          retention-days: 14

@@ -40,13 +40,26 @@ jobs:
           mkdir -p artifacts/source
           ./scripts/create-public-source-snapshot.sh "artifacts/source/HitTheKit-source-$RELEASE_VERSION.tar.gz"
           sha256sum "artifacts/source/HitTheKit-source-$RELEASE_VERSION.tar.gz" > artifacts/source/SHA256SUMS
+      - name: Verify source snapshot checksum
+        working-directory: artifacts/source
+        run: sha256sum --check SHA256SUMS
       - name: Attest source provenance
+        id: attest-source
         uses: actions/attest@v4
         with:
           subject-path: artifacts/source/HitTheKit-source-${{ inputs.version }}.tar.gz
+      - name: Record source release evidence
+        run: |
+          {
+            printf 'repository=%s\n' "$GITHUB_REPOSITORY"
+            printf 'commit=%s\n' "$GITHUB_SHA"
+            printf 'version=%s\n' "$RELEASE_VERSION"
+            printf 'attestation-url=%s\n' '${{ steps.attest-source.outputs.attestation-url }}'
+          } > artifacts/source/RELEASE-EVIDENCE.txt
       - name: Upload source release evidence
         uses: actions/upload-artifact@v7
         with:
           name: HitTheKit-source-${{ inputs.version }}
           path: artifacts/source
           if-no-files-found: error
+          retention-days: 30
