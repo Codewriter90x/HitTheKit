@@ -41,6 +41,7 @@ without creating an unreviewed second source of truth.
 
 ## Development and testing
 
+- [Branching and release channels](development/branching-and-releases.md)
 - [DSP song clock](development/dsp-song-clock.md)
 - [Chart timeline](development/chart-timeline.md)
 - [Demo-song vertical slice](development/demo-song-vertical-slice.md)

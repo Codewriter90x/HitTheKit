@@ -57,6 +57,19 @@ Approval to discuss an idea is not approval to contribute substantial code or
 assets. A merged change must still satisfy provenance, security, accessibility,
 and release requirements.
 
+### Branch target
+
+Authorized feature, fix, documentation, and maintenance pull requests normally
+target `develop`. The `main` branch represents the latest stable, releasable
+source state and accepts only reviewed release-candidate or urgent hotfix pull
+requests. Use the repository prefixes `feature/`, `fix/`, `chore/`, `docs/`, or
+`hotfix/` for short-lived branches; do not create permanent `beta` or `stable`
+branches.
+
+The complete development, beta, release-candidate, stable, and hotfix workflow
+is documented in
+[`docs/development/branching-and-releases.md`](docs/development/branching-and-releases.md).
+
 A Contributor License Agreement, copyright assignment, or another contribution
 mechanism may be introduced after professional legal review. This document is
 not a CLA, does not transfer copyright, and does not create an implied
