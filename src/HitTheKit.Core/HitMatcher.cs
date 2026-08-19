@@ -47,7 +47,8 @@ namespace HitTheKit.Core
                         "The candidate list cannot contain null notes.",
                         nameof(notes));
 
-                if (_resolvedNotes.Contains(note) || note.Pad != hit.Pad)
+                if (_resolvedNotes.Contains(note) || note.Pad != hit.Pad ||
+                    note.Articulation != DrumArticulation.Default && note.Articulation != hit.Articulation)
                 {
                     continue;
                 }

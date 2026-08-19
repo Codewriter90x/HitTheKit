@@ -126,7 +126,18 @@
                 <ui:VisualElement name="chart-creator-results" class="chart-creator-results" style="display: none;">
                     <ui:Label text="REVISIONE TAKE" class="eyebrow chart-creator-eyebrow" />
                     <ui:Label name="chart-creator-summary" text="0 COLPI REGISTRATI" class="chart-creator-summary" />
-                    <ui:Label text="Seleziona una nota per correggere tempo o strumento. Il pacchetto .htksong resta senza audio." class="chart-creator-copy" />
+                    <ui:Label text="Seleziona una nota per correggere tempo, dinamica e articolazione. Il pacchetto .htksong resta senza audio." class="chart-creator-copy" />
+                    <ui:VisualElement class="chart-waveform-panel">
+                        <ui:VisualElement name="chart-waveform-host" class="chart-waveform-host" />
+                        <ui:VisualElement class="chart-waveform-toolbar">
+                            <ui:Label name="chart-waveform-time" text="PLAYHEAD 0.000s" class="chart-waveform-time" />
+                            <ui:Button name="chart-waveform-zoom-in" text="ZOOM +" class="chart-waveform-button" />
+                            <ui:Button name="chart-waveform-zoom-out" text="ZOOM −" class="chart-waveform-button" />
+                            <ui:Button name="chart-waveform-reset" text="TUTTO" class="chart-waveform-button" />
+                            <ui:Button name="chart-waveform-preview" text="ASCOLTA DA QUI" class="chart-waveform-button chart-waveform-preview" />
+                            <ui:Button name="chart-waveform-stop" text="STOP" class="chart-waveform-button" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
                     <ui:VisualElement class="chart-note-editor">
                         <ui:ListView name="chart-note-list" class="chart-note-list" />
                         <ui:VisualElement class="chart-note-controls">
@@ -134,6 +145,8 @@
                             <ui:VisualElement class="chart-note-fields">
                                 <ui:TextField name="chart-note-time" label="TEMPO (s)" class="chart-note-time" />
                                 <ui:DropdownField name="chart-note-pad" label="STRUMENTO" class="chart-note-pad" />
+                                <ui:TextField name="chart-note-velocity" label="VELOCITY (1–127)" class="chart-note-velocity" />
+                                <ui:DropdownField name="chart-note-articulation" label="ARTICOLAZIONE" class="chart-note-articulation" />
                             </ui:VisualElement>
                             <ui:VisualElement class="chart-note-buttons">
                                 <ui:Button name="chart-note-add" text="AGGIUNGI" class="run-secondary-button chart-note-button" />

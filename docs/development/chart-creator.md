@@ -17,8 +17,10 @@ timeline.
    current chart only as a playback reference.
 4. Play during the normal count-in and backing track. Hits before song time zero
    or beyond the declared song duration are ignored.
-5. At the result screen, review the captured notes in the visual editor. Select
-   a note to change its time or drum pad, add missing notes, or delete unwanted
+5. At the result screen, review the captured notes against the bounded waveform.
+   Drag its playhead to scrub the source timeline, zoom around a passage, and
+   preview audio from the selected time. Select a note to change its time, drum
+   pad, velocity or physical articulation, add missing notes, or delete unwanted
    notes. The original recorded take remains unchanged in memory.
 6. Save the edited timing as recorded, or quantize the edited draft
    non-destructively to an eighth- or sixteenth-note grid.
@@ -69,13 +71,28 @@ The exported title is marked `Recorded Take` and the difficulty hint says that
 the performance must be reviewed before sharing. This is a captured performance,
 not a claim of authoritative transcription.
 
+## Note expression
+
+Schema v1 remains backward compatible: `velocity` and `articulation` are
+optional note properties. A legacy note without them keeps unknown velocity and
+the `default` articulation wildcard. Newly recorded/exported notes preserve
+velocity; non-default articulations use explicit identifiers such as `rim`,
+`bell`, `bow`, `edge`, `open`, or `pedal`.
+
+Known articulations are validated against the selected pad. An explicit Ride
+Bell target, for example, matches only a bell hit and highlights the bell zone
+of the instructional kit. Changing a note to an incompatible pad resets its
+articulation to the backward-compatible default rather than inventing a zone.
+
+The waveform is an editor envelope, not a second clock or audio importer. It is
+sampled from the already-loaded `AudioClip` into a bounded 512-point model, and
+preview playback reuses the existing `DspSongClockPrototype` audio source. The
+chart timing remains source-time based and the recorded take remains immutable.
+
 ## Current foundation limits
 
-- The visual editor supports individual note time/pad changes, additions and
-  deletions. Waveform scrubbing and articulation/velocity authoring are future
-  editing tools.
-- The schema currently stores pad and time. Velocity and articulation remain in
-  the in-memory take but schema v1 does not serialize them.
+- The waveform provides envelope scrubbing, zoom and preview; it is not yet a
+  sample-accurate destructive audio editor.
 - The native picker currently targets macOS. WAV and OGG are supported; MP3 is
   intentionally rejected by the production loader.
 - The author must enter BPM, bars and meter explicitly. Unknown timing never

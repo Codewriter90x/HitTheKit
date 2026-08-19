@@ -25,6 +25,7 @@ namespace HitTheKit.Unity.Gameplay
             Velocity = input.Velocity;
             TimeSeconds = input.SongTimeSeconds;
             Source = input.Source;
+            Articulation = input.Articulation;
             RecordingIndex = recordingIndex;
         }
 
@@ -32,6 +33,7 @@ namespace HitTheKit.Unity.Gameplay
         public int Velocity { get; }
         public double TimeSeconds { get; }
         public DrumInputSource Source { get; }
+        public DrumArticulation Articulation { get; }
         internal int RecordingIndex { get; }
     }
 
@@ -185,7 +187,12 @@ namespace HitTheKit.Unity.Gameplay
                 RecordedChartHit hit = draft.Hits[index];
                 double time = Quantize(hit.TimeSeconds, bpm, quantization);
                 time = Math.Max(0, Math.Min(draft.DurationSeconds, time));
-                projected.Add(new ProjectedHit(time, hit.Pad, hit.RecordingIndex));
+                projected.Add(new ProjectedHit(
+                    time,
+                    hit.Pad,
+                    hit.Velocity,
+                    hit.Articulation,
+                    hit.RecordingIndex));
             }
             projected.Sort((left, right) =>
             {
@@ -205,7 +212,13 @@ namespace HitTheKit.Unity.Gameplay
                     .Append(hit.TimeSeconds.ToString("0.#########", CultureInfo.InvariantCulture))
                     .Append(", \"pad\": \"")
                     .Append(PadId(hit.Pad))
-                    .Append("\" }");
+                    .Append("\", \"velocity\": ")
+                    .Append(hit.Velocity.ToString(CultureInfo.InvariantCulture));
+                if (hit.Articulation != DrumArticulation.Default)
+                    json.Append(", \"articulation\": \"")
+                        .Append(ArticulationId(hit.Articulation))
+                        .Append('"');
+                json.Append(" }");
             }
             if (projected.Count > 0) json.Append('\n').Append("    ");
             json.Append("]\n  }\n}\n");
@@ -245,18 +258,46 @@ namespace HitTheKit.Unity.Gameplay
             }
         }
 
+        private static string ArticulationId(DrumArticulation articulation)
+        {
+            switch (articulation)
+            {
+                case DrumArticulation.Default: return "default";
+                case DrumArticulation.Head: return "head";
+                case DrumArticulation.Rim: return "rim";
+                case DrumArticulation.Bow: return "bow";
+                case DrumArticulation.Edge: return "edge";
+                case DrumArticulation.Bell: return "bell";
+                case DrumArticulation.Closed: return "closed";
+                case DrumArticulation.HalfOpen: return "halfOpen";
+                case DrumArticulation.Open: return "open";
+                case DrumArticulation.Pedal: return "pedal";
+                case DrumArticulation.Choke: return "choke";
+                default: throw new ArgumentOutOfRangeException(nameof(articulation));
+            }
+        }
+
         private static bool IsFinite(double value) => !double.IsNaN(value) && !double.IsInfinity(value);
 
         private sealed class ProjectedHit
         {
-            public ProjectedHit(double timeSeconds, DrumPad pad, int recordingIndex)
+            public ProjectedHit(
+                double timeSeconds,
+                DrumPad pad,
+                int velocity,
+                DrumArticulation articulation,
+                int recordingIndex)
             {
                 TimeSeconds = timeSeconds;
                 Pad = pad;
+                Velocity = velocity;
+                Articulation = articulation;
                 RecordingIndex = recordingIndex;
             }
             public double TimeSeconds { get; }
             public DrumPad Pad { get; }
+            public int Velocity { get; }
+            public DrumArticulation Articulation { get; }
             public int RecordingIndex { get; }
         }
     }

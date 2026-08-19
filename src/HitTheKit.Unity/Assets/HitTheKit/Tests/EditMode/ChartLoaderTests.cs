@@ -261,6 +261,43 @@ namespace HitTheKit.Unity.Tests
             Assert.That(ReferenceEquals(chart.Notes[0], chart.Notes[1]), Is.False);
         }
 
+        [Test]
+        public void Loads_optional_velocity_and_articulation_without_changing_legacy_notes()
+        {
+            LoadedChart chart = loader.Load(Chart(
+                "{\"time\":1,\"pad\":\"ride\",\"velocity\":112,\"articulation\":\"bell\"}," +
+                "{\"time\":2,\"pad\":\"snare\"}"), "easy");
+
+            Assert.That(chart.Notes[0].Velocity, Is.EqualTo(112));
+            Assert.That(chart.Notes[0].Articulation, Is.EqualTo(DrumArticulation.Bell));
+            Assert.That(chart.Notes[1].Velocity, Is.Null);
+            Assert.That(chart.Notes[1].Articulation, Is.EqualTo(DrumArticulation.Default));
+        }
+
+        [TestCase("0")]
+        [TestCase("128")]
+        [TestCase("null")]
+        public void Rejects_invalid_explicit_velocity(string value)
+        {
+            Assert.Throws<ChartLoadException>(() => loader.Load(
+                Chart($"{{\"time\":1,\"pad\":\"snare\",\"velocity\":{value}}}"), "easy"));
+        }
+
+        [TestCase("Bell")]
+        [TestCase("unknown")]
+        public void Rejects_unknown_or_incorrectly_cased_articulation(string articulation)
+        {
+            Assert.Throws<ChartLoadException>(() => loader.Load(
+                Chart($"{{\"time\":1,\"pad\":\"ride\",\"articulation\":\"{articulation}\"}}"), "easy"));
+        }
+
+        [Test]
+        public void Rejects_articulation_that_is_not_valid_for_the_selected_pad()
+        {
+            Assert.Throws<ChartLoadException>(() => loader.Load(
+                Chart("{\"time\":1,\"pad\":\"kick\",\"articulation\":\"bell\"}"), "easy"));
+        }
+
         private static string Chart(string notes, double offset = 0, int version = 1)
         {
             return $"{{\"version\":{version},\"offsetSeconds\":{offset.ToString(System.Globalization.CultureInfo.InvariantCulture)}," +

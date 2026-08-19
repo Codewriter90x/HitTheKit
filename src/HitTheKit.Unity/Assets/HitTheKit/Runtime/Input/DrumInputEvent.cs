@@ -16,7 +16,8 @@ namespace HitTheKit.Unity.Input
             DrumPad pad,
             int velocity,
             double songTimeSeconds,
-            DrumInputSource source = DrumInputSource.Keyboard)
+            DrumInputSource source = DrumInputSource.Keyboard,
+            DrumArticulation articulation = DrumArticulation.Default)
         {
             if (!Enum.IsDefined(typeof(DrumPad), pad))
             {
@@ -38,18 +39,22 @@ namespace HitTheKit.Unity.Input
                 throw new ArgumentOutOfRangeException(nameof(source), "The drum input source is not supported.");
             }
 
+            DrumArticulationValidator.EnsureValid(pad, articulation);
+
             Pad = pad;
             Velocity = velocity;
             SongTimeSeconds = songTimeSeconds;
             Source = source;
+            Articulation = articulation;
         }
 
         public DrumPad Pad { get; }
         public int Velocity { get; }
         public double SongTimeSeconds { get; }
         public DrumInputSource Source { get; }
+        public DrumArticulation Articulation { get; }
 
         public DrumInputEvent WithSongTime(double songTimeSeconds) =>
-            new DrumInputEvent(Pad, Velocity, songTimeSeconds, Source);
+            new DrumInputEvent(Pad, Velocity, songTimeSeconds, Source, Articulation);
     }
 }

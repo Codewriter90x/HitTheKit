@@ -7,6 +7,7 @@ using HitTheKit.Unity.Charts;
 using HitTheKit.Unity.Gameplay;
 using HitTheKit.Unity.Input;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace HitTheKit.Unity.Tests
 {
@@ -132,6 +133,79 @@ namespace HitTheKit.Unity.Tests
         }
 
         [Test]
+        public void Visual_editor_and_json_round_trip_preserve_velocity_and_articulation()
+        {
+            var session = new ChartRecordingSession(8);
+            session.Record(Input(
+                DrumPad.Ride,
+                1,
+                73,
+                DrumInputSource.Midi,
+                DrumArticulation.Bow));
+            var editor = new ChartDraftEditor(session.Finish());
+
+            editor.Update(0, 1.25, DrumPad.Ride, 119, DrumArticulation.Bell);
+            editor.Add(2, DrumPad.Snare, 86, DrumArticulation.Rim);
+            LoadedChart loaded = new ChartLoader().Load(
+                ChartCreatorJson.Serialize(editor.BuildDraft(), "easy", 120, ChartQuantization.None),
+                "easy");
+
+            Assert.That(loaded.Notes.Select(note => (note.Velocity, note.Articulation)), Is.EqualTo(new[]
+            {
+                ((int?)119, DrumArticulation.Bell),
+                ((int?)86, DrumArticulation.Rim)
+            }));
+        }
+
+        [Test]
+        public void Waveform_envelope_scrubbing_and_zoom_are_deterministic_and_bounded()
+        {
+            float[] samples =
+            {
+                0.1f, -0.2f,
+                0.8f, 0.4f,
+                -0.5f, 0.3f,
+                1.0f, -0.9f
+            };
+            ChartWaveformModel first = ChartWaveformModel.FromInterleaved(samples, 2, 4, 4);
+            ChartWaveformModel second = ChartWaveformModel.FromInterleaved(samples, 2, 4, 4);
+
+            Assert.That(Enumerable.Range(0, first.PeakCount).Select(first.PeakAt),
+                Is.EqualTo(Enumerable.Range(0, second.PeakCount).Select(second.PeakAt)));
+            Assert.That(first.Scrub(0.5), Is.EqualTo(2).Within(0.000001));
+            first.Zoom(2);
+            Assert.That(first.ViewEndSeconds - first.ViewStartSeconds, Is.EqualTo(2).Within(0.000001));
+            Assert.That(first.SelectedTimeSeconds, Is.InRange(first.ViewStartSeconds, first.ViewEndSeconds));
+            Assert.That(first.Scrub(-1), Is.EqualTo(first.ViewStartSeconds));
+            Assert.That(first.Scrub(2), Is.EqualTo(first.ViewEndSeconds));
+            first.ResetZoom();
+            Assert.That((first.ViewStartSeconds, first.ViewEndSeconds), Is.EqualTo((0d, 4d)));
+        }
+
+        [Test]
+        public void Waveform_reads_the_complete_audio_clip_in_bounded_chunks()
+        {
+            AudioClip clip = AudioClip.Create("waveform-test", 1024, 1, 1024, false);
+            var samples = new float[1024];
+            samples[10] = 0.75f;
+            samples[900] = -1f;
+            Assert.That(clip.SetData(samples, 0), Is.True);
+
+            try
+            {
+                ChartWaveformModel model = ChartWaveformModel.FromAudioClip(clip, 8, 16);
+
+                Assert.That(model.PeakAt(0), Is.EqualTo(0.75f).Within(0.0001f));
+                Assert.That(model.PeakAt(7), Is.EqualTo(1f).Within(0.0001f));
+                Assert.That(model.DurationSeconds, Is.EqualTo(1).Within(0.0001));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(clip);
+            }
+        }
+
+        [Test]
         public void Visual_editor_rejects_invalid_indices_times_pads_and_velocity()
         {
             var session = new ChartRecordingSession(4);
@@ -143,6 +217,8 @@ namespace HitTheKit.Unity.Tests
             Assert.Throws<ArgumentOutOfRangeException>(() => editor.Update(0, 4.01, DrumPad.Kick));
             Assert.Throws<ArgumentOutOfRangeException>(() => editor.Update(0, 1, (DrumPad)999));
             Assert.Throws<ArgumentOutOfRangeException>(() => editor.Add(1, DrumPad.Snare, 128));
+            Assert.Throws<ArgumentException>(() =>
+                editor.Add(1, DrumPad.Kick, 100, DrumArticulation.Bell));
             Assert.Throws<ArgumentOutOfRangeException>(() => editor.Delete(2));
             Assert.That(editor.Notes, Has.Count.EqualTo(1));
         }
@@ -228,7 +304,8 @@ namespace HitTheKit.Unity.Tests
             DrumPad pad,
             double time,
             int velocity = 96,
-            DrumInputSource source = DrumInputSource.Keyboard) =>
-            new DrumInputEvent(pad, velocity, time, source);
+            DrumInputSource source = DrumInputSource.Keyboard,
+            DrumArticulation articulation = DrumArticulation.Default) =>
+            new DrumInputEvent(pad, velocity, time, source, articulation);
     }
 }

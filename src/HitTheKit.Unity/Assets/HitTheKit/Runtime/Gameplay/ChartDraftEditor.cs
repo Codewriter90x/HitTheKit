@@ -12,19 +12,22 @@ namespace HitTheKit.Unity.Gameplay
             int identity,
             DrumPad pad,
             int velocity,
+            DrumArticulation articulation,
             double timeSeconds,
             DrumInputSource source)
         {
             Identity = identity;
             Pad = pad;
             Velocity = velocity;
+            Articulation = articulation;
             TimeSeconds = timeSeconds;
             Source = source;
         }
 
         public int Identity { get; }
         public DrumPad Pad { get; internal set; }
-        public int Velocity { get; }
+        public int Velocity { get; internal set; }
+        public DrumArticulation Articulation { get; internal set; }
         public double TimeSeconds { get; internal set; }
         public DrumInputSource Source { get; }
     }
@@ -44,7 +47,8 @@ namespace HitTheKit.Unity.Gameplay
             for (int index = 0; index < draft.Hits.Count; index++)
             {
                 RecordedChartHit hit = draft.Hits[index];
-                notes.Add(new EditableChartNote(nextIdentity++, hit.Pad, hit.Velocity, hit.TimeSeconds, hit.Source));
+                notes.Add(new EditableChartNote(
+                    nextIdentity++, hit.Pad, hit.Velocity, hit.Articulation, hit.TimeSeconds, hit.Source));
             }
             Sort();
             readOnlyNotes = notes.AsReadOnly();
@@ -56,22 +60,46 @@ namespace HitTheKit.Unity.Gameplay
         public int Update(int index, double timeSeconds, DrumPad pad)
         {
             EditableChartNote note = At(index);
+            DrumArticulation articulation = DrumArticulationValidator.IsValid(pad, note.Articulation)
+                ? note.Articulation
+                : DrumArticulation.Default;
+            return Update(index, timeSeconds, pad, note.Velocity, articulation);
+        }
+
+        public int Update(
+            int index,
+            double timeSeconds,
+            DrumPad pad,
+            int velocity,
+            DrumArticulation articulation)
+        {
+            EditableChartNote note = At(index);
             ValidateTime(timeSeconds);
             ValidatePad(pad);
+            ValidateVelocity(velocity);
+            DrumArticulationValidator.EnsureValid(pad, articulation);
             note.TimeSeconds = timeSeconds;
             note.Pad = pad;
+            note.Velocity = velocity;
+            note.Articulation = articulation;
             Sort();
             return notes.IndexOf(note);
         }
 
-        public int Add(double timeSeconds, DrumPad pad, int velocity = 100)
+        public int Add(
+            double timeSeconds,
+            DrumPad pad,
+            int velocity = 100,
+            DrumArticulation articulation = DrumArticulation.Default)
         {
             ValidateTime(timeSeconds);
             ValidatePad(pad);
-            if (velocity < 0 || velocity > 127) throw new ArgumentOutOfRangeException(nameof(velocity));
+            ValidateVelocity(velocity);
+            DrumArticulationValidator.EnsureValid(pad, articulation);
             if (notes.Count >= ChartRecordingSession.MaximumHits)
                 throw new InvalidOperationException($"A chart cannot exceed {ChartRecordingSession.MaximumHits} notes.");
-            var note = new EditableChartNote(nextIdentity++, pad, velocity, timeSeconds, DrumInputSource.Test);
+            var note = new EditableChartNote(
+                nextIdentity++, pad, velocity, articulation, timeSeconds, DrumInputSource.Test);
             notes.Add(note);
             Sort();
             return notes.IndexOf(note);
@@ -86,7 +114,12 @@ namespace HitTheKit.Unity.Gameplay
             {
                 EditableChartNote note = notes[index];
                 hits[index] = new RecordedChartHit(
-                    new DrumInputEvent(note.Pad, note.Velocity, note.TimeSeconds, note.Source),
+                    new DrumInputEvent(
+                        note.Pad,
+                        note.Velocity,
+                        note.TimeSeconds,
+                        note.Source,
+                        note.Articulation),
                     index);
             }
             return new ChartRecordingDraft(durationSeconds, hits);
@@ -109,6 +142,11 @@ namespace HitTheKit.Unity.Gameplay
         private static void ValidatePad(DrumPad pad)
         {
             if (!Enum.IsDefined(typeof(DrumPad), pad)) throw new ArgumentOutOfRangeException(nameof(pad));
+        }
+
+        private static void ValidateVelocity(int velocity)
+        {
+            if (velocity < 1 || velocity > 127) throw new ArgumentOutOfRangeException(nameof(velocity));
         }
 
         private void Sort() => notes.Sort((left, right) =>

@@ -154,6 +154,28 @@ namespace HitTheKit.Unity.Tests
             Assert.That(surface.GuidanceText, Does.Contain("BORDO"));
         }
 
+        [TestCase(DrumArticulation.Bow, GameplayKitZone.Bow)]
+        [TestCase(DrumArticulation.Bell, GameplayKitZone.Bell)]
+        [TestCase(DrumArticulation.Edge, GameplayKitZone.Edge)]
+        public void Ride_chart_articulation_highlights_the_matching_physical_zone(
+            DrumArticulation articulation,
+            GameplayKitZone expectedZone)
+        {
+            string articulationId = articulation.ToString();
+            articulationId = char.ToLowerInvariant(articulationId[0]) + articulationId.Substring(1);
+            LoadedChart chart = new ChartLoader().Load(
+                "{\"version\":1,\"offsetSeconds\":0,\"difficulties\":{\"easy\":[" +
+                $"{{\"time\":1,\"pad\":\"ride\",\"velocity\":100,\"articulation\":\"{articulationId}\"}}" +
+                "]}}",
+                "easy");
+
+            GameplayKitTargetState state = new GameplayKitTargetStateCalculator().Calculate(
+                DrumPad.Ride, new ChartTimeline(chart).Notes, 0.5, 1, null, 0);
+
+            Assert.That(state.Zone, Is.EqualTo(expectedZone));
+            Assert.That(state.Intensity, Is.GreaterThan(0));
+        }
+
         [TestCase(DrumPad.Kick, GameplayKitZone.Pedal, "CASSA")]
         [TestCase(DrumPad.Snare, GameplayKitZone.Head, "RULLANTE")]
         [TestCase(DrumPad.HiHat, GameplayKitZone.Bow, "CHARLESTON")]

@@ -88,10 +88,21 @@ namespace HitTheKit.Unity.Gameplay
         private Label chartNoteSelectionLabel;
         private TextField chartNoteTimeField;
         private DropdownField chartNotePadField;
+        private TextField chartNoteVelocityField;
+        private DropdownField chartNoteArticulationField;
         private Button chartNoteAddButton;
         private Button chartNoteApplyButton;
         private Button chartNoteDeleteButton;
         private Label chartNoteStatusLabel;
+        private VisualElement chartWaveformHost;
+        private ChartWaveformView chartWaveformView;
+        private Label chartWaveformTimeLabel;
+        private Button chartWaveformZoomInButton;
+        private Button chartWaveformZoomOutButton;
+        private Button chartWaveformResetButton;
+        private Button chartWaveformPreviewButton;
+        private Button chartWaveformStopButton;
+        private readonly List<DrumArticulation> chartArticulationChoices = new List<DrumArticulation>();
         private GameplayHighwaySurface surface;
         private GameplayKitSurface kitSurface;
         private bool showInstructionalKit;
@@ -190,6 +201,7 @@ namespace HitTheKit.Unity.Gameplay
         private void OnDestroy()
         {
             FlushPracticeTime();
+            songClock?.StopPreview();
             ReleaseAudioFeedback();
         }
 
@@ -300,11 +312,21 @@ namespace HitTheKit.Unity.Gameplay
             chartNoteSelectionLabel = root.Q<Label>("chart-note-selection");
             chartNoteTimeField = root.Q<TextField>("chart-note-time");
             chartNotePadField = root.Q<DropdownField>("chart-note-pad");
+            chartNoteVelocityField = root.Q<TextField>("chart-note-velocity");
+            chartNoteArticulationField = root.Q<DropdownField>("chart-note-articulation");
             chartNoteAddButton = root.Q<Button>("chart-note-add");
             chartNoteApplyButton = root.Q<Button>("chart-note-apply");
             chartNoteDeleteButton = root.Q<Button>("chart-note-delete");
             chartNoteStatusLabel = root.Q<Label>("chart-note-status");
+            chartWaveformHost = root.Q<VisualElement>("chart-waveform-host");
+            chartWaveformTimeLabel = root.Q<Label>("chart-waveform-time");
+            chartWaveformZoomInButton = root.Q<Button>("chart-waveform-zoom-in");
+            chartWaveformZoomOutButton = root.Q<Button>("chart-waveform-zoom-out");
+            chartWaveformResetButton = root.Q<Button>("chart-waveform-reset");
+            chartWaveformPreviewButton = root.Q<Button>("chart-waveform-preview");
+            chartWaveformStopButton = root.Q<Button>("chart-waveform-stop");
             ConfigureChartNoteEditorView();
+            ConfigureChartWaveformView();
             PlayerPreferencesSnapshot preferences = PlayerPreferencesRuntime.Current.Snapshot;
             root.EnableInClassList("gameplay--high-contrast", preferences.HighContrast);
             root.EnableInClassList("gameplay--reduced-motion", preferences.ReducedMotion);
@@ -535,6 +557,7 @@ namespace HitTheKit.Unity.Gameplay
         public void RestartRun()
         {
             FlushPracticeTime();
+            songClock?.StopPreview();
             practiceTimer.ResetAttempt();
             resultRecorded = false;
             chartDraft = null;
@@ -614,6 +637,7 @@ namespace HitTheKit.Unity.Gameplay
                 chartSaveRawButton?.SetEnabled(hitCount > 0);
                 chartSaveEighthButton?.SetEnabled(hitCount > 0);
                 chartSaveSixteenthButton?.SetEnabled(hitCount > 0);
+                ConfigureChartWaveform();
                 RefreshChartNoteEditor(hitCount > 0 ? 0 : -1);
                 SetDisplayed(chartCreatorResults, true);
             }
@@ -706,10 +730,35 @@ namespace HitTheKit.Unity.Gameplay
             return selected;
         }
 
+        public int EditChartNote(
+            int index,
+            double timeSeconds,
+            DrumPad pad,
+            int velocity,
+            DrumArticulation articulation)
+        {
+            if (chartDraftEditor == null) throw new InvalidOperationException("Finish a Chart Creator take first.");
+            int selected = chartDraftEditor.Update(index, timeSeconds, pad, velocity, articulation);
+            RefreshChartNoteEditor(selected);
+            return selected;
+        }
+
         public int AddChartNote(double timeSeconds, DrumPad pad)
         {
             if (chartDraftEditor == null) throw new InvalidOperationException("Finish a Chart Creator take first.");
             int selected = chartDraftEditor.Add(timeSeconds, pad);
+            RefreshChartNoteEditor(selected);
+            return selected;
+        }
+
+        public int AddChartNote(
+            double timeSeconds,
+            DrumPad pad,
+            int velocity,
+            DrumArticulation articulation)
+        {
+            if (chartDraftEditor == null) throw new InvalidOperationException("Finish a Chart Creator take first.");
+            int selected = chartDraftEditor.Add(timeSeconds, pad, velocity, articulation);
             RefreshChartNoteEditor(selected);
             return selected;
         }
@@ -832,6 +881,11 @@ namespace HitTheKit.Unity.Gameplay
             if (chartNoteAddButton != null) chartNoteAddButton.clicked += AddChartNoteFromView;
             if (chartNoteApplyButton != null) chartNoteApplyButton.clicked += ApplyChartNoteFromView;
             if (chartNoteDeleteButton != null) chartNoteDeleteButton.clicked += DeleteChartNoteFromView;
+            if (chartWaveformZoomInButton != null) chartWaveformZoomInButton.clicked += ZoomChartWaveformIn;
+            if (chartWaveformZoomOutButton != null) chartWaveformZoomOutButton.clicked += ZoomChartWaveformOut;
+            if (chartWaveformResetButton != null) chartWaveformResetButton.clicked += ResetChartWaveform;
+            if (chartWaveformPreviewButton != null) chartWaveformPreviewButton.clicked += PreviewChartWaveform;
+            if (chartWaveformStopButton != null) chartWaveformStopButton.clicked += StopChartWaveformPreview;
         }
 
         private void UnbindRunControls()
@@ -848,15 +902,23 @@ namespace HitTheKit.Unity.Gameplay
             if (chartNoteAddButton != null) chartNoteAddButton.clicked -= AddChartNoteFromView;
             if (chartNoteApplyButton != null) chartNoteApplyButton.clicked -= ApplyChartNoteFromView;
             if (chartNoteDeleteButton != null) chartNoteDeleteButton.clicked -= DeleteChartNoteFromView;
+            if (chartWaveformZoomInButton != null) chartWaveformZoomInButton.clicked -= ZoomChartWaveformIn;
+            if (chartWaveformZoomOutButton != null) chartWaveformZoomOutButton.clicked -= ZoomChartWaveformOut;
+            if (chartWaveformResetButton != null) chartWaveformResetButton.clicked -= ResetChartWaveform;
+            if (chartWaveformPreviewButton != null) chartWaveformPreviewButton.clicked -= PreviewChartWaveform;
+            if (chartWaveformStopButton != null) chartWaveformStopButton.clicked -= StopChartWaveformPreview;
         }
 
         private void ConfigureChartNoteEditorView()
         {
-            if (chartNoteList == null || chartNotePadField == null) return;
+            if (chartNoteList == null || chartNotePadField == null || chartNoteArticulationField == null) return;
             chartNotePadField.choices = new List<string>();
             foreach (DrumPad pad in Enum.GetValues(typeof(DrumPad)))
                 chartNotePadField.choices.Add(GameplayHighwayLanes.Find(pad).Label);
             chartNotePadField.index = 0;
+            chartNotePadField.UnregisterValueChangedCallback(HandleChartNotePadChanged);
+            chartNotePadField.RegisterValueChangedCallback(HandleChartNotePadChanged);
+            RefreshChartArticulationChoices(DrumPad.Kick, DrumArticulation.Default);
             chartNoteList.fixedItemHeight = 30;
             chartNoteList.virtualizationMethod = CollectionVirtualizationMethod.FixedHeight;
             chartNoteList.selectionType = SelectionType.Single;
@@ -875,7 +937,10 @@ namespace HitTheKit.Unity.Gameplay
                     return;
                 }
                 EditableChartNote note = chartDraftEditor.Notes[index];
-                label.text = $"{index + 1:000}   {note.TimeSeconds:0.000}s   {GameplayHighwayLanes.Find(note.Pad).Label}";
+                string articulation = note.Articulation == DrumArticulation.Default
+                    ? string.Empty
+                    : $" · {ArticulationLabel(note.Articulation)}";
+                label.text = $"{index + 1:000}   {note.TimeSeconds:0.000}s   {GameplayHighwayLanes.Find(note.Pad).Label}{articulation} · V{note.Velocity}";
             };
             chartNoteList.selectionChanged -= HandleChartNoteSelectionChanged;
             chartNoteList.selectionChanged += HandleChartNoteSelectionChanged;
@@ -916,12 +981,17 @@ namespace HitTheKit.Unity.Gameplay
             {
                 if (chartNoteSelectionLabel != null) chartNoteSelectionLabel.text = "SELEZIONA UNA NOTA";
                 if (chartNoteTimeField != null) chartNoteTimeField.value = string.Empty;
+                if (chartNoteVelocityField != null) chartNoteVelocityField.value = string.Empty;
                 return;
             }
             EditableChartNote note = chartDraftEditor.Notes[index];
             chartNoteSelectionLabel.text = $"NOTA {index + 1:000} · VELOCITY {note.Velocity}";
             chartNoteTimeField.value = note.TimeSeconds.ToString("0.000", CultureInfo.InvariantCulture);
             chartNotePadField.index = (int)note.Pad;
+            chartNoteVelocityField.value = note.Velocity.ToString(CultureInfo.InvariantCulture);
+            RefreshChartArticulationChoices(note.Pad, note.Articulation);
+            chartWaveformView?.SetSelectedTime(note.TimeSeconds);
+            RefreshChartWaveformTime();
         }
 
         private void ApplyChartNoteFromView()
@@ -929,7 +999,12 @@ namespace HitTheKit.Unity.Gameplay
             try
             {
                 int index = chartNoteList?.selectedIndex ?? -1;
-                int selected = EditChartNote(index, ParseChartNoteTime(), SelectedChartNotePad());
+                int selected = EditChartNote(
+                    index,
+                    ParseChartNoteTime(),
+                    SelectedChartNotePad(),
+                    ParseChartNoteVelocity(),
+                    SelectedChartNoteArticulation());
                 chartNoteStatusLabel.text = $"NOTA {selected + 1:000} AGGIORNATA";
             }
             catch (Exception exception) { SetChartNoteError(exception); }
@@ -939,7 +1014,11 @@ namespace HitTheKit.Unity.Gameplay
         {
             try
             {
-                int selected = AddChartNote(ParseChartNoteTime(), SelectedChartNotePad());
+                int selected = AddChartNote(
+                    ParseChartNoteTime(),
+                    SelectedChartNotePad(),
+                    ParseChartNoteVelocity(),
+                    SelectedChartNoteArticulation());
                 chartNoteStatusLabel.text = $"NOTA {selected + 1:000} AGGIUNTA";
             }
             catch (Exception exception) { SetChartNoteError(exception); }
@@ -970,6 +1049,152 @@ namespace HitTheKit.Unity.Gameplay
             if (index < 0 || index >= Enum.GetValues(typeof(DrumPad)).Length)
                 throw new InvalidOperationException("Seleziona uno strumento valido.");
             return (DrumPad)index;
+        }
+
+        private int ParseChartNoteVelocity()
+        {
+            if (int.TryParse(chartNoteVelocityField?.value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int velocity) &&
+                velocity >= 1 && velocity <= 127)
+                return velocity;
+            throw new InvalidOperationException("Inserisci una velocity valida fra 1 e 127.");
+        }
+
+        private DrumArticulation SelectedChartNoteArticulation()
+        {
+            int index = chartNoteArticulationField?.index ?? -1;
+            if (index < 0 || index >= chartArticulationChoices.Count)
+                throw new InvalidOperationException("Seleziona un'articolazione valida.");
+            return chartArticulationChoices[index];
+        }
+
+        private void HandleChartNotePadChanged(ChangeEvent<string> _)
+        {
+            DrumPad pad = SelectedChartNotePad();
+            RefreshChartArticulationChoices(pad, DrumArticulation.Default);
+        }
+
+        private void RefreshChartArticulationChoices(DrumPad pad, DrumArticulation selected)
+        {
+            chartArticulationChoices.Clear();
+            var labels = new List<string>();
+            foreach (DrumArticulation articulation in Enum.GetValues(typeof(DrumArticulation)))
+            {
+                if (!DrumArticulationValidator.IsValid(pad, articulation)) continue;
+                chartArticulationChoices.Add(articulation);
+                labels.Add(ArticulationLabel(articulation));
+            }
+            chartNoteArticulationField.choices = labels;
+            int index = chartArticulationChoices.IndexOf(selected);
+            chartNoteArticulationField.index = index >= 0 ? index : 0;
+        }
+
+        private static string ArticulationLabel(DrumArticulation articulation)
+        {
+            switch (articulation)
+            {
+                case DrumArticulation.Default: return "STANDARD / QUALSIASI";
+                case DrumArticulation.Head: return "PELLE / CENTRO";
+                case DrumArticulation.Rim: return "BORDO / RIM";
+                case DrumArticulation.Bow: return "CORPO / BOW";
+                case DrumArticulation.Edge: return "BORDO / EDGE";
+                case DrumArticulation.Bell: return "CAMPANA / BELL";
+                case DrumArticulation.Closed: return "CHIUSO";
+                case DrumArticulation.HalfOpen: return "SEMIAPERTO";
+                case DrumArticulation.Open: return "APERTO";
+                case DrumArticulation.Pedal: return "PEDALE";
+                case DrumArticulation.Choke: return "STOP / CHOKE";
+                default: throw new ArgumentOutOfRangeException(nameof(articulation));
+            }
+        }
+
+        private void ConfigureChartWaveformView()
+        {
+            if (chartWaveformHost == null) return;
+            if (chartWaveformView != null) chartWaveformView.Scrubbed -= HandleChartWaveformScrubbed;
+            chartWaveformHost.Clear();
+            chartWaveformView = new ChartWaveformView { name = "chart-waveform" };
+            chartWaveformView.style.flexGrow = 1;
+            chartWaveformView.Scrubbed += HandleChartWaveformScrubbed;
+            chartWaveformHost.Add(chartWaveformView);
+        }
+
+        private void ConfigureChartWaveform()
+        {
+            if (chartWaveformView == null) return;
+            AudioClip clip = songClock?.GeneratedClip;
+            if (clip == null)
+            {
+                chartWaveformView.SetModel(null);
+                chartWaveformPreviewButton?.SetEnabled(false);
+                if (chartWaveformTimeLabel != null) chartWaveformTimeLabel.text = "WAVEFORM NON DISPONIBILE";
+                return;
+            }
+
+            try
+            {
+                chartWaveformView.SetModel(ChartWaveformModel.FromAudioClip(clip));
+                chartWaveformPreviewButton?.SetEnabled(true);
+                RefreshChartWaveformTime();
+            }
+            catch (Exception exception)
+            {
+                chartWaveformView.SetModel(null);
+                chartWaveformPreviewButton?.SetEnabled(false);
+                if (chartWaveformTimeLabel != null) chartWaveformTimeLabel.text = "WAVEFORM NON LEGGIBILE";
+                if (chartNoteStatusLabel != null) chartNoteStatusLabel.text = exception.Message;
+            }
+        }
+
+        private void HandleChartWaveformScrubbed(double timeSeconds)
+        {
+            if (chartNoteTimeField != null)
+                chartNoteTimeField.value = timeSeconds.ToString("0.000", CultureInfo.InvariantCulture);
+            RefreshChartWaveformTime();
+        }
+
+        private void RefreshChartWaveformTime()
+        {
+            ChartWaveformModel model = chartWaveformView?.Model;
+            if (chartWaveformTimeLabel == null || model == null) return;
+            chartWaveformTimeLabel.text =
+                $"PLAYHEAD {model.SelectedTimeSeconds:0.000}s · VISTA {model.ViewStartSeconds:0.00}–{model.ViewEndSeconds:0.00}s";
+        }
+
+        private void ZoomChartWaveformIn()
+        {
+            chartWaveformView?.Zoom(2.0);
+            RefreshChartWaveformTime();
+        }
+
+        private void ZoomChartWaveformOut()
+        {
+            chartWaveformView?.Zoom(0.5);
+            RefreshChartWaveformTime();
+        }
+
+        private void ResetChartWaveform()
+        {
+            chartWaveformView?.ResetZoom();
+            RefreshChartWaveformTime();
+        }
+
+        private void PreviewChartWaveform()
+        {
+            try
+            {
+                ChartWaveformModel model = chartWaveformView?.Model ??
+                    throw new InvalidOperationException("Waveform non disponibile.");
+                double sourceTime = Math.Min(model.SelectedTimeSeconds, Math.Max(0, model.DurationSeconds - 0.001));
+                songClock.PreviewFromSourceTime(sourceTime, CurrentSession.SpeedMultiplier);
+                if (chartNoteStatusLabel != null) chartNoteStatusLabel.text = $"ANTEPRIMA DA {sourceTime:0.000}s";
+            }
+            catch (Exception exception) { SetChartNoteError(exception); }
+        }
+
+        private void StopChartWaveformPreview()
+        {
+            songClock?.StopPreview();
+            if (chartNoteStatusLabel != null) chartNoteStatusLabel.text = "ANTEPRIMA FERMA";
         }
 
         private void SetChartNoteError(Exception exception)

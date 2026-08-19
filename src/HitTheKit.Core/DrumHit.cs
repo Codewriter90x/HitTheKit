@@ -4,7 +4,11 @@ namespace HitTheKit.Core
 {
     public readonly struct DrumHit
     {
-        public DrumHit(DrumPad pad, double timeSeconds, int velocity = 127)
+        public DrumHit(
+            DrumPad pad,
+            double timeSeconds,
+            int velocity = 127,
+            DrumArticulation articulation = DrumArticulation.Default)
         {
             if (double.IsNaN(timeSeconds) || double.IsInfinity(timeSeconds))
             {
@@ -20,9 +24,11 @@ namespace HitTheKit.Core
                     "Velocity must be between 0 and 127.");
             }
 
+            DrumArticulationValidator.EnsureValid(pad, articulation);
             Pad = pad;
             TimeSeconds = timeSeconds;
             Velocity = velocity;
+            Articulation = articulation;
         }
 
         public DrumPad Pad { get; }
@@ -30,5 +36,7 @@ namespace HitTheKit.Core
         public double TimeSeconds { get; }
 
         public int Velocity { get; }
+
+        public DrumArticulation Articulation { get; }
     }
 }
