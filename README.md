@@ -46,6 +46,18 @@ hit matching and MIDI input are shared rather than reimplemented per mode.
 These are real captures of the current Unity application running the original,
 rights-clean demo content—not promotional mockups.
 
+<p align="center">
+  <a href="https://codewriter90x.github.io/HitTheKit/en/#demo">
+    <img src="website/assets/images/screenshots/hitthekit-real-tour-poster.jpg" width="100%" alt="Watch the 42-second HitTheKit gameplay tour">
+  </a>
+  <br>
+  <strong><a href="https://codewriter90x.github.io/HitTheKit/en/#demo">Watch the 42-second gameplay tour →</a></strong>
+</p>
+
+The tour moves from the main menu through kit setup and lesson selection into
+real gameplay. Its soundtrack is an original, rights-clean instrumental created
+for HitTheKit.
+
 | Main menu | Concert Stage gameplay |
 | --- | --- |
 | [![HitTheKit main menu with Play, Learn and electronic-drum setup](website/assets/images/screenshots/main-menu.jpg)](website/assets/images/screenshots/main-menu.jpg) | [![HitTheKit Concert Stage gameplay with the perspective drum highway and countdown](website/assets/images/screenshots/gameplay-concert-stage.jpg)](website/assets/images/screenshots/gameplay-concert-stage.jpg) |

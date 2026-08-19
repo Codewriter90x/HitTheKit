@@ -61,6 +61,7 @@
       </button>
 
       <nav class="site-nav" id="site-nav" aria-label="Navigazione principale" data-nav>
+        <a href="#demo" data-i18n="navDemo">Video</a>
         <a href="#how" data-i18n="navHow">Come funziona</a>
         <a href="#themes" data-i18n="navThemes">Temi</a>
         <a href="#learn" data-i18n="navLearn">Impara</a>
@@ -91,7 +92,7 @@
           <h1 id="hero-title"><span data-i18n="heroLine1">SALI SUL PALCO,</span><strong data-i18n="heroLine2">COLPISCI IL TEMPO.</strong></h1>
           <p class="hero-lead" data-i18n="heroLead">Il rhythm game costruito per chi vuole imparare davvero a suonare: timing preciso, lezioni progressive e la tua batteria elettronica al centro dell’esperienza.</p>
           <div class="hero-actions">
-            <a class="button button-primary" href="#how"><span data-i18n="heroCta">Scopri come funziona</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+            <a class="button button-primary" href="#demo"><span data-i18n="heroCta">Guarda il gameplay</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
             <a class="button button-secondary" href="https://github.com/Codewriter90x/HitTheKit" target="_blank" rel="noopener noreferrer" data-i18n="repoCta">Vedi il codice</a>
             <a class="button button-sponsor" href="https://github.com/sponsors/Codewriter90x" target="_blank" rel="noopener noreferrer" data-i18n="sponsorCta">Supporta HitTheKit</a>
           </div>
@@ -106,7 +107,24 @@
           <figcaption data-i18n="heroCaption">Otto elementi leggibili, una sola timeline musicale.</figcaption>
         </figure>
       </div>
-      <a class="scroll-cue" href="#how"><span data-i18n="scroll">SCOPRI</span><i aria-hidden="true"></i></a>
+      <a class="scroll-cue" href="#demo"><span data-i18n="scroll">GUARDA</span><i aria-hidden="true"></i></a>
+    </section>
+
+    <section class="section section-demo" id="demo" aria-labelledby="demo-title">
+      <div class="section-inner">
+        <div class="demo-heading reveal">
+          <p class="section-label" data-i18n="demoLabel">GAMEPLAY REALE</p>
+          <h2 id="demo-title" data-i18n="demoTitle">Quarantadue secondi dentro HitTheKit</h2>
+          <p data-i18n="demoIntro">Dal menu alla configurazione, dalla scelta della lezione alla highway: una cattura reale dell’app con contenuti originali.</p>
+        </div>
+        <figure class="demo-frame reveal">
+          <iframe src="https://www.youtube-nocookie.com/embed/10wJjOFGMCg?rel=0" title="HitTheKit — Real Gameplay" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen aria-describedby="demo-caption"></iframe>
+          <figcaption id="demo-caption">
+            <span data-i18n="demoCaption">Menu → configurazione → lezione → gameplay</span>
+            <small data-i18n="demoRights">Cattura dell’app e colonna sonora originale rights-clean.</small>
+          </figcaption>
+        </figure>
+      </div>
     </section>
 
     <section class="section section-dark" id="how" aria-labelledby="how-title">
