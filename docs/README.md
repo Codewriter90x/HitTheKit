@@ -4,9 +4,11 @@ This directory is the canonical technical-documentation hub for HitTheKit.
 Documentation is versioned with the code so architectural and behavioral
 changes can be reviewed in the same pull request that introduces them.
 
-The GitHub Wiki is intentionally not used. Keeping one source of truth avoids
-stale copies, preserves history, supports local reading and makes broken links
-testable in CI.
+The [GitHub Wiki](https://github.com/Codewriter90x/HitTheKit/wiki) is the public,
+beginner-friendly handbook. Its pages are generated from the versioned sources
+in [`docs/wiki`](wiki/README.md). This hub remains canonical for deeper
+architecture and development material. That separation keeps the Wiki useful
+without creating an unreviewed second source of truth.
 
 ## Start here
 
@@ -15,6 +17,7 @@ testable in CI.
 - [Support](../SUPPORT.md) — supported environments and diagnostic information
 - [Roadmap](../ROADMAP.md) — current priorities and public milestones
 - [Security](../SECURITY.md) — private vulnerability reporting
+- [Public Wiki sources](wiki/README.md) — reviewed user-facing handbook
 
 ## Architecture
 

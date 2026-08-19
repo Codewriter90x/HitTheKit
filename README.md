@@ -19,6 +19,7 @@
   <a href="https://codewriter90x.github.io/HitTheKit/en/">Website</a> ·
   <a href="#what-works-today">Experience</a> ·
   <a href="#build-from-source">Build from source</a> ·
+  <a href="https://github.com/Codewriter90x/HitTheKit/wiki">Wiki</a> ·
   <a href="docs/README.md">Documentation</a> ·
   <a href="ROADMAP.md">Roadmap</a> ·
   <a href="https://github.com/sponsors/Codewriter90x">Sponsor</a>
@@ -99,8 +100,12 @@ input boundary used by keyboard and simulated sources. Start with the
 
 ## Documentation
 
-The versioned [documentation hub](docs/README.md) is the single source of truth
-for technical documentation. It organizes:
+The [public Wiki](https://github.com/Codewriter90x/HitTheKit/wiki) is the
+beginner-friendly handbook for building, configuring and using HitTheKit. Its
+pages are generated from versioned sources under `docs/wiki/`.
+
+The versioned [documentation hub](docs/README.md) remains the source of truth
+for deeper technical documentation. It organizes:
 
 - architecture and domain boundaries;
 - gameplay, learning and device-setup design;
@@ -108,8 +113,8 @@ for technical documentation. It organizes:
 - development, tests and packaging;
 - release, legal and governance material.
 
-Keeping documentation beside the code makes changes reviewable and prevents a
-separate Wiki from becoming stale.
+Keeping both documentation layers beside the code makes changes reviewable and
+prevents the rendered Wiki from becoming stale.
 
 ## Contributing and support
 
