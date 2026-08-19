@@ -4,6 +4,11 @@ This process separates source readiness, gameplay validation, legal approval,
 and public distribution. Passing an early stage does not imply that later
 stages passed.
 
+Release candidates follow the branch and tag lifecycle defined in
+[`branching-and-releases.md`](../development/branching-and-releases.md). In
+particular, normal work integrates through `develop`, while stable release tags
+are created only from reviewed commits on `main`.
+
 ## 1. Freeze an exact candidate
 
 1. Choose an exact commit on a clean worktree.
