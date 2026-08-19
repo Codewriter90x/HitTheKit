@@ -7,9 +7,14 @@ timeline.
 
 ## Workflow
 
-1. Add or select a playable song in the Song Library.
-2. Choose its difficulty and practice speed.
-3. Select **Record chart**.
+1. Select **Import audio & create** in the Song Library and choose a local WAV
+   or OGG file, or select an existing playable song.
+2. For new audio, enter title, artist, verified BPM, bar count and beats per bar.
+   HitTheKit copies the selected audio into a private local authoring folder; it
+   never modifies the source file.
+3. Choose practice speed and select **Record chart**. A new audio-only source
+   starts with a real empty schema-v1 timeline; an existing song keeps its
+   current chart only as a playback reference.
 4. Play during the normal count-in and backing track. Hits before song time zero
    or beyond the declared song duration are ignored.
 5. At the result screen, review the captured-hit count and save the raw timing,
@@ -42,10 +47,11 @@ game validates and atomically imports it. Existing song folders are never
 overwritten.
 
 The publish is atomic and both documents are parsed by the production loaders
-before the folder or package becomes visible. The manifest declares chart availability but
-keeps audio as `missing`. Chart Creator never copies, embeds, downloads, or
-redistributes the source audio. To play or share the take, the user must add an
-audio file they are entitled to use and update the local binding explicitly.
+before the folder or package becomes visible. When the recording used a local
+WAV/OGG source, the private exported folder receives its own local audio copy and
+is immediately playable. The `.htksong` manifest still declares audio as
+`missing`: Chart Creator never embeds, downloads, or redistributes source audio
+in the portable package. A recipient supplies their own authorized local copy.
 
 Import is fail-closed. Unknown/archive entries, audio declarations, symbolic
 links, duplicate names, unsupported versions, malformed JSON, invalid charts,
@@ -59,10 +65,13 @@ not a claim of authoritative transcription.
 
 ## Current foundation limits
 
-- A playable Song Library entry is required; audio import/file-picker UI is not
-  part of this first foundation.
 - Editing individual notes is not yet available. Raw/1/8/1/16 save choices are
   the initial review tools.
 - The schema currently stores pad and time. Velocity and articulation remain in
   the in-memory take but schema v1 does not serialize them.
-- Exported takes are intentionally non-playable until authorized audio is bound.
+- The native picker currently targets macOS. WAV and OGG are supported; MP3 is
+  intentionally rejected by the production loader.
+- The author must enter BPM, bars and meter explicitly. Unknown timing never
+  receives a hidden default.
+- Portable packages remain chart-only; imported packages require an authorized
+  local audio binding on the receiving computer.

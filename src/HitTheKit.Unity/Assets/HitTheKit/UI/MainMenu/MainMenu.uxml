@@ -125,10 +125,49 @@
                 <ui:VisualElement class="song-library-footer">
                     <ui:Label name="song-library-diagnostic" class="song-library-diagnostic" />
                     <ui:VisualElement class="song-library-actions">
+                        <ui:Button name="song-import-audio-button" text="IMPORTA AUDIO E CREA" class="song-library-secondary song-import-audio-button" />
                         <ui:Button name="song-refresh-button" text="AGGIORNA LIBRERIA" class="song-library-secondary" />
                         <ui:Button name="song-folder-button" text="APRI CARTELLA BRANI" class="song-library-secondary" />
                         <ui:Button name="song-back-button" text="INDIETRO" class="song-library-secondary" />
                     </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="chart-audio-import-overlay" class="modal-layer chart-audio-import-layer" style="display: none;">
+            <ui:VisualElement class="modal-panel chart-audio-import-panel">
+                <ui:Label text="CHART CREATOR · NUOVO BRANO" class="modal-eyebrow" />
+                <ui:Label text="IMPORTA LA BASE AUDIO" class="chart-audio-import-title" />
+                <ui:Label name="chart-audio-file" class="chart-audio-file" />
+                <ui:Label text="L'audio viene copiato soltanto nella tua libreria locale. Il pacchetto .htksong conterrà esclusivamente la chart." class="chart-audio-import-copy" />
+                <ui:VisualElement class="chart-audio-fields">
+                    <ui:VisualElement class="chart-audio-field chart-audio-field--wide">
+                        <ui:Label text="TITOLO" class="chart-audio-field-label" />
+                        <ui:TextField name="chart-audio-title" class="chart-audio-text-field" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="chart-audio-field chart-audio-field--wide">
+                        <ui:Label text="ARTISTA / AUTORE" class="chart-audio-field-label" />
+                        <ui:TextField name="chart-audio-artist" class="chart-audio-text-field" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="chart-audio-field-row">
+                        <ui:VisualElement class="chart-audio-field">
+                            <ui:Label text="BPM VERIFICATI" class="chart-audio-field-label" />
+                            <ui:TextField name="chart-audio-bpm" class="chart-audio-text-field" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="chart-audio-field">
+                            <ui:Label text="BATTUTE" class="chart-audio-field-label" />
+                            <ui:TextField name="chart-audio-bars" class="chart-audio-text-field" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="chart-audio-field">
+                            <ui:Label text="BEAT PER BATTUTA" class="chart-audio-field-label" />
+                            <ui:TextField name="chart-audio-beats" class="chart-audio-text-field" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Label name="chart-audio-error" class="chart-audio-error" />
+                <ui:VisualElement class="modal-actions chart-audio-actions">
+                    <ui:Button name="chart-audio-cancel" text="ANNULLA" class="modal-secondary" />
+                    <ui:Button name="chart-audio-start" text="IMPORTA E REGISTRA" class="modal-primary" />
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>

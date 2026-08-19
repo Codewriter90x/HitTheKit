@@ -1002,6 +1002,48 @@
     -unity-font-style: bold;
 }
 .song-library-secondary:hover, .song-library-secondary:focus { border-color: white; color: white; }
+.song-import-audio-button { border-color: rgb(230, 145, 48); color: rgb(255, 185, 91); }
+
+.chart-audio-import-layer { background-color: rgba(0, 2, 7, 0.9); }
+.chart-audio-import-panel {
+    width: 720px;
+    min-height: 610px;
+    padding: 28px 38px;
+    justify-content: flex-start;
+    border-color: rgb(230, 145, 48);
+    background-color: rgba(5, 10, 18, 0.99);
+}
+.chart-audio-import-title { margin-top: 7px; color: white; font-size: 31px; -unity-font-style: bold; }
+.chart-audio-file {
+    margin-top: 13px;
+    padding: 9px 12px;
+    color: rgb(73, 216, 255);
+    font-size: 13px;
+    -unity-font-style: bold;
+    background-color: rgba(9, 34, 47, 0.9);
+    border-width: 1px;
+    border-color: rgba(73, 216, 255, 0.5);
+    border-radius: 5px;
+}
+.chart-audio-import-copy { margin-top: 12px; color: rgb(173, 193, 208); font-size: 12px; white-space: normal; }
+.chart-audio-fields { margin-top: 15px; }
+.chart-audio-field-row { flex-direction: row; justify-content: space-between; }
+.chart-audio-field { width: 31.5%; margin-top: 10px; }
+.chart-audio-field--wide { width: 100%; }
+.chart-audio-field-label { margin-bottom: 5px; color: rgb(120, 192, 220); font-size: 9px; -unity-font-style: bold; letter-spacing: 1px; }
+.chart-audio-text-field { height: 38px; color: white; background-color: rgb(9, 19, 29); }
+.chart-audio-text-field .unity-text-input {
+    padding-left: 10px;
+    color: white;
+    background-color: rgb(9, 19, 29);
+    border-width: 1px;
+    border-color: rgb(52, 86, 108);
+    border-radius: 4px;
+}
+.chart-audio-text-field:focus .unity-text-input { border-color: rgb(73, 216, 255); }
+.chart-audio-error { min-height: 34px; margin-top: 12px; color: rgb(255, 178, 70); font-size: 11px; white-space: normal; }
+.chart-audio-actions { flex-direction: row; justify-content: flex-end; }
+.chart-audio-actions .modal-secondary, .chart-audio-actions .modal-primary { min-width: 190px; }
 
 .main-menu--compact .song-library-section { left: 6px; top: 8px; right: 6px; }
 .main-menu--compact .song-library-rail { width: 104px; min-width: 104px; }

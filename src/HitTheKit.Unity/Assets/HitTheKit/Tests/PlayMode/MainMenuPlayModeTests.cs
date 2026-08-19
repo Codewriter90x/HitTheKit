@@ -205,6 +205,74 @@ namespace HitTheKit.Unity.Tests
         }
 
         [UnityTest]
+        public IEnumerator Chart_creator_audio_import_opens_a_guided_metadata_form_without_exposing_the_local_path()
+        {
+            string audio = Path.Combine(Application.temporaryCachePath, "authoring-ui.wav");
+            WriteSilentWave(audio);
+            MainMenuController controller = null;
+            yield return LoadMainMenu(value => controller = value);
+            controller.ShowSongLibrary();
+
+            controller.BeginChartAuthoringAudio(audio);
+            yield return null;
+
+            VisualElement root = controller.GetComponent<UIDocument>().rootVisualElement;
+            Assert.That(controller.IsChartAudioImportVisible, Is.True);
+            Assert.That(root.Q<VisualElement>("chart-audio-import-overlay").resolvedStyle.display,
+                Is.EqualTo(DisplayStyle.Flex));
+            Assert.That(root.Q<Label>("chart-audio-file").text, Is.EqualTo("authoring-ui.wav"));
+            Assert.That(root.Q<Label>("chart-audio-file").text, Does.Not.Contain(Application.temporaryCachePath));
+            Assert.That(root.Q<TextField>("chart-audio-title").value, Is.EqualTo("authoring ui"));
+            Assert.That(root.Q<TextField>("chart-audio-artist").value, Is.Empty);
+            Assert.That(root.Q<TextField>("chart-audio-bpm").value, Is.Empty,
+                "Unknown timing must not be silently replaced with a default BPM.");
+            Assert.That(root.Q<TextField>("chart-audio-bars").value, Is.Empty);
+            Assert.That(root.Q<TextField>("chart-audio-beats").value, Is.Empty);
+            Assert.That(root.Q<Button>("chart-audio-start"), Is.Not.Null);
+            Assert.That(root.Q<Button>("chart-audio-cancel"), Is.Not.Null);
+
+            File.Delete(audio);
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator Audio_only_authoring_source_loads_the_real_dsp_audio_with_an_empty_chart()
+        {
+            string root = Path.Combine(Application.temporaryCachePath, "hitthekit-authoring-session-" +
+                System.Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(root);
+            string source = Path.Combine(root, "source.wav");
+            WriteSilentWave(source);
+            SongLibraryEntry song = new ChartAuthoringAudioImporter().Import(
+                new ChartAuthoringAudioRequest(source, "Authoring Song", "Local Artist", 120, 1, 4),
+                Path.Combine(root, "library"),
+                new System.DateTimeOffset(2026, 8, 19, 15, 0, 0, System.TimeSpan.Zero)).Song;
+            GameplaySessionContext.SelectChartCreator(song, 1.0, "easy");
+
+            AsyncOperation operation = SceneManager.LoadSceneAsync(MainMenuRoutes.GameplayScene, LoadSceneMode.Single);
+            while (!operation.isDone) yield return null;
+            var clock = Object.FindFirstObjectByType<HitTheKit.Unity.Audio.DspSongClockPrototype>();
+            float deadline = Time.realtimeSinceStartup + 4f;
+            while (clock.GeneratedClip == null && string.IsNullOrEmpty(clock.LoadError) &&
+                   Time.realtimeSinceStartup < deadline)
+                yield return null;
+
+            GameplayHighwayController gameplay = Object.FindFirstObjectByType<GameplayHighwayController>();
+            var timeline = Object.FindFirstObjectByType<HitTheKit.Unity.Charts.ChartTimelinePrototype>();
+            Assert.That(gameplay.CurrentSession.IsChartCreator, Is.True);
+            Assert.That(gameplay.CurrentSession.Chart, Is.EqualTo(GameplaySessionChart.AuthoringEmpty));
+            Assert.That(clock.ExternalAudioPath, Is.EqualTo(song.AudioPath));
+            Assert.That(clock.LoadError, Is.Null.Or.Empty);
+            Assert.That(clock.GeneratedClip, Is.Not.Null);
+            Assert.That(timeline.Chart.Notes, Is.Empty);
+            Assert.That(Object.FindFirstObjectByType<HitTheKit.Unity.Matching.HitMatchingPrototype>()
+                .Session.Notes, Is.Empty);
+
+            Directory.Delete(root, true);
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
         public IEnumerator Compact_song_library_keeps_rows_controls_and_actions_inside_their_panels()
         {
             MainMenuController controller = null;
@@ -508,6 +576,30 @@ namespace HitTheKit.Unity.Tests
             Assert.That(inner.yMin, Is.GreaterThanOrEqualTo(outer.yMin - PixelTolerance), description);
             Assert.That(inner.xMax, Is.LessThanOrEqualTo(outer.xMax + PixelTolerance), description);
             Assert.That(inner.yMax, Is.LessThanOrEqualTo(outer.yMax + PixelTolerance), description);
+        }
+
+        private static void WriteSilentWave(string path)
+        {
+            const int sampleRate = 8000;
+            const int sampleCount = 8000;
+            using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write(new[] { (byte)'R', (byte)'I', (byte)'F', (byte)'F' });
+                writer.Write(36 + sampleCount * 2);
+                writer.Write(new[] { (byte)'W', (byte)'A', (byte)'V', (byte)'E' });
+                writer.Write(new[] { (byte)'f', (byte)'m', (byte)'t', (byte)' ' });
+                writer.Write(16);
+                writer.Write((short)1);
+                writer.Write((short)1);
+                writer.Write(sampleRate);
+                writer.Write(sampleRate * 2);
+                writer.Write((short)2);
+                writer.Write((short)16);
+                writer.Write(new[] { (byte)'d', (byte)'a', (byte)'t', (byte)'a' });
+                writer.Write(sampleCount * 2);
+                for (int index = 0; index < sampleCount; index++) writer.Write((short)0);
+            }
         }
 
         private static IEnumerator LoadMainMenu(System.Action<MainMenuController> ready)

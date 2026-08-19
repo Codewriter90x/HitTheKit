@@ -268,19 +268,23 @@ namespace HitTheKit.Unity.Gameplay
             string folderPath,
             string chartPath,
             string manifestPath,
-            string packagePath)
+            string packagePath,
+            string localAudioPath)
         {
             SongId = songId;
             FolderPath = folderPath;
             ChartPath = chartPath;
             ManifestPath = manifestPath;
             PackagePath = packagePath;
+            LocalAudioPath = localAudioPath;
         }
         public string SongId { get; }
         public string FolderPath { get; }
         public string ChartPath { get; }
         public string ManifestPath { get; }
         public string PackagePath { get; }
+        public string LocalAudioPath { get; }
+        public bool IsLocallyPlayable => !string.IsNullOrWhiteSpace(LocalAudioPath);
     }
 
     public sealed class ChartCreatorExporter
@@ -292,7 +296,8 @@ namespace HitTheKit.Unity.Gameplay
             ChartCreatorMetadata metadata,
             ChartQuantization quantization,
             string libraryRoot,
-            DateTimeOffset createdAtUtc)
+            DateTimeOffset createdAtUtc,
+            string sourceAudioPath = null)
         {
             if (draft == null) throw new ArgumentNullException(nameof(draft));
             if (draft.Hits.Count == 0)
@@ -310,32 +315,52 @@ namespace HitTheKit.Unity.Gameplay
             string packagePath = Path.Combine(root, songId + HtkSongPackageService.Extension);
             string temporary = Path.Combine(root, $".hitthekit-chart-{Guid.NewGuid():N}");
             Directory.CreateDirectory(temporary);
-            bool destinationPublished = false;
+            bool packagePublished = false;
             try
             {
                 string chartJson = ChartCreatorJson.Serialize(draft, metadata.Difficulty, metadata.Bpm, quantization);
                 string chartPath = Path.Combine(temporary, "notes.json");
                 string manifestPath = Path.Combine(temporary, "song.json");
                 File.WriteAllText(chartPath, chartJson, Utf8WithoutBom);
-                File.WriteAllText(manifestPath, Manifest(songId, metadata), Utf8WithoutBom);
+                File.WriteAllText(manifestPath, Manifest(songId, metadata, null), Utf8WithoutBom);
 
-                // Validate both public formats before the atomic publish into HTKSongs.
+                // First validate and publish the shareable chart-only package. Local audio is
+                // added only to the private folder afterwards and never enters .htksong v1.
                 new ChartLoader().Load(chartJson, metadata.Difficulty);
                 new SongLibraryDiscovery().Parse(File.ReadAllText(manifestPath), temporary, SongLibraryOrigin.UserFolder);
+                new HtkSongPackageService().CreateChartOnlyPackage(temporary, packagePath);
+                packagePublished = true;
+
+                string localAudioPath = null;
+                if (!string.IsNullOrWhiteSpace(sourceAudioPath))
+                {
+                    string source = ChartAuthoringAudioImporter.ValidateSource(sourceAudioPath);
+                    string audioFileName = "source-audio" + Path.GetExtension(source).ToLowerInvariant();
+                    localAudioPath = Path.Combine(temporary, audioFileName);
+                    File.Copy(source, localAudioPath, false);
+                    File.WriteAllText(manifestPath, Manifest(songId, metadata, audioFileName), Utf8WithoutBom);
+                    SongLibraryEntry local = new SongLibraryDiscovery().Parse(
+                        File.ReadAllText(manifestPath),
+                        temporary,
+                        SongLibraryOrigin.UserFolder);
+                    if (!local.IsPlayable)
+                        throw new InvalidOperationException("The local recorded take did not become playable.");
+                }
+
                 Directory.Move(temporary, destination);
-                destinationPublished = true;
-                new HtkSongPackageService().CreateChartOnlyPackage(destination, packagePath);
                 return new ChartCreatorExportResult(
                     songId,
                     destination,
                     Path.Combine(destination, "notes.json"),
                     Path.Combine(destination, "song.json"),
-                    packagePath);
+                    packagePath,
+                    localAudioPath == null ? null : Path.Combine(destination, Path.GetFileName(localAudioPath)));
             }
             catch
             {
                 if (Directory.Exists(temporary)) Directory.Delete(temporary, true);
-                if (destinationPublished && Directory.Exists(destination)) Directory.Delete(destination, true);
+                if (Directory.Exists(destination)) Directory.Delete(destination, true);
+                if (packagePublished && File.Exists(packagePath)) File.Delete(packagePath);
                 throw;
             }
         }
@@ -351,8 +376,12 @@ namespace HitTheKit.Unity.Gameplay
             return value;
         }
 
-        private static string Manifest(string songId, ChartCreatorMetadata metadata)
+        private static string Manifest(string songId, ChartCreatorMetadata metadata, string audioFileName)
         {
+            string audio = string.IsNullOrWhiteSpace(audioFileName)
+                ? "  \"audioAvailability\": \"missing\",\n"
+                : "  \"audioAvailability\": \"available\",\n" +
+                  $"  \"audioFile\": \"{Escape(audioFileName)}\",\n";
             return "{\n" +
                    "  \"schemaVersion\": 1,\n" +
                    $"  \"id\": \"{Escape(songId)}\",\n" +
@@ -363,7 +392,7 @@ namespace HitTheKit.Unity.Gameplay
                    $"  \"beatsPerBar\": {metadata.BeatsPerBar},\n" +
                    "  \"difficultyHint\": \"Recorded performance · review before sharing\",\n" +
                    "  \"sortOrder\": 0,\n" +
-                   "  \"audioAvailability\": \"missing\",\n" +
+                   audio +
                    "  \"chartAvailability\": \"available\",\n" +
                    "  \"chartFile\": \"notes.json\"\n" +
                    "}\n";

@@ -426,6 +426,13 @@ namespace HitTheKit.Unity.Gameplay
             }
             currentInputLabel.text = $"{GameplayHighwayLanes.Find(input.Pad).Label}  ·  VELOCITY {input.Velocity}{timing}";
 
+            if (CurrentSession.IsChartCreator)
+            {
+                PlayDrum(input.Pad, input.Velocity);
+                SetJudgment("REC", "judgment--perfect");
+                return;
+            }
+
             GameplayAudioFeedbackDecision audioDecision = GameplayAudioFeedbackPolicy.ForInput(input, result);
             if (audioDecision.PlayDrum) PlayDrum(input.Pad, input.Velocity);
             if (audioDecision.PlayMistake) PlayMistake();
@@ -644,12 +651,15 @@ namespace HitTheKit.Unity.Gameplay
                 metadata,
                 quantization,
                 SongLibraryRuntime.UserRoot,
-                DateTimeOffset.UtcNow);
+                DateTimeOffset.UtcNow,
+                CurrentSession.AudioFilePath);
             LastChartExportPath = result.FolderPath;
             LastChartPackagePath = result.PackagePath;
             if (chartCreatorStatusLabel != null)
                 chartCreatorStatusLabel.text =
-                    $"SALVATO · {Path.GetFileName(result.PackagePath)} · COPIA IL PACCHETTO SU UN ALTRO MAC";
+                    result.IsLocallyPlayable
+                        ? $"SALVATO E PRONTO · {Path.GetFileName(result.PackagePath)} · AUDIO SOLO LOCALE"
+                        : $"SALVATO · {Path.GetFileName(result.PackagePath)} · AGGIUNGI AUDIO LOCALE";
             return result;
         }
 

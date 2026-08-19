@@ -95,6 +95,20 @@ The refresh button performs an explicit rescan. Discovery does not watch the
 filesystem continuously, allocate every frame, or access folders outside the
 two configured roots.
 
+## Local audio authoring
+
+The Song Library's **Import audio & create** action opens the macOS file picker
+for WAV/OGG content. After the player supplies title, artist and verified timing
+metadata, the importer copies the selected file into a new, never-overwritten
+folder under `~/Documents/HTKSongs`. The source file is not changed and its
+absolute path is not persisted in `song.json`.
+
+The resulting entry is intentionally audio-only: it is not playable as a normal
+song, but it can start Chart Creator with the existing DSP clock and an empty
+timeline. Once a take is saved, the local folder contains authorized audio plus
+the new chart and is playable immediately. Its sibling `.htksong` remains
+chart-only for safe transfer.
+
 ## Portable `.htksong` chart packages
 
 Chart Creator writes a portable chart-only package next to each recorded take.

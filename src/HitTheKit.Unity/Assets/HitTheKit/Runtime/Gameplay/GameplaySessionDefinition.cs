@@ -40,7 +40,8 @@ namespace HitTheKit.Unity.Gameplay
         Timekeeper,
         FirstGroove,
         SchoolLesson,
-        ExternalFile
+        ExternalFile,
+        AuthoringEmpty
     }
 
     public enum GameplayReturnTarget
@@ -114,6 +115,17 @@ namespace HitTheKit.Unity.Gameplay
                     throw new ArgumentException("External songs require a chart file.", nameof(chartFilePath));
                 if (string.IsNullOrWhiteSpace(audioFilePath))
                     throw new ArgumentException("External songs require an audio file.", nameof(audioFilePath));
+            }
+            else if (chart == GameplaySessionChart.AuthoringEmpty)
+            {
+                if (!isChartCreator || kind != GameplaySessionKind.FreePlay)
+                    throw new ArgumentException("An empty authoring timeline requires Chart Creator.", nameof(chart));
+                if (string.IsNullOrWhiteSpace(songId))
+                    throw new ArgumentException("Chart authoring requires a song ID.", nameof(songId));
+                if (!string.IsNullOrEmpty(chartFilePath))
+                    throw new ArgumentException("A new chart must not reference an existing chart file.", nameof(chartFilePath));
+                if (string.IsNullOrWhiteSpace(audioFilePath))
+                    throw new ArgumentException("Chart authoring requires imported audio.", nameof(audioFilePath));
             }
             else if (!string.IsNullOrEmpty(chartFilePath) || !string.IsNullOrEmpty(audioFilePath))
             {
@@ -254,6 +266,41 @@ namespace HitTheKit.Unity.Gameplay
             double speedMultiplier = 1.0,
             string difficulty = null)
         {
+            if (song == null) throw new ArgumentNullException(nameof(song));
+            if (!GameplaySongSpeeds.IsSupported(speedMultiplier))
+                throw new ArgumentOutOfRangeException(nameof(speedMultiplier));
+            if (!song.IsPlayable)
+            {
+                if (!song.CanAuthorChart)
+                    throw new InvalidOperationException($"Song '{song.Id}' has no valid local audio for chart authoring.");
+                string authoringDifficulty = string.IsNullOrWhiteSpace(difficulty) ? "easy" : difficulty;
+                if (!ContainsDifficulty(HitTheKit.Unity.Charts.ChartLoader.SupportedDifficulties, authoringDifficulty))
+                    throw new ArgumentOutOfRangeException(nameof(difficulty));
+                double effectiveBpm = song.Bpm.Value * speedMultiplier;
+                return new GameplaySessionDefinition(
+                    GameplaySessionKind.FreePlay,
+                    GameplaySessionChart.AuthoringEmpty,
+                    authoringDifficulty,
+                    speedMultiplier,
+                    effectiveBpm,
+                    song.Bars.Value,
+                    song.BeatsPerBar.Value,
+                    SongCountInBeats(effectiveBpm),
+                    false,
+                    theme,
+                    GameplayReturnTarget.SongLibrary,
+                    song.Title.ToUpperInvariant(),
+                    song.Artist.ToUpperInvariant(),
+                    $"{song.Artist.ToUpperInvariant()} · NUOVA CHART · {effectiveBpm:0.#} BPM · {speedMultiplier:0.##}×",
+                    "CHART CREATOR · ASCOLTA L'AUDIO E REGISTRA OGNI COLPO",
+                    "TORNA AI BRANI",
+                    null,
+                    song.Id,
+                    null,
+                    song.AudioPath,
+                    true);
+            }
+
             GameplaySessionDefinition source = Song(song, theme, speedMultiplier, difficulty);
             return new GameplaySessionDefinition(
                 source.Kind,
