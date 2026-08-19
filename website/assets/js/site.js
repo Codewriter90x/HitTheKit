@@ -35,11 +35,25 @@ function getSavedLanguage() {
     const value = localStorage.getItem("htk-lang");
     if (value === "en" || value === "it") return value;
   } catch {
-    // Fall through to the browser preference when storage is unavailable.
+    // A private or locked-down browser may make storage unavailable.
   }
 
+  return null;
+}
+
+function getBrowserLanguage() {
   const browserLanguage = navigator.languages?.[0] || navigator.language || "";
   return browserLanguage.toLowerCase().startsWith("it") ? "it" : "en";
+}
+
+function saveLanguage(language) {
+  try { localStorage.setItem("htk-lang", language); } catch { /* storage can be unavailable */ }
+}
+
+function routeForLanguage(language) {
+  const suffix = `${window.location.search}${window.location.hash}`;
+  if (language === "en") return `en/${suffix}`;
+  return `../${suffix}`;
 }
 
 function applyLanguage(language) {
@@ -61,7 +75,6 @@ function applyLanguage(language) {
       ? "HitTheKit è il rhythm game open source per batteria elettronica: timing deterministico, lezioni progressive e supporto CoreMIDI su macOS."
       : "HitTheKit is the open-source rhythm game for electronic drums: deterministic timing, progressive lessons, and CoreMIDI support on macOS.";
   }
-  try { localStorage.setItem("htk-lang", language); } catch { /* storage can be unavailable */ }
 }
 
 function setMenu(open) {
@@ -75,7 +88,9 @@ function setMenu(open) {
 }
 
 languageButton.addEventListener("click", () => {
-  applyLanguage(document.documentElement.lang === "it" ? "en" : "it");
+  const language = document.documentElement.lang === "it" ? "en" : "it";
+  saveLanguage(language);
+  window.location.assign(routeForLanguage(language));
 });
 
 menuButton.addEventListener("click", () => {
@@ -131,4 +146,13 @@ if ("IntersectionObserver" in window) {
   pageSections.forEach((section) => sectionObserver.observe(section));
 }
 
-applyLanguage(getSavedLanguage());
+const pageLanguage = document.documentElement.dataset.locale === "en" ? "en" : "it";
+const preferredLanguage = getSavedLanguage() || getBrowserLanguage();
+
+// The root is the canonical Italian entry point. A first-time non-Italian
+// visitor is sent to the stable English route; direct /en/ visits remain stable.
+if (pageLanguage === "it" && preferredLanguage === "en") {
+  window.location.replace(routeForLanguage("en"));
+} else {
+  applyLanguage(pageLanguage);
+}
