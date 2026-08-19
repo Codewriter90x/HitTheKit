@@ -308,7 +308,7 @@
                 </ui:VisualElement>
                 <ui:VisualElement class="player-settings-block">
                     <ui:Label text="INFORMAZIONI &amp; DATI" class="modal-eyebrow" />
-                    <ui:Label name="about-value" text="HitTheKit 0.5.0 · GPL-3.0 · nessuna telemetria applicativa" class="theme-settings-description" />
+                    <ui:Label name="about-value" text="HitTheKit 0.5.0 · MPL-2.0 · nessuna telemetria applicativa" class="theme-settings-description" />
                     <ui:Button name="reset-preferences" text="RIPRISTINA IMPOSTAZIONI" class="setting-row setting-row--compact" />
                     <ui:Button name="reset-local-data" text="CANCELLA PROGRESSI E CONFIGURAZIONE" class="setting-row setting-row--compact setting-row--danger" />
                     <ui:Label name="reset-status" class="progress-settings-status" />

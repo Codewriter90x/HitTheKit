@@ -79,7 +79,8 @@ Hardware observations must not be generalized beyond the tested models.
 1. confirm the bundled catalog contains only authorized original material;
 2. refresh asset provenance and third-party notices from the exact candidate;
 3. review dependency and CodeQL results;
-4. obtain the required professional GPL/Unity and contribution-model review;
+4. validate MPL compliance, current Unity distribution terms, and the
+   contribution model for the exact candidate;
 5. confirm no secrets, certificates, private captures, or personal data are in
    the candidate; and
 6. decide the clean-history public repository boundary.

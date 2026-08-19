@@ -4,9 +4,9 @@ Thank you for helping make HitTheKit more reliable, accessible, and useful.
 
 Before participating, read the [Code of Conduct](CODE_OF_CONDUCT.md),
 [support guide](SUPPORT.md), and [project governance](GOVERNANCE.md).
-HitTheKit is intended to remain available under both an open-source GPL license
-and a possible separate commercial-license path. That model requires clear
-copyright permissions for every substantial contribution.
+HitTheKit is intended to remain available under both the open-source MPL-2.0
+Community license and a possible separate commercial-license path. That model
+requires clear copyright permissions for every substantial contribution.
 
 ## Current contribution policy
 

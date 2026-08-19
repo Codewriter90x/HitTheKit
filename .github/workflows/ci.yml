@@ -34,6 +34,8 @@ jobs:
           persist-credentials: false
       - name: Validate public-readiness contracts
         run: bash tests/scripts/public-readiness-contract-tests.sh
+      - name: Validate MPL licensing contracts
+        run: bash tests/scripts/licensing-contract-tests.sh
       - name: Validate website localization contracts
         run: bash tests/scripts/website-localization-contract-tests.sh
       - name: Validate public Wiki contracts

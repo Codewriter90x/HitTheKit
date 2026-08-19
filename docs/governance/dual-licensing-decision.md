@@ -1,8 +1,13 @@
 # Dual-Licensing Decision Record
 
-Status: `PROPOSED_PENDING_LEGAL_REVIEW`
+Status: `SUPERSEDED_BY_MPL_COMMUNITY_LICENSE_DECISION`
 
 Date: 2026-08-05
+
+> Historical record. The project subsequently adopted MPL-2.0 as its Community
+> license. See
+> [MPL Community License Decision](mpl-community-license-decision.md). Existing
+> GPL copies retain the rights already granted to their recipients.
 
 ## Decision
 

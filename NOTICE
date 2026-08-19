@@ -3,18 +3,18 @@ HitTheKit public source notice
 Copyright (c) 2026 HitTheKit contributors and the respective rightsholders
 identified in COPYRIGHT.md.
 
-Original HitTheKit source code is made available under GPL-3.0-only. See
-LICENSE. Third-party software and tools retain their own licenses and notices;
-see THIRD_PARTY_NOTICES.md.
+Unless stated otherwise, original HitTheKit source code is made available under
+MPL-2.0. See LICENSE and LICENSING.md. Third-party software and tools retain
+their own licenses and notices; see THIRD_PARTY_NOTICES.md.
 
 This source repository contains no commercial recordings, stems, MIDI files,
 lyrics, transcriptions, album artwork, or download links. Player-owned local
 content is outside the repository and remains the player's responsibility.
 
-The initial public publication is source-and-website only. No Unity player
-binary is approved for public distribution. Unity-runtime redistribution and
-the proposed separate commercial-license path remain subject to qualified
-legal review and are not granted by this notice.
+No Unity player binary is approved merely by this notice. Each binary candidate
+must independently pass the Unity terms, dependency, provenance, signing,
+platform-testing, and release gates. The proposed separate commercial-license
+path requires a written agreement and is not granted by this notice.
 
 HitTheKit is independent and is not sponsored, endorsed, certified by, or
 affiliated with Unity Technologies, Apple Inc., or referenced hardware

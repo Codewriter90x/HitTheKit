@@ -10,6 +10,11 @@ Baseline: `44d47f3acc8e6f305fb95fc8f9a0baae06c57f84`
 > Current visual-asset evidence is maintained in
 > [`ASSET_PROVENANCE.md`](ASSET_PROVENANCE.md), and every public release still
 > requires a fresh exact-commit legal and dependency review.
+>
+> The GPL findings below describe the audited 2026-08-05 baseline and are not
+> the current Community license. HitTheKit subsequently adopted MPL-2.0; see
+> [the current licensing overview](../../LICENSING.md) and
+> [MPL Community License Decision](../governance/mpl-community-license-decision.md).
 
 ## Scope and limitations
 
