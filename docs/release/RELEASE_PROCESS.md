@@ -32,6 +32,14 @@ release notes.
 
 Use Unity `6000.5.6f1` and the exact candidate commit:
 
+The canonical local commands and the relationship between automated and manual
+evidence are documented in
+[`unity-test-gate.md`](../development/unity-test-gate.md). Automated Unity jobs
+remain disabled until the repository variable `UNITY_CI_ENABLED` is explicitly
+set to `true` after valid license secrets have been installed. Pull requests
+from forks must provide maintainer-generated manual evidence because repository
+secrets are intentionally unavailable to untrusted fork workflows.
+
 1. synchronize the core assembly;
 2. build the current CoreMIDI plug-in on macOS;
 3. run all Unity EditMode tests;
@@ -97,9 +105,11 @@ The release record must include:
 
 In the public repository, dispatch `.github/workflows/source-release.yml` for
 the approved exact version to create an attested, rights-clean source snapshot.
-Verify the downloaded artifact with:
+The artifact contains the snapshot, `SHA256SUMS`, and
+`RELEASE-EVIDENCE.txt`. Verify the downloaded artifact with:
 
 ```sh
+shasum -a 256 -c SHA256SUMS
 gh attestation verify HitTheKit-source-0.5.0.tar.gz -R Codewriter90x/HitTheKit
 ```
 

@@ -21,3 +21,14 @@ Descrivi il comportamento modificato e il motivo.
 ## Evidenza manuale
 
 Indica sistema operativo, versione Unity, dispositivo di input e risultato.
+Per modifiche Unity, registra separatamente i totali EditMode e PlayMode usando
+il gate descritto in `docs/development/unity-test-gate.md`. Se il job automatico
+e disattivato o non riceve i secret nelle PR da fork, questa evidenza e
+obbligatoria prima del merge.
+
+- Commit testato:
+- Unity Editor:
+- Sistema/architettura:
+- EditMode (passed/failed/skipped):
+- PlayMode (passed/failed/skipped):
+- Motivo di eventuali test non eseguiti:

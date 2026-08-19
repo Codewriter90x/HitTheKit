@@ -41,6 +41,7 @@ for path in \
   docs/legal/ASSET_PROVENANCE.md \
   docs/legal/ASSET_PROVENANCE.sha256 \
   docs/development/windows-playtest-package.md \
+  docs/development/unity-test-gate.md \
   docs/release/PUBLIC_RELEASE_CHECKLIST.md \
   docs/release/RELEASE_PROCESS.md \
   scripts/package-game-windows-x64.sh \
@@ -50,6 +51,15 @@ for path in \
   tests/scripts/windows-packaging-contract-tests.sh; do
   [ -s "$path" ] || fail "required public file is missing or empty: $path"
 done
+
+grep -Fq "vars.UNITY_CI_ENABLED == 'true'" .github/workflows/ci.yml || \
+  fail "Unity CI must stay behind the explicit activation variable"
+grep -Fq 'test-mode: [editmode, playmode]' .github/workflows/ci.yml || \
+  fail "Unity CI must define both EditMode and PlayMode"
+grep -Fq 'languages: c-cpp' .github/workflows/codeql.yml || \
+  fail "CodeQL must analyze the native C++ boundary"
+grep -Fq 'Verify source snapshot checksum' .github/workflows/source-release.yml || \
+  fail "source release workflow must verify its checksum manifest"
 
 case "$PUBLICATION_STATE" in
   private-preparation)
