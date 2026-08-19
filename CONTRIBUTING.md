@@ -62,6 +62,14 @@ mechanism may be introduced after professional legal review. This document is
 not a CLA, does not transfer copyright, and does not create an implied
 assignment or commercial-license grant.
 
+A Harmony-based copyright-license CLA is currently being evaluated in
+[`docs/legal/CONTRIBUTOR_LICENSE_AGREEMENT_DRAFT.md`](docs/legal/CONTRIBUTOR_LICENSE_AGREEMENT_DRAFT.md),
+with unresolved adoption gates recorded in
+[`docs/legal/CLA_ADOPTION_CHECKLIST.md`](docs/legal/CLA_ADOPTION_CHECKLIST.md).
+Both documents are non-operative drafts. Do not sign or rely on them. Opening a
+pull request, issue, or discussion does not accept the draft, and no CLA
+automation or electronic acceptance process is active.
+
 Until a reviewed mechanism exists, maintainers should not merge a substantial
 external code or asset contribution merely because it was submitted under the
 repository's Community license. The required rights for the proposed

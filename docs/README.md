@@ -68,6 +68,8 @@ without creating an unreviewed second source of truth.
 ## Rights and governance
 
 - [Asset provenance](legal/ASSET_PROVENANCE.md)
+- [Contributor License Agreement draft](legal/CONTRIBUTOR_LICENSE_AGREEMENT_DRAFT.md)
+- [CLA adoption checklist](legal/CLA_ADOPTION_CHECKLIST.md)
 - [Dual-licensing readiness report](legal/dual-licensing-readiness-report.md)
 - [Dual-licensing decision record](governance/dual-licensing-decision.md)
 - [Commercial-license draft](legal/COMMERCIAL-LICENSE-DRAFT.md)
