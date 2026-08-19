@@ -49,6 +49,7 @@ without creating an unreviewed second source of truth.
 - [Performance error map](development/performance-error-map.md)
 - [Auto Tempo Coach](development/auto-tempo-coach.md)
 - [Audio and latency sound check](development/audio-latency-sound-check.md)
+- [Ghost Replay](development/ghost-replay.md)
 - [Demo-song vertical slice](development/demo-song-vertical-slice.md)
 - [Keyboard hit matching](development/keyboard-hit-matching.md)
 - [Pad visuals](development/pad-visuals.md)

@@ -12,6 +12,7 @@ namespace HitTheKit.Unity.Gameplay
         public const float ImpactZoneHalfHeight = 9f;
         public const int NoteGlowPasses = 3;
         private IReadOnlyList<TimelineNote> notes = Array.Empty<TimelineNote>();
+        private IReadOnlyList<GhostReplayHit> ghostHits = Array.Empty<GhostReplayHit>();
         private double songPositionSeconds;
         private double lookAheadSeconds = 4;
         private GameplayPresentationTheme theme;
@@ -26,6 +27,7 @@ namespace HitTheKit.Unity.Gameplay
 
         public GameplayPresentationTheme Theme => theme;
         public IReadOnlyList<TimelineNote> Notes => notes;
+        public IReadOnlyList<GhostReplayHit> GhostHits => ghostHits;
         public double SongPositionSeconds => songPositionSeconds;
 
         public void SetTheme(GameplayPresentationTheme value)
@@ -39,9 +41,11 @@ namespace HitTheKit.Unity.Gameplay
             double positionSeconds,
             double lookAhead,
             DrumPad? highlightedPad,
-            float highlightedIntensity)
+            float highlightedIntensity,
+            IReadOnlyList<GhostReplayHit> replayHits = null)
         {
             notes = upcomingNotes ?? Array.Empty<TimelineNote>();
+            ghostHits = replayHits ?? Array.Empty<GhostReplayHit>();
             songPositionSeconds = IsFinite(positionSeconds) ? positionSeconds : 0;
             lookAheadSeconds = IsFinite(lookAhead) && lookAhead > 0 ? lookAhead : 4;
             pulsePad = highlightedPad;
@@ -106,6 +110,16 @@ namespace HitTheKit.Unity.Gameplay
                     new Color(palette.Grid.r, palette.Grid.g, palette.Grid.b, palette.Grid.a * 0.34f), 0.8f);
             }
 
+            for (int index = 0; index < ghostHits.Count; index++)
+            {
+                GhostReplayHit hit = ghostHits[index];
+                if (hit == null) continue;
+                double delta = hit.TimeSeconds - songPositionSeconds;
+                if (delta < -0.16 || delta > lookAheadSeconds) continue;
+                DrawGhost(painter, hit.Pad, delta,
+                    horizonY, strikeY, topLeft, topRight, bottomLeft, bottomRight);
+            }
+
             for (int index = 0; index < notes.Count; index++)
             {
                 TimelineNote note = notes[index];
@@ -129,6 +143,46 @@ namespace HitTheKit.Unity.Gameplay
                 new Vector2(bottomRight + 5, strikeY),
                 pulseIntensity > 0.01f ? Color.Lerp(palette.Strike, Color.white, pulseIntensity) : palette.Strike,
                 pulseIntensity > 0.01f ? 5.5f : 3.6f);
+        }
+
+        private void DrawGhost(
+            Painter2D painter,
+            DrumPad pad,
+            double delta,
+            float horizonY,
+            float strikeY,
+            float topLeft,
+            float topRight,
+            float bottomLeft,
+            float bottomRight)
+        {
+            float normalized = 1f - Mathf.Clamp01((float)(delta / lookAheadSeconds));
+            float eased = normalized * normalized;
+            float y = Mathf.Lerp(horizonY, strikeY, eased);
+            float x;
+            if (pad == DrumPad.Kick)
+            {
+                x = Mathf.Lerp((topLeft + topRight) * 0.5f, (bottomLeft + bottomRight) * 0.5f, eased);
+            }
+            else
+            {
+                int laneIndex = GameplayHighwayLanes.HighwayIndex(pad);
+                if (laneIndex < 0) return;
+                float ratio = (laneIndex + 0.5f) / GameplayHighwayLanes.HighwayLaneCount;
+                x = Mathf.Lerp(Mathf.Lerp(topLeft, topRight, ratio), Mathf.Lerp(bottomLeft, bottomRight, ratio), eased);
+            }
+
+            float radiusX = Mathf.Lerp(4f, pad == DrumPad.Kick ? 27f : 18f, eased);
+            float radiusY = Mathf.Lerp(3f, 11f, eased);
+            var center = new Vector2(x, y);
+            Color outline = new Color(1f, 1f, 1f, 0.54f);
+            StrokeRegularPolygon(painter, center, radiusX, radiusY, 10, outline, 1.8f);
+            StrokeLine(painter,
+                new Vector2(center.x - radiusX * 0.45f, center.y - radiusY * 0.45f),
+                new Vector2(center.x + radiusX * 0.45f, center.y + radiusY * 0.45f), outline, 1.4f);
+            StrokeLine(painter,
+                new Vector2(center.x - radiusX * 0.45f, center.y + radiusY * 0.45f),
+                new Vector2(center.x + radiusX * 0.45f, center.y - radiusY * 0.45f), outline, 1.4f);
         }
 
         private void DrawNote(

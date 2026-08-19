@@ -54,6 +54,7 @@ namespace HitTheKit.Unity.Gameplay
         private Label environmentTitleLabel;
         private Label environmentSubtitleLabel;
         private Label currentInputLabel;
+        private Label ghostStatusLabel;
         private Label deviceLabel;
         private Label keyGuideCymbalsLabel;
         private Label keyGuideTomsLabel;
@@ -67,6 +68,7 @@ namespace HitTheKit.Unity.Gameplay
         private Button resultRestartButton;
         private Button resultMenuButton;
         private Button resultApplyCalibrationButton;
+        private Button resultGhostButton;
         private Button resultPracticeWeakestButton;
         private Button autoTempoAdvanceButton;
         private Button practicePreviousSectionButton;
@@ -125,6 +127,7 @@ namespace HitTheKit.Unity.Gameplay
         private readonly TimingCalibrationAdvisor keyboardCalibration = new TimingCalibrationAdvisor();
         private readonly TimingCalibrationAdvisor midiCalibration = new TimingCalibrationAdvisor();
         private readonly PracticePerformanceAnalyzer performanceAnalyzer = new PracticePerformanceAnalyzer();
+        private readonly PerformanceGhostReplay ghostReplay = new PerformanceGhostReplay();
         private PracticeErrorMapAnalyzer errorMapAnalyzer;
         private PracticeErrorCell weakestPracticeError;
         private DrumInputSource lastCalibrationSource = DrumInputSource.Keyboard;
@@ -173,6 +176,8 @@ namespace HitTheKit.Unity.Gameplay
         public string LastChartPackagePath { get; private set; }
         public int EditableChartNoteCount => chartDraftEditor?.Notes.Count ?? 0;
         public PracticeErrorCell WeakestPracticeError => weakestPracticeError;
+        public IReadOnlyList<GhostReplayHit> GhostHits => ghostReplay.Ghost;
+        public int CurrentGhostTakeHitCount => ghostReplay.CurrentHitCount;
 
         private void Awake()
         {
@@ -304,6 +309,7 @@ namespace HitTheKit.Unity.Gameplay
             environmentTitleLabel = root.Q<Label>("environment-title");
             environmentSubtitleLabel = root.Q<Label>("environment-subtitle");
             currentInputLabel = root.Q<Label>("current-input");
+            ghostStatusLabel = root.Q<Label>("ghost-status");
             deviceLabel = root.Q<Label>("device-status");
             keyGuideCymbalsLabel = root.Q<Label>("key-guide-cymbals");
             keyGuideTomsLabel = root.Q<Label>("key-guide-toms");
@@ -316,6 +322,7 @@ namespace HitTheKit.Unity.Gameplay
             resultRestartButton = root.Q<Button>("result-restart-button");
             resultMenuButton = root.Q<Button>("result-menu-button");
             resultApplyCalibrationButton = root.Q<Button>("result-apply-calibration");
+            resultGhostButton = root.Q<Button>("result-ghost-restart");
             resultPracticeWeakestButton = root.Q<Button>("result-practice-weakest");
             autoTempoAdvanceButton = root.Q<Button>("auto-tempo-advance");
             practicePreviousSectionButton = root.Q<Button>("practice-previous-section");
@@ -466,7 +473,11 @@ namespace HitTheKit.Unity.Gameplay
             float pulse = latestPulsePad.HasValue && pulseDeadlines.TryGetValue(latestPulsePad.Value, out float deadline)
                 ? Mathf.Clamp01((deadline - Time.unscaledTime) / PulseDurationSeconds)
                 : 0;
-            surface.SetFrame(upcoming, position, HighwayLookAheadSeconds, latestPulsePad, pulse);
+            surface.SetFrame(upcoming, position, HighwayLookAheadSeconds, latestPulsePad, pulse, ghostReplay.Ghost);
+            if (ghostStatusLabel != null)
+                ghostStatusLabel.text = ghostReplay.HasGhost
+                    ? $"GHOST ATTIVO · {ghostReplay.Ghost.Count} COLPI"
+                    : "GHOST · COMPLETA UN TENTATIVO";
             if (showInstructionalKit)
                 kitSurface?.SetFrame(upcoming, position, KitPreparationSeconds, latestPulsePad, pulse);
             if (showInstructionalKit && kitGuidanceLabel != null && kitSurface != null)
@@ -494,6 +505,7 @@ namespace HitTheKit.Unity.Gameplay
         private void HandleInputProcessed(DrumInputEvent input, HitResult result)
         {
             if (CurrentSession.IsChartCreator) chartRecording?.Record(input);
+            else CaptureGhostHit(input, result);
             latestPulsePad = input.Pad;
             pulseDeadlines[input.Pad] = Time.unscaledTime + PulseDurationSeconds;
             lastCalibrationSource = input.Source == DrumInputSource.Midi
@@ -531,6 +543,9 @@ namespace HitTheKit.Unity.Gameplay
                 judgment += $" · {FormatDelta(result.DeltaSeconds.Value)}";
             SetJudgment(judgment, $"judgment--{result.Grade.ToString().ToLowerInvariant()}");
         }
+
+        public bool CaptureGhostHit(DrumInputEvent input, HitResult result) =>
+            ghostReplay.Record(input.SongTimeSeconds, input.Pad, input.Velocity, result?.Grade);
 
         private void HandleHitResolved(HitResult result)
         {
@@ -624,6 +639,7 @@ namespace HitTheKit.Unity.Gameplay
             performanceAnalyzer.Reset();
             errorMapAnalyzer?.Reset();
             weakestPracticeError = null;
+            ghostReplay.ResetCurrent();
             if (metronomeSource != null) metronomeSource.Stop();
             metronomeScheduled = false;
             pulseDeadlines.Clear();
@@ -874,6 +890,13 @@ namespace HitTheKit.Unity.Gameplay
                 RenderErrorMap();
                 RenderAutoTempoRecommendation(matchingSnapshot, score);
                 RenderCalibrationRecommendation();
+                if (resultGhostButton != null)
+                {
+                    resultGhostButton.SetEnabled(ghostReplay.CurrentHitCount > 0);
+                    resultGhostButton.text = ghostReplay.CurrentHitCount > 0
+                        ? $"RIPROVA CON GHOST · {ghostReplay.CurrentHitCount} COLPI"
+                        : "GHOST NON DISPONIBILE";
+                }
                 SetDisplayed(chartCreatorResults, false);
             }
             SetDisplayed(resultsOverlay, true);
@@ -1097,6 +1120,7 @@ namespace HitTheKit.Unity.Gameplay
             if (resultRestartButton != null) resultRestartButton.clicked += RestartRun;
             if (resultMenuButton != null) resultMenuButton.clicked += ReturnToMainMenu;
             if (resultApplyCalibrationButton != null) resultApplyCalibrationButton.clicked += ApplyCalibrationRecommendation;
+            if (resultGhostButton != null) resultGhostButton.clicked += BeginGhostReplayFromButton;
             if (resultPracticeWeakestButton != null) resultPracticeWeakestButton.clicked += PracticeWeakestArea;
             if (autoTempoAdvanceButton != null) autoTempoAdvanceButton.clicked += ApplyAutoTempoRecommendation;
             if (practicePreviousSectionButton != null) practicePreviousSectionButton.clicked += SelectPreviousPracticeSection;
@@ -1126,6 +1150,7 @@ namespace HitTheKit.Unity.Gameplay
             if (resultRestartButton != null) resultRestartButton.clicked -= RestartRun;
             if (resultMenuButton != null) resultMenuButton.clicked -= ReturnToMainMenu;
             if (resultApplyCalibrationButton != null) resultApplyCalibrationButton.clicked -= ApplyCalibrationRecommendation;
+            if (resultGhostButton != null) resultGhostButton.clicked -= BeginGhostReplayFromButton;
             if (resultPracticeWeakestButton != null) resultPracticeWeakestButton.clicked -= PracticeWeakestArea;
             if (autoTempoAdvanceButton != null) autoTempoAdvanceButton.clicked -= ApplyAutoTempoRecommendation;
             if (practicePreviousSectionButton != null) practicePreviousSectionButton.clicked -= SelectPreviousPracticeSection;
@@ -1146,6 +1171,15 @@ namespace HitTheKit.Unity.Gameplay
             if (chartWaveformPreviewButton != null) chartWaveformPreviewButton.clicked -= PreviewChartWaveform;
             if (chartWaveformStopButton != null) chartWaveformStopButton.clicked -= StopChartWaveformPreview;
         }
+
+        public bool BeginGhostReplay()
+        {
+            if (CurrentSession.IsChartCreator || !ghostReplay.CommitCurrentTake()) return false;
+            RestartRun();
+            return true;
+        }
+
+        private void BeginGhostReplayFromButton() => BeginGhostReplay();
 
         private void ConfigureChartNoteEditorView()
         {
