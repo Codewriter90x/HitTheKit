@@ -36,9 +36,9 @@ remotes; do not rely on the temporary rename redirect.
 - the exact source commit is approved;
 - the initial publication is source-and-website only;
 - the technical rights/provenance audit and source contracts are green;
-- unresolved Unity-runtime/GPL and commercial-license questions are disclosed,
-  with qualified legal review still required before public binaries or a
-  separate commercial license;
+- MPL-2.0 is the current Community license, while Unity-runtime terms,
+  exact-candidate notices, and the commercial-license agreement remain
+  separately gated before public binaries or commercial licensing;
 - the worktree is clean;
 - historical releases remain private and are not linked as current downloads;
 - the target owner, repository name, visibility, and maintainer identity are

@@ -31,6 +31,9 @@ resolve_identity() {
   fail "usage: $0 <notarized-HitTheKit.app> <output.dmg>"
 [[ "$APP_PATH" == *.app ]] || fail "input must be an .app bundle"
 [ -d "$APP_PATH/Contents" ] || fail "app bundle does not exist or is invalid: $APP_PATH"
+LEGAL_SOURCE="$APP_PATH/Contents/Resources/Legal"
+[ -f "$LEGAL_SOURCE/SOURCE-CODE.txt" ] ||
+  fail "app bundle lacks the MPL source disclosure: $LEGAL_SOURCE/SOURCE-CODE.txt"
 [[ "$OUTPUT_DMG" == *.dmg ]] || fail "output must use the .dmg extension"
 [ ! -e "$OUTPUT_DMG" ] || fail "output already exists: $OUTPUT_DMG"
 
@@ -59,6 +62,7 @@ trap cleanup EXIT INT TERM
 
 mkdir -p "$STAGE_ROOT"
 ditto "$APP_PATH" "$STAGE_ROOT/HitTheKit.app"
+ditto "$LEGAL_SOURCE" "$STAGE_ROOT/Legal"
 ln -s /Applications "$STAGE_ROOT/Applications"
 hdiutil create -quiet -volname "HitTheKit" -srcfolder "$STAGE_ROOT" -format UDZO "$TEMP_DMG"
 hdiutil verify "$TEMP_DMG" >/dev/null

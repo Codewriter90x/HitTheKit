@@ -14,7 +14,9 @@ Build and package it with Unity `6000.5.6f1`:
 The script builds the native plug-in, synchronizes Core, invokes the checked-in
 Unity build method, embeds the arm64 plug-in, applies an ad-hoc signature,
 verifies the bundle, and creates a resource-fork-safe ZIP under
-`artifacts/game/`.
+`artifacts/game/`. The application and ZIP include `Legal/` with the MPL text,
+project and third-party notices, and `SOURCE-CODE.txt`, which identifies the
+exact public Git revision corresponding to the build.
 
 This playtest packaging is intentionally not a production distribution flow.
 Unity gives the local build an ad-hoc signature, but downloading it on another

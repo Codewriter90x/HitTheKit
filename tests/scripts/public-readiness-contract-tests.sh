@@ -52,6 +52,9 @@ for path in \
   [ -s "$path" ] || fail "required public file is missing or empty: $path"
 done
 
+[ -s tests/scripts/licensing-contract-tests.sh ] ||
+  fail "required public file is missing or empty: tests/scripts/licensing-contract-tests.sh"
+
 grep -Fq "vars.UNITY_CI_ENABLED == 'true'" .github/workflows/ci.yml || \
   fail "Unity CI must stay behind the explicit activation variable"
 grep -Fq 'test-mode: [editmode, playmode]' .github/workflows/ci.yml || \
@@ -115,5 +118,6 @@ grep -Eq 'DO NOT PUBLISH YET' docs/release/0.5.0-release-notes-draft.md || \
   fail "draft release notes must retain the publication gate"
 
 bash tests/scripts/asset-provenance-contract-tests.sh
+bash tests/scripts/licensing-contract-tests.sh
 
 echo "PUBLIC_READINESS_CONTRACTS_OK version=$VERSION_VALUE state=$PUBLICATION_STATE"

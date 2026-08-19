@@ -15,8 +15,8 @@ documented, and represented honestly in the release notes.
   reduced motion;
 - publish screenshots, checksums, known limitations, and reproducible release
   notes from the exact candidate commit; and
-- complete professional review of GPL, Unity distribution, contribution, and
-  commercial-licensing terms.
+- validate the MPL-based Unity distribution, contribution, and
+  commercial-licensing terms for the exact release candidate.
 
 ## Next: broader compatibility and confidence
 
