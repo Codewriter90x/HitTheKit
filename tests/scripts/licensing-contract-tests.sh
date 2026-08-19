@@ -38,6 +38,12 @@ grep -Fq 'MPL-2.0 · public source, binaries under validation' website/en/index.
   fail "English website license status is stale"
 grep -Fq 'MPL-2.0 · sorgenti pubblici, binari in validazione' website/index.html ||
   fail "Italian website license status is stale"
+grep -Fq 'SOURCE-CODE.txt' scripts/install-distribution-notices.sh ||
+  fail "binary packaging lacks an exact-source disclosure"
+grep -Fq 'install-distribution-notices.sh' scripts/build-macos-distribution-app.sh ||
+  fail "macOS distribution build does not embed legal notices"
+grep -Fq 'install-distribution-notices.sh' scripts/package-game-windows-x64.sh ||
+  fail "Windows package does not embed legal notices"
 
 if rg -n 'HitTheKit-GPL-3\.0\.txt|license-GPL--3\.0' README.md NOTICE scripts src website docs/wiki; then
   fail "an operative GPL label remains outside historical records"

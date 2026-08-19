@@ -1,8 +1,8 @@
-#!/bin/sh
-set -eu
+#!/bin/bash
+set -euo pipefail
 
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-REPOSITORY_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
+SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
+REPOSITORY_ROOT=$(CDPATH='' cd -- "$SCRIPT_DIR/.." && pwd)
 UNITY_PATH=${UNITY_PATH:-/Applications/Unity/Hub/Editor/6000.5.6f1/Unity.app/Contents/MacOS/Unity}
 BUILD_VERSION=${1:-0.1.0}
 OUTPUT_ROOT=${2:-"$REPOSITORY_ROOT/artifacts/game/macos-arm64-$BUILD_VERSION"}
@@ -19,6 +19,15 @@ fi
 if [ -e "$OUTPUT_ROOT" ]; then
   echo "Output directory already exists: $OUTPUT_ROOT" >&2
   exit 3
+fi
+
+SOURCE_COMMIT=${HITTHEKIT_SOURCE_COMMIT:-}
+if [ -z "$SOURCE_COMMIT" ]; then
+  [ -z "$(git -C "$REPOSITORY_ROOT" status --porcelain)" ] || {
+    echo "The playtest source must be committed and clean before packaging." >&2
+    exit 4
+  }
+  SOURCE_COMMIT=$(git -C "$REPOSITORY_ROOT" rev-parse HEAD)
 fi
 
 mkdir -p "$OUTPUT_ROOT"
@@ -51,11 +60,19 @@ cp "$SOURCE_COREMIDI_PLUGIN" "$COREMIDI_PLUGIN"
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $BUILD_VERSION" "$APP_PATH/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_VERSION" "$APP_PATH/Contents/Info.plist"
 "$REPOSITORY_ROOT/scripts/apply-macos-app-icon.sh" "$APP_PATH"
+HITTHEKIT_SOURCE_COMMIT="$SOURCE_COMMIT" \
+  "$REPOSITORY_ROOT/scripts/install-distribution-notices.sh" \
+  "$APP_PATH/Contents/Resources/Legal" "$BUILD_VERSION"
 BINARY_NAME=$(/usr/libexec/PlistBuddy -c "Print :CFBundleExecutable" "$APP_PATH/Contents/Info.plist")
 MAIN_BINARY="$APP_PATH/Contents/MacOS/$BINARY_NAME"
 
-codesign --force --sign - "$COREMIDI_PLUGIN"
-codesign --force --deep --sign - "$APP_PATH"
+while IFS= read -r -d '' candidate; do
+  [ "$candidate" != "$MAIN_BINARY" ] || continue
+  if file -b "$candidate" | grep -q 'Mach-O'; then
+    codesign --force --sign - "$candidate"
+  fi
+done < <(find "$APP_PATH/Contents" -type f -print0)
+codesign --force --sign - "$APP_PATH"
 
 test -x "$MAIN_BINARY"
 test -f "$COREMIDI_PLUGIN"
@@ -65,6 +82,7 @@ codesign --verify --deep --strict --verbose=2 "$APP_PATH"
 
 mkdir -p "$PACKAGE_ROOT"
 cp -R "$APP_PATH" "$PACKAGE_ROOT/HitTheKit.app"
+ditto "$APP_PATH/Contents/Resources/Legal" "$PACKAGE_ROOT/Legal"
 printf '%s\n' \
   'HitTheKit macOS Apple Silicon playtest' \
   '' \
@@ -74,6 +92,7 @@ printf '%s\n' \
   '' \
   'This early playtest is ad-hoc signed and not yet Apple-notarized.' \
   'No Unity installation is required.' \
+  'License, notices, and exact source information are in Legal/.' \
   > "$PACKAGE_ROOT/README-FIRST.txt"
 
 ditto -c -k --sequesterRsrc --keepParent "$PACKAGE_ROOT" "$ZIP_PATH"

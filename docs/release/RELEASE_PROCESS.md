@@ -17,6 +17,8 @@ are created only from reviewed commits on `main`.
 3. Stop feature work on the candidate; only reviewed release blockers may
    change it.
 4. Record the commit SHA in the release evidence.
+5. Keep the worktree clean so `SOURCE-CODE.txt` can identify the exact public
+   revision corresponding to every executable candidate.
 
 ## 2. Run source and packaging contracts
 
@@ -95,6 +97,9 @@ Signing credentials remain outside Git. On the authorized release Mac:
 
 The pipeline must finish with `HITTHEKIT_MACOS_DISTRIBUTION_READY`. Verify the
 stapled application and each archive again after copying to the clean test Mac.
+Confirm that the application resources and DMG both include `Legal/` with
+`LICENSE`, `NOTICE`, `THIRD_PARTY_NOTICES.md`,
+`LICENSING.md`, and an exact-revision `SOURCE-CODE.txt`.
 
 ## 7. Prepare evidence
 

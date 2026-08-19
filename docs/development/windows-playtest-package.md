@@ -20,7 +20,9 @@ Build and package with:
 
 The script synchronizes the tested Core assembly, asks Unity for a clean
 `StandaloneWindows64` player, rejects a package containing the CoreMIDI native
-plug-in, adds player instructions, creates a ZIP, and prints its SHA-256.
+plug-in, adds player instructions and a `Legal/` directory, creates a ZIP, and
+prints its SHA-256. `Legal/SOURCE-CODE.txt` identifies the exact public Git
+revision for the MPL-covered HitTheKit files in that executable distribution.
 Generated output remains under the ignored `artifacts/game` directory.
 
 The Windows player contains `HitTheKit.exe`, `HitTheKit_Data`, Unity runtime
@@ -40,6 +42,13 @@ test the exact ZIP on clean Windows 10 and Windows 11 machines:
    high contrast, reduced motion, and keyboard-only navigation;
 6. confirm Device Setup states clearly that production MIDI is macOS-only; and
 7. collect logs and screenshots without personal paths or third-party content.
+
+## MIDI support
+
+Installing Unity Windows Build Support enables player compilation only. It
+does not provide production MIDI input. Windows electronic-drum support needs
+a separately implemented and tested Windows MIDI backend; until then the
+Windows player is keyboard-only.
 
 ## Signing and public distribution
 
