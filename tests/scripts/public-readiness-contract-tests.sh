@@ -31,6 +31,7 @@ for path in \
   PRIVACY.md \
   README.md \
   docs/README.md \
+  docs/wiki/README.md \
   ROADMAP.md \
   SECURITY.md \
   SUPPORT.md \
@@ -43,7 +44,9 @@ for path in \
   docs/release/PUBLIC_RELEASE_CHECKLIST.md \
   docs/release/RELEASE_PROCESS.md \
   scripts/package-game-windows-x64.sh \
+  scripts/publish-github-wiki.sh \
   tests/scripts/asset-provenance-contract-tests.sh \
+  tests/scripts/wiki-contract-tests.sh \
   tests/scripts/windows-packaging-contract-tests.sh; do
   [ -s "$path" ] || fail "required public file is missing or empty: $path"
 done
