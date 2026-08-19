@@ -47,6 +47,7 @@ without creating an unreviewed second source of truth.
 - [Practice Lab](development/practice-lab.md)
 - [Chart Creator foundation](development/chart-creator.md)
 - [Performance error map](development/performance-error-map.md)
+- [Auto Tempo Coach](development/auto-tempo-coach.md)
 - [Demo-song vertical slice](development/demo-song-vertical-slice.md)
 - [Keyboard hit matching](development/keyboard-hit-matching.md)
 - [Pad visuals](development/pad-visuals.md)
