@@ -84,6 +84,37 @@ namespace HitTheKit.Unity.Tests
         }
 
         [UnityTest]
+        public IEnumerator Results_dialog_keeps_diagnostics_scrollable_and_actions_separate()
+        {
+            AsyncOperation load = SceneManager.LoadSceneAsync("GameplayPrototype", LoadSceneMode.Single);
+            while (!load.isDone) yield return null;
+            yield return null;
+
+            GameplayHighwayController controller = Object.FindAnyObjectByType<GameplayHighwayController>();
+            Assert.That(controller, Is.Not.Null);
+            VisualElement root = controller.GetComponent<UIDocument>().rootVisualElement;
+            VisualElement overlay = root.Q<VisualElement>("results-overlay");
+            ScrollView scroll = root.Q<ScrollView>("results-scroll");
+            VisualElement actions = root.Q<VisualElement>(className: "result-actions");
+            VisualElement errorMap = root.Q<VisualElement>(className: "error-map-panel");
+            VisualElement autoTempo = root.Q<VisualElement>(className: "auto-tempo-panel");
+            Button calibration = root.Q<Button>("result-apply-calibration");
+            Button ghost = root.Q<Button>("result-ghost-restart");
+
+            Assert.That(overlay, Is.Not.Null);
+            Assert.That(scroll, Is.Not.Null);
+            Assert.That(actions, Is.Not.Null);
+            overlay.style.display = DisplayStyle.Flex;
+            yield return null;
+            yield return null;
+
+            Assert.That(scroll.worldBound.height, Is.GreaterThan(100f));
+            Assert.That(actions.worldBound.yMin, Is.GreaterThanOrEqualTo(scroll.worldBound.yMax - 1f));
+            Assert.That(autoTempo.worldBound.yMin, Is.GreaterThanOrEqualTo(errorMap.worldBound.yMax - 1f));
+            Assert.That(ghost.worldBound.yMin, Is.GreaterThanOrEqualTo(calibration.worldBound.yMax - 1f));
+        }
+
+        [UnityTest]
         public IEnumerator Ghost_replay_is_local_visual_only_and_does_not_change_score()
         {
             AsyncOperation load = SceneManager.LoadSceneAsync("GameplayPrototype", LoadSceneMode.Single);
