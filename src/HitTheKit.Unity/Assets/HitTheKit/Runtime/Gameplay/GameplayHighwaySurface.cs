@@ -9,8 +9,8 @@ namespace HitTheKit.Unity.Gameplay
 {
     public sealed class GameplayHighwaySurface : VisualElement
     {
-        public const float ImpactZoneHalfHeight = 9f;
-        public const int NoteGlowPasses = 3;
+        public const float ImpactZoneHalfHeight = 13f;
+        public const int NoteGlowPasses = 4;
         private IReadOnlyList<TimelineNote> notes = Array.Empty<TimelineNote>();
         private IReadOnlyList<GhostReplayHit> ghostHits = Array.Empty<GhostReplayHit>();
         private double songPositionSeconds;
@@ -81,7 +81,7 @@ namespace HitTheKit.Unity.Gameplay
                 float ratio = lane / (float)laneCount;
                 Vector2 start = new Vector2(Mathf.Lerp(topLeft, topRight, ratio), horizonY);
                 Vector2 end = new Vector2(Mathf.Lerp(bottomLeft, bottomRight, ratio), strikeY);
-                StrokeLine(painter, start, end, palette.Grid, lane == 0 || lane == laneCount ? 2.2f : 1.2f);
+                StrokeLine(painter, start, end, palette.Grid, lane == 0 || lane == laneCount ? 2.8f : 1.3f);
             }
 
             FillQuad(painter,
@@ -89,15 +89,15 @@ namespace HitTheKit.Unity.Gameplay
                 new Vector2(bottomRight + 7, strikeY - ImpactZoneHalfHeight),
                 new Vector2(bottomRight + 9, strikeY + ImpactZoneHalfHeight),
                 new Vector2(bottomLeft - 9, strikeY + ImpactZoneHalfHeight),
-                new Color(palette.Strike.r, palette.Strike.g, palette.Strike.b, 0.12f));
+                new Color(palette.Strike.r, palette.Strike.g, palette.Strike.b, 0.18f));
             StrokeLine(painter,
                 new Vector2(bottomLeft - 8, strikeY - ImpactZoneHalfHeight),
                 new Vector2(bottomRight + 8, strikeY - ImpactZoneHalfHeight),
-                new Color(palette.Strike.r, palette.Strike.g, palette.Strike.b, 0.34f), 1.4f);
+                new Color(palette.Strike.r, palette.Strike.g, palette.Strike.b, 0.48f), 2.0f);
             StrokeLine(painter,
                 new Vector2(bottomLeft - 8, strikeY + ImpactZoneHalfHeight),
                 new Vector2(bottomRight + 8, strikeY + ImpactZoneHalfHeight),
-                new Color(palette.Strike.r, palette.Strike.g, palette.Strike.b, 0.34f), 1.4f);
+                new Color(palette.Strike.r, palette.Strike.g, palette.Strike.b, 0.48f), 2.0f);
 
             for (int marker = 1; marker < 8; marker++)
             {
@@ -133,16 +133,16 @@ namespace HitTheKit.Unity.Gameplay
             StrokeLine(painter,
                 new Vector2(bottomLeft - 12, strikeY),
                 new Vector2(bottomRight + 12, strikeY),
-                new Color(palette.Strike.r, palette.Strike.g, palette.Strike.b, 0.18f), 12f);
+                new Color(palette.Strike.r, palette.Strike.g, palette.Strike.b, 0.22f), 18f);
             StrokeLine(painter,
                 new Vector2(bottomLeft - 9, strikeY),
                 new Vector2(bottomRight + 9, strikeY),
-                new Color(palette.Strike.r, palette.Strike.g, palette.Strike.b, 0.45f), 7f);
+                new Color(palette.Strike.r, palette.Strike.g, palette.Strike.b, 0.58f), 10f);
             StrokeLine(painter,
                 new Vector2(bottomLeft - 5, strikeY),
                 new Vector2(bottomRight + 5, strikeY),
                 pulseIntensity > 0.01f ? Color.Lerp(palette.Strike, Color.white, pulseIntensity) : palette.Strike,
-                pulseIntensity > 0.01f ? 5.5f : 3.6f);
+                pulseIntensity > 0.01f ? 7.5f : 4.8f);
         }
 
         private void DrawGhost(
@@ -228,8 +228,8 @@ namespace HitTheKit.Unity.Gameplay
             float topX = Mathf.Lerp(topLeft, topRight, laneRatio);
             float bottomX = Mathf.Lerp(bottomLeft, bottomRight, laneRatio);
             float x = Mathf.Lerp(topX, bottomX, eased);
-            float radiusX = Mathf.Lerp(5f, 22f, eased);
-            float radiusY = Mathf.Lerp(3.5f, 13f, eased);
+            float radiusX = Mathf.Lerp(5f, 27f, eased);
+            float radiusY = Mathf.Lerp(3.5f, 16f, eased);
             var noteCenter = new Vector2(x, y);
             float bottomXForLane = Mathf.Lerp(bottomLeft, bottomRight, laneRatio);
             float laneApproach = Mathf.Clamp01((normalized - 0.58f) / 0.42f);

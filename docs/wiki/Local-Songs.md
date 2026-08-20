@@ -5,14 +5,18 @@ you own it or are otherwise authorized to use it.
 
 ## Local folder
 
-The game discovers player-owned entries under:
+The game discovers player-owned entries in its private application-support
+folder. Use **Open song folder** in the Song Library to reveal the exact path.
+On macOS this lives below:
 
 ```text
-~/Documents/HTKSongs/
+~/Library/Application Support/HitTheKit/HitTheKit/Songs/
 ```
 
-The directory is created automatically during discovery. Each direct child is
-one song and must contain a `song.json` manifest:
+The directory is created automatically without requesting broad access to the
+user's Documents folder. `~/Documents/HTKSongs` is not scanned automatically;
+copy existing local song folders once into the folder opened by the game. Each
+direct child is one song and must contain a `song.json` manifest:
 
 ```text
 HTKSongs/

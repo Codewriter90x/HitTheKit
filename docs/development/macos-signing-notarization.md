@@ -154,8 +154,9 @@ on another Mac. The distribution build also installs the canonical
 Commercial audio and charts are never added to the public DMG or repository.
 For a player who owns local song bindings, `package-local-song-pack.sh` creates
 a private ZIP containing only each selected song's `song.json`, declared chart,
-and declared audio. Extracting that ZIP into `~/Documents` produces the
-automatically discovered `~/Documents/HTKSongs` folder.
+and declared audio. Extract the ZIP and copy the contained song directories
+into the location revealed by **Open song folder**. The game deliberately does
+not scan `~/Documents` automatically, avoiding repeated macOS privacy prompts.
 
 ## Runtime smoke
 

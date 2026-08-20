@@ -1,18 +1,18 @@
 # Folder-based song library
 
 The **Gioca / Play** destination opens a setlist before entering the shared
-`GameplayPrototype` scene. The setlist is rebuilt on demand from three roots:
+`GameplayPrototype` scene. The setlist is rebuilt on demand from two roots:
 
-1. `~/Documents/HTKSongs` for player-owned songs;
-2. the legacy `Application.persistentDataPath/Songs` location;
-3. `StreamingAssets/Songs` for bundled entries.
+1. `Application.persistentDataPath/Songs` for player-owned songs;
+2. `StreamingAssets/Songs` for bundled entries.
 
-`~/Documents/HTKSongs` is created automatically when the library is first
-discovered. If macOS denies access, discovery remains usable through the legacy
-and bundled roots and reports a bounded diagnostic instead of crashing. The
-Documents folder is evaluated first, so a local folder can deliberately replace
-legacy or bundled metadata with the same stable song ID. Duplicate IDs inside
-later roots are ignored and surfaced as diagnostics.
+The private application-support folder is created automatically when the
+library is first discovered. It avoids repeated macOS privacy prompts for the
+user's Documents folder and is opened by the **Open song folder** action. A
+local folder can deliberately replace bundled metadata with the same stable
+song ID. Duplicate IDs inside later roots are ignored and surfaced as
+diagnostics. `~/Documents/HTKSongs` is no longer scanned automatically; content
+already stored there can be copied once into the folder opened by the game.
 
 ## Folder contract
 
@@ -51,9 +51,8 @@ of `generated`, `missing`, or `available`; `chartAvailability` is one of
 declare file paths. Therefore `song.ogg` and `notes.json` are not reserved or
 presumed filenames.
 
-A player-owned binding may override a bundled entry with the same ID from
-`~/Documents/HTKSongs`. The previous `Application.persistentDataPath/Songs`
-root remains readable for backward compatibility. An asset declared `available` may
+A player-owned binding may override a bundled entry with the same ID from the
+private user-library folder. An asset declared `available` may
 provide its corresponding `audioFile` or `chartFile`; a playable binding needs
 both assets available and must also provide BPM, bars, and beats per bar
 verified against those exact files. Audio supports `.ogg` and `.wav`; charts
@@ -100,7 +99,7 @@ two configured roots.
 The Song Library's **Import audio & create** action opens the macOS file picker
 for WAV/OGG content. After the player supplies title, artist and verified timing
 metadata, the importer copies the selected file into a new, never-overwritten
-folder under `~/Documents/HTKSongs`. The source file is not changed and its
+folder under the private user-library root opened by **Open song folder**. The source file is not changed and its
 absolute path is not persisted in `song.json`.
 
 The resulting entry is intentionally audio-only: it is not playable as a normal
@@ -112,8 +111,8 @@ chart-only for safe transfer.
 ## Portable `.htksong` chart packages
 
 Chart Creator writes a portable chart-only package next to each recorded take.
-Copy a `.htksong` file directly into `~/Documents/HTKSongs` and select
-**Refresh library**. Before normal folder discovery, the game validates the
+Copy a `.htksong` file into the directory opened by **Open song folder** and
+select **Refresh library**. Before normal folder discovery, the game validates the
 container and atomically installs its `song.json` and `notes.json` into a folder
 named after the validated song ID. The package remains in place so it can be
 copied to another computer; subsequent refreshes are idempotent.

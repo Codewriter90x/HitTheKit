@@ -527,9 +527,10 @@ namespace HitTheKit.Unity.Gameplay
         public const string DocumentsFolderName = "HTKSongs";
 
         public static string BundledRoot => System.IO.Path.Combine(Application.streamingAssetsPath, "Songs");
-        public static string UserRoot => UserProfileRoot(
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+        public static string UserRoot => System.IO.Path.Combine(Application.persistentDataPath, "Songs");
         public static string LegacyUserRoot => System.IO.Path.Combine(Application.persistentDataPath, "Songs");
+        public static string DocumentsUserRoot => UserProfileRoot(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
 
         public static string UserProfileRoot(string userProfileDirectory)
         {
@@ -553,7 +554,7 @@ namespace HitTheKit.Unity.Gameplay
             string bundledRoot)
         {
             if (string.IsNullOrWhiteSpace(userRoot))
-                throw new ArgumentException("Documents song root is required.", nameof(userRoot));
+                throw new ArgumentException("User song root is required.", nameof(userRoot));
             if (string.IsNullOrWhiteSpace(legacyUserRoot))
                 throw new ArgumentException("Legacy song root is required.", nameof(legacyUserRoot));
             if (string.IsNullOrWhiteSpace(bundledRoot))
@@ -571,7 +572,7 @@ namespace HitTheKit.Unity.Gameplay
                 exception is NotSupportedException)
             {
                 runtimeDiagnostics.Add(
-                    $"Could not create the Documents song folder ({exception.GetType().Name}); " +
+                    $"Could not create the private song folder ({exception.GetType().Name}); " +
                     "the legacy and bundled libraries remain available.");
             }
 

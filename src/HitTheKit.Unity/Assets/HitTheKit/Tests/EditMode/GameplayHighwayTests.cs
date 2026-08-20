@@ -215,8 +215,8 @@ namespace HitTheKit.Unity.Tests
         [Test]
         public void Highway_uses_a_broad_impact_zone_and_bounded_multi_pass_note_glow()
         {
-            Assert.That(GameplayHighwaySurface.ImpactZoneHalfHeight, Is.GreaterThanOrEqualTo(8f));
-            Assert.That(GameplayHighwaySurface.NoteGlowPasses, Is.InRange(2, 4));
+            Assert.That(GameplayHighwaySurface.ImpactZoneHalfHeight, Is.GreaterThanOrEqualTo(12f));
+            Assert.That(GameplayHighwaySurface.NoteGlowPasses, Is.EqualTo(4));
         }
 
         [Test]

@@ -153,7 +153,7 @@ namespace HitTheKit.Unity.Tests
         }
 
         [Test]
-        public void Runtime_creates_the_documents_song_root_automatically()
+        public void Runtime_creates_the_private_song_root_automatically()
         {
             string documents = Path.Combine(root, "Documents");
             string documentsSongs = SongLibraryRuntime.DocumentsRoot(documents);
@@ -186,15 +186,17 @@ namespace HitTheKit.Unity.Tests
         }
 
         [Test]
-        public void Runtime_user_root_does_not_treat_the_unix_home_as_documents()
+        public void Runtime_user_root_uses_private_application_storage_without_scanning_documents()
         {
             string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
             Assert.That(userProfile, Is.Not.Empty);
             Assert.That(SongLibraryRuntime.UserRoot,
-                Is.EqualTo(Path.Combine(userProfile, "Documents", "HTKSongs")));
+                Is.EqualTo(SongLibraryRuntime.LegacyUserRoot));
             Assert.That(SongLibraryRuntime.UserRoot,
-                Is.Not.EqualTo(Path.Combine(userProfile, "HTKSongs")));
+                Is.Not.EqualTo(SongLibraryRuntime.DocumentsUserRoot));
+            Assert.That(SongLibraryRuntime.DocumentsUserRoot,
+                Is.EqualTo(Path.Combine(userProfile, "Documents", "HTKSongs")));
         }
 
         [Test]
@@ -235,7 +237,7 @@ namespace HitTheKit.Unity.Tests
             SongLibrarySnapshot snapshot = SongLibraryRuntime.Discover(documents, legacy, bundled);
 
             Assert.That(snapshot.Songs.Single().Id, Is.EqualTo("legacy-song"));
-            Assert.That(snapshot.Diagnostics.Single(), Does.Contain("Could not create the Documents song folder"));
+            Assert.That(snapshot.Diagnostics.Single(), Does.Contain("Could not create the private song folder"));
             Assert.That(snapshot.Diagnostics.Single(), Does.Not.Contain(root));
         }
 

@@ -10,23 +10,23 @@
                 <ui:Label text="HITTHEKIT" class="brand" />
                 <ui:Label name="track-name" text="NEON CIRCUIT" class="track-name" />
                 <ui:Label name="track-meta" text="DEMO STAGE · EASY · 120 BPM" class="eyebrow" />
+                <ui:VisualElement class="progress-panel">
+                    <ui:VisualElement class="song-progress-track">
+                        <ui:VisualElement name="song-progress-fill" class="song-progress-fill" />
+                    </ui:VisualElement>
+                    <ui:Label name="song-position" text="00:00 / 00:16" class="song-position" />
+                </ui:VisualElement>
             </ui:VisualElement>
 
-            <ui:VisualElement class="progress-panel">
-                <ui:VisualElement class="song-progress-track">
-                    <ui:VisualElement name="song-progress-fill" class="song-progress-fill" />
-                </ui:VisualElement>
-                <ui:Label name="song-position" text="00:00 / 00:16" class="song-position" />
+            <ui:VisualElement class="live-combo-panel">
+                <ui:Label text="COMBO" class="metric-label" />
+                <ui:Label name="combo-value" text="0" class="live-combo-value" />
             </ui:VisualElement>
 
             <ui:VisualElement class="score-panel">
                 <ui:VisualElement class="metric">
                     <ui:Label text="SCORE" class="metric-label" />
                     <ui:Label name="score-value" text="0" class="metric-value" />
-                </ui:VisualElement>
-                <ui:VisualElement class="metric metric--compact">
-                    <ui:Label text="COMBO" class="metric-label" />
-                    <ui:Label name="combo-value" text="0" class="metric-value metric-value--accent" />
                 </ui:VisualElement>
                 <ui:VisualElement class="metric metric--compact">
                     <ui:Label text="ACCURACY" class="metric-label" />
@@ -54,24 +54,6 @@
                 </ui:VisualElement>
             </ui:VisualElement>
 
-            <ui:VisualElement class="highway-column">
-                <ui:VisualElement name="highway-host" class="highway-host" />
-                <ui:VisualElement class="environment-identity">
-                    <ui:Label name="environment-title" text="ARCADE NEON" class="environment-title" />
-                    <ui:Label name="environment-subtitle" text="HOLOGRAPHIC RUNWAY" class="environment-subtitle" />
-                </ui:VisualElement>
-                <ui:Label name="kit-guidance-label" text="SEGUI I COLORI: LA NOTA E IL PEZZO SI ACCENDONO INSIEME" class="kit-guidance-label" />
-                <ui:VisualElement name="kit-visual-host" class="kit-visual-host" />
-                <ui:VisualElement name="countdown-overlay" class="countdown-overlay">
-                    <ui:Label text="PREPARATI" class="countdown-heading" />
-                    <ui:Label name="countdown-label" text="4" class="countdown-label" />
-                    <ui:Label text="ASCOLTA IL TEMPO" class="countdown-copy" />
-                </ui:VisualElement>
-                <ui:Label name="judgment-label" text="READY" class="judgment-label" />
-                <ui:VisualElement name="targets-host" class="targets-host" />
-                <ui:VisualElement name="kick-target-host" class="kick-target-host" />
-            </ui:VisualElement>
-
             <ui:VisualElement class="side-rail side-rail--right">
                 <ui:VisualElement class="hud-panel rail-card">
                     <ui:Label text="INPUT DEVICE" class="rail-title" />
@@ -91,10 +73,29 @@
                     <ui:Label name="key-guide-floor-kick" text="L/F  TIMPANO / GRANCASSA" class="rail-copy" />
                 </ui:VisualElement>
             </ui:VisualElement>
+
+            <ui:VisualElement class="highway-column">
+                <ui:VisualElement class="highway-aura" />
+                <ui:VisualElement name="highway-host" class="highway-host" />
+                <ui:VisualElement class="environment-identity">
+                    <ui:Label name="environment-title" text="ARCADE NEON" class="environment-title" />
+                    <ui:Label name="environment-subtitle" text="HOLOGRAPHIC RUNWAY" class="environment-subtitle" />
+                </ui:VisualElement>
+                <ui:Label name="kit-guidance-label" text="SEGUI I COLORI: LA NOTA E IL PEZZO SI ACCENDONO INSIEME" class="kit-guidance-label" />
+                <ui:VisualElement name="kit-visual-host" class="kit-visual-host" />
+                <ui:VisualElement name="countdown-overlay" class="countdown-overlay">
+                    <ui:Label text="PREPARATI" class="countdown-heading" />
+                    <ui:Label name="countdown-label" text="4" class="countdown-label" />
+                    <ui:Label text="ASCOLTA IL TEMPO" class="countdown-copy" />
+                </ui:VisualElement>
+                <ui:Label name="judgment-label" text="READY" class="judgment-label" />
+                <ui:VisualElement name="targets-host" class="targets-host" />
+                <ui:VisualElement name="kick-target-host" class="kick-target-host" />
+            </ui:VisualElement>
         </ui:VisualElement>
 
         <ui:VisualElement class="footer-strip">
-            <ui:Label text="COLPISCI QUANDO LA NOTA TOCCA LA LINEA LUMINOSA" />
+            <ui:Label text="COLPISCI QUANDO LA NOTA ENTRA NELLA LINEA LUMINOSA" />
             <ui:VisualElement class="footer-actions">
                 <ui:Label text="STILE VISIVO: IMPOSTAZIONI" />
                 <ui:Button name="pause-button" text="ESC / P  PAUSA" class="gameplay-menu-button" />

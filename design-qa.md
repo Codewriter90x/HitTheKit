@@ -38,3 +38,40 @@
 - The reference contains illustrative completion history; a fresh implementation correctly shows zero completed lessons.
 
 final result: passed
+
+---
+
+# Design QA — Gameplay Arena Highway
+
+## Source and implementation
+
+- Source reference: `mockup/gameplay-visual-direction-01-arena-highway.png`
+- Implemented screen: `mockup/gameplay-visual-implementation-final.png`
+- Side-by-side comparison: `mockup/gameplay-visual-comparison-final.png`
+- Reference source dimensions: 1672 x 941
+- Captured player viewport: 1366 x 768 (1920 x 1080 logical player surface)
+- State: Neon Circuit gameplay, approximately three seconds after launch
+
+## Comparison history
+
+1. The first pass established the arena, highway, HUD and drum-target hierarchy,
+   but the right diagnostic rail overlapped the Ride target.
+2. The second pass widened the highway, strengthened the impact line and moved
+   the diagnostic rails above the target row. A redundant keyboard guide could
+   still compete with the rightmost target.
+3. The final pass removed that redundant guide, preserved the full target row,
+   increased impact-line contrast and verified the selected concept and runtime
+   screen together at the same normalized viewport.
+
+## Final assessment
+
+- The note highway is the dominant visual element.
+- Combo, score, accuracy and song progress occupy distinct, readable regions.
+- The impact line is bright and unambiguous.
+- Lane markers and drum targets use both color and text/shape cues.
+- No P0, P1 or P2 clipping, overlap or hierarchy defect remains in the verified
+  16:9 viewport.
+- Residual P3 difference: the runtime uses the existing stylized/procedural drum
+  stage rather than the photorealistic kit used in the aspirational concept.
+
+Final result: `passed`

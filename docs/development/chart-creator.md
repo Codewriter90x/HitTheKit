@@ -32,8 +32,8 @@ back to the source song's original timeline before it is serialized.
 
 ## Output and rights boundary
 
-The exporter creates a new, never-overwritten folder under
-`~/Documents/HTKSongs` containing only:
+The exporter creates a new, never-overwritten folder under the private Song
+Library directory opened by **Open song folder**, containing only:
 
 - `song.json`;
 - `notes.json`.
@@ -46,8 +46,8 @@ entries:
 - `song.json`;
 - `notes.json`.
 
-To transfer a take, copy only the `.htksong` file into
-`Documents/HTKSongs` on the other computer and refresh the Song Library. The
+To transfer a take, copy only the `.htksong` file into the directory opened by
+**Open song folder** on the other computer and refresh the Song Library. The
 game validates and atomically imports it. Existing song folders are never
 overwritten. Select the imported entry, choose **Bind local audio**, select
 your own authorized WAV/OGG copy, and confirm the local-only binding. The game

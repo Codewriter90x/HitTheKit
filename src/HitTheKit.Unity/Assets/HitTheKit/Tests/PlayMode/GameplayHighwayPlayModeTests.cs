@@ -115,6 +115,36 @@ namespace HitTheKit.Unity.Tests
         }
 
         [UnityTest]
+        public IEnumerator Arena_hud_keeps_the_highway_dominant_and_primary_metrics_separate()
+        {
+            AsyncOperation load = SceneManager.LoadSceneAsync("GameplayPrototype", LoadSceneMode.Single);
+            while (!load.isDone) yield return null;
+            yield return null;
+            yield return null;
+
+            GameplayHighwayController controller = Object.FindAnyObjectByType<GameplayHighwayController>();
+            Assert.That(controller, Is.Not.Null);
+            VisualElement root = controller.GetComponent<UIDocument>().rootVisualElement;
+            VisualElement content = root.Q<VisualElement>(className: "gameplay-content");
+            VisualElement highway = root.Q<VisualElement>(className: "highway-column");
+            VisualElement track = root.Q<VisualElement>(className: "track-panel");
+            VisualElement combo = root.Q<VisualElement>(className: "live-combo-panel");
+            VisualElement score = root.Q<VisualElement>(className: "score-panel");
+            VisualElement aura = root.Q<VisualElement>(className: "highway-aura");
+
+            Assert.That(content, Is.Not.Null);
+            Assert.That(highway, Is.Not.Null);
+            Assert.That(track, Is.Not.Null);
+            Assert.That(combo, Is.Not.Null);
+            Assert.That(score, Is.Not.Null);
+            Assert.That(aura, Is.Not.Null);
+            Assert.That(highway.worldBound.width, Is.GreaterThan(content.worldBound.width * 0.72f));
+            Assert.That(track.worldBound.center.x, Is.LessThan(combo.worldBound.center.x));
+            Assert.That(combo.worldBound.center.x, Is.LessThan(score.worldBound.center.x));
+            Assert.That(aura.worldBound.width, Is.GreaterThan(highway.worldBound.width * 0.60f));
+        }
+
+        [UnityTest]
         public IEnumerator Ghost_replay_is_local_visual_only_and_does_not_change_score()
         {
             AsyncOperation load = SceneManager.LoadSceneAsync("GameplayPrototype", LoadSceneMode.Single);
