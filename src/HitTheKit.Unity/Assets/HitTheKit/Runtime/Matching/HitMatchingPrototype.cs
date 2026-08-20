@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using HitTheKit.Core;
 using HitTheKit.Unity.Audio;
 using HitTheKit.Unity.Charts;
@@ -78,6 +79,13 @@ namespace HitTheKit.Unity.Matching
             TryInitializeSession();
         }
 
+        public void RestartSession(double startSeconds, double endSeconds)
+        {
+            if (chartTimeline == null || chartTimeline.Timeline == null)
+                throw new InvalidOperationException("The chart timeline has not started.");
+            Session = CreateSession(chartTimeline.CreateMatchingNotes(startSeconds, endSeconds));
+        }
+
         private bool TryInitializeSession()
         {
             if (Session != null) return true;
@@ -92,13 +100,16 @@ namespace HitTheKit.Unity.Matching
                 return false;
             }
 
-            Session = new HitMatchingSession(
-                chartTimeline.CreateMatchingNotes(),
-                timingWindows.ToCore(),
-                0);
-            Session.HitResolved += result => HitResolved?.Invoke(result);
-            Session.InputProcessed += (input, result) => InputProcessed?.Invoke(input, result);
+            Session = CreateSession(chartTimeline.CreateMatchingNotes());
             return true;
+        }
+
+        private HitMatchingSession CreateSession(IReadOnlyList<ChartNote> notes)
+        {
+            var session = new HitMatchingSession(notes, timingWindows.ToCore(), 0);
+            session.HitResolved += result => HitResolved?.Invoke(result);
+            session.InputProcessed += (input, result) => InputProcessed?.Invoke(input, result);
+            return session;
         }
 
         private bool HasRequiredReferences()

@@ -75,6 +75,27 @@ namespace HitTheKit.Unity.Audio
             IsPaused = false;
         }
 
+        public void Seek(double positionSeconds)
+        {
+            EnsureScheduled();
+            EnsureFinite(positionSeconds, nameof(positionSeconds));
+            if (positionSeconds < 0 || positionSeconds >= DurationSeconds)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(positionSeconds),
+                    "Song position must be within the scheduled duration.");
+            }
+
+            if (IsPaused)
+            {
+                StartDspTime = pausedAtDspTime - positionSeconds;
+            }
+            else
+            {
+                StartDspTime = timeSource.Now - positionSeconds;
+            }
+        }
+
         private static void EnsureFinite(double value, string parameterName)
         {
             if (double.IsNaN(value) || double.IsInfinity(value))

@@ -122,6 +122,48 @@ namespace HitTheKit.Unity.Tests
             Assert.That(clock.PositionSeconds, Is.EqualTo(1).Within(0.000001));
         }
 
+        [Test]
+        public void Seek_reanchors_running_clock_to_absolute_song_position()
+        {
+            var time = new FakeDspTimeSource { Now = 12 };
+            var clock = new DspSongClock(time);
+            clock.Schedule(10, 20);
+
+            clock.Seek(7.5);
+
+            Assert.That(clock.PositionSeconds, Is.EqualTo(7.5).Within(0.000001));
+            time.Now = 12.25;
+            Assert.That(clock.PositionSeconds, Is.EqualTo(7.75).Within(0.000001));
+        }
+
+        [Test]
+        public void Seek_preserves_pause_and_new_position_until_resume()
+        {
+            var time = new FakeDspTimeSource { Now = 12 };
+            var clock = new DspSongClock(time);
+            clock.Schedule(10, 20);
+            clock.Pause();
+
+            clock.Seek(4);
+            time.Now = 18;
+
+            Assert.That(clock.IsPaused, Is.True);
+            Assert.That(clock.PositionSeconds, Is.EqualTo(4).Within(0.000001));
+            clock.Resume();
+            Assert.That(clock.PositionSeconds, Is.EqualTo(4).Within(0.000001));
+        }
+
+        [TestCase(-0.001)]
+        [TestCase(20)]
+        [TestCase(double.NaN)]
+        [TestCase(double.PositiveInfinity)]
+        public void Seek_rejects_positions_outside_scheduled_duration(double position)
+        {
+            var clock = CreateClock();
+            clock.Schedule(0, 20);
+            Assert.Throws<ArgumentOutOfRangeException>(() => clock.Seek(position));
+        }
+
         private static DspSongClock CreateClock() => new DspSongClock(new FakeDspTimeSource());
 
         private sealed class FakeDspTimeSource : IDspTimeSource

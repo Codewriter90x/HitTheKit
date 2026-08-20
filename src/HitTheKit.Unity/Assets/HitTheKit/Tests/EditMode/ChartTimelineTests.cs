@@ -121,6 +121,34 @@ namespace HitTheKit.Unity.Tests
             Assert.That(timeline.GetElapsed(10), Is.Empty);
         }
 
+        [Test]
+        public void Range_is_start_inclusive_end_exclusive_and_preserves_order()
+        {
+            ChartTimeline timeline = Timeline(notes: Notes(
+                (0.99, "kick"),
+                (1.0, "snare"),
+                (1.5, "hiHat"),
+                (2.0, "ride")));
+
+            var range = timeline.GetRange(1, 2);
+
+            Assert.That(range.Select(note => note.Note.Pad), Is.EqualTo(new[]
+            {
+                DrumPad.Snare,
+                DrumPad.HiHat
+            }));
+        }
+
+        [TestCase(-1, 1)]
+        [TestCase(1, 1)]
+        [TestCase(2, 1)]
+        [TestCase(double.NaN, 1)]
+        [TestCase(0, double.PositiveInfinity)]
+        public void Range_rejects_invalid_boundaries(double start, double end)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => Timeline().GetRange(start, end));
+        }
+
         private static ChartTimeline Timeline(double offset = 0, string notes = "")
         {
             string json = $"{{\"version\":1,\"offsetSeconds\":{offset.ToString(System.Globalization.CultureInfo.InvariantCulture)}," +

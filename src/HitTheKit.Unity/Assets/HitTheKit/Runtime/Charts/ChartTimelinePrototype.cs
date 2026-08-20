@@ -65,12 +65,23 @@ namespace HitTheKit.Unity.Charts
         public IReadOnlyList<ChartNote> CreateMatchingNotes()
         {
             if (Timeline == null) throw new InvalidOperationException("The chart timeline has not started.");
-            var result = new ChartNote[Timeline.Notes.Count];
+            return CreateMatchingNotes(Timeline.Notes);
+        }
+
+        public IReadOnlyList<ChartNote> CreateMatchingNotes(double startSeconds, double endSeconds)
+        {
+            if (Timeline == null) throw new InvalidOperationException("The chart timeline has not started.");
+            return CreateMatchingNotes(Timeline.GetRange(startSeconds, endSeconds));
+        }
+
+        private static IReadOnlyList<ChartNote> CreateMatchingNotes(IReadOnlyList<TimelineNote> source)
+        {
+            var result = new ChartNote[source.Count];
             for (int index = 0; index < result.Length; index++)
             {
-                ChartNote note = Timeline.Notes[index].Note;
+                ChartNote note = source[index].Note;
                 result[index] = new ChartNote(
-                    Timeline.Notes[index].EffectiveTimeSeconds,
+                    source[index].EffectiveTimeSeconds,
                     note.Pad,
                     note.Velocity,
                     note.Articulation);

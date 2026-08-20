@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using HitTheKit.Core;
 using HitTheKit.Unity.Charts;
 using HitTheKit.Unity.Gameplay;
@@ -114,6 +115,44 @@ namespace HitTheKit.Unity.Tests
             controller.RestartRun();
             Assert.That(controller.RunState, Is.EqualTo(GameplayRunState.Countdown));
             Assert.That(controller.ScoreSnapshot.Score, Is.Zero);
+        }
+
+        [UnityTest]
+        public IEnumerator Practice_lab_loops_a_section_with_filtered_matching_and_a_paused_seek()
+        {
+            AsyncOperation load = SceneManager.LoadSceneAsync("GameplayPrototype", LoadSceneMode.Single);
+            while (!load.isDone) yield return null;
+            yield return null;
+
+            GameplayHighwayController controller = Object.FindAnyObjectByType<GameplayHighwayController>();
+            var songClock = Object.FindAnyObjectByType<HitTheKit.Unity.Audio.DspSongClockPrototype>();
+            var matching = Object.FindAnyObjectByType<HitTheKit.Unity.Matching.HitMatchingPrototype>();
+            Assert.That(controller, Is.Not.Null);
+            Assert.That(controller.PracticeSections.Count, Is.GreaterThan(1));
+
+            UIDocument document = controller.GetComponent<UIDocument>();
+            Assert.That(document.rootVisualElement.Q<Button>("practice-loop-section"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Button>("practice-set-a"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Button>("practice-set-b"), Is.Not.Null);
+
+            controller.TogglePause();
+            controller.SelectNextPracticeSection();
+            controller.LoopSelectedPracticeSection();
+
+            GameplayPracticeRange range = controller.ActivePracticeRange;
+            Assert.That(range, Is.Not.Null);
+            Assert.That(range.Label, Is.EqualTo("BATTUTE 5–8"));
+            Assert.That(songClock.Clock.IsPaused, Is.True);
+            Assert.That(songClock.GetComponent<AudioSource>().isPlaying, Is.False);
+            Assert.That(songClock.PositionSeconds, Is.LessThanOrEqualTo(range.StartSeconds));
+            Assert.That(matching.Session.Notes, Is.Not.Empty);
+            Assert.That(matching.Session.Notes.All(note =>
+                note.TimeSeconds >= range.StartSeconds && note.TimeSeconds < range.EndSeconds), Is.True);
+
+            controller.TogglePause();
+            yield return null;
+            Assert.That(controller.RunState, Is.EqualTo(GameplayRunState.Playing));
+            Assert.That(songClock.GetComponent<AudioSource>().isPlaying, Is.True);
         }
 
         [UnityTest]

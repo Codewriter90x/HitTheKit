@@ -44,6 +44,7 @@ without creating an unreviewed second source of truth.
 - [Branching and release channels](development/branching-and-releases.md)
 - [DSP song clock](development/dsp-song-clock.md)
 - [Chart timeline](development/chart-timeline.md)
+- [Practice Lab](development/practice-lab.md)
 - [Chart Creator foundation](development/chart-creator.md)
 - [Demo-song vertical slice](development/demo-song-vertical-slice.md)
 - [Keyboard hit matching](development/keyboard-hit-matching.md)

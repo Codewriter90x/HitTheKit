@@ -512,6 +512,35 @@
 .result-performance-panel { width: 100%; align-items: center; }
 .run-dialog-title { font-size: 34px; -unity-font-style: bold; letter-spacing: 3px; }
 .run-dialog-copy { color: var(--muted); margin-top: 9px; margin-bottom: 20px; }
+.practice-dialog { width: 720px; }
+.practice-panel {
+    width: 100%;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-width: 1px;
+    border-color: rgba(77, 216, 255, 0.42);
+    border-radius: 9px;
+    background-color: rgba(4, 18, 32, 0.94);
+}
+.practice-kicker { color: var(--accent); font-size: 11px; -unity-font-style: bold; letter-spacing: 2px; }
+.practice-section-label { margin-top: 5px; margin-bottom: 10px; color: white; font-size: 20px; -unity-font-style: bold; }
+.practice-row { width: 100%; flex-direction: row; justify-content: center; }
+.practice-button {
+    flex-grow: 1;
+    min-width: 120px;
+    height: 36px;
+    margin: 4px;
+    border-width: 1px;
+    border-color: rgba(111, 176, 222, 0.58);
+    border-radius: 5px;
+    color: rgb(184, 207, 228);
+    background-color: rgba(8, 24, 42, 0.96);
+    -unity-font-style: bold;
+    font-size: 10px;
+}
+.practice-button:hover, .practice-button:focus { border-color: var(--accent); color: white; }
+.practice-button--primary { background-color: rgba(16, 112, 142, 0.74); border-color: var(--accent); color: white; }
+.practice-status { margin-top: 10px; color: rgb(119, 220, 255); font-size: 11px; -unity-text-align: middle-center; }
 .run-primary-button,
 .run-secondary-button {
     min-width: 210px;

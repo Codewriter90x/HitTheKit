@@ -21,6 +21,7 @@ namespace HitTheKit.Unity.Gameplay
         private const double HighwayLookAheadSeconds = 4.0;
         private const double KitPreparationSeconds = 1.35;
         private const float PulseDurationSeconds = 0.18f;
+        private const int PracticeLeadInBeats = 2;
 
         [SerializeField] private UIDocument document;
         [SerializeField] private ChartTimelinePrototype chartTimeline;
@@ -66,6 +67,12 @@ namespace HitTheKit.Unity.Gameplay
         private Button resultRestartButton;
         private Button resultMenuButton;
         private Button resultApplyCalibrationButton;
+        private Button practicePreviousSectionButton;
+        private Button practiceNextSectionButton;
+        private Button practiceLoopSectionButton;
+        private Button practiceSetAButton;
+        private Button practiceSetBButton;
+        private Button practiceClearButton;
         private VisualElement pauseOverlay;
         private VisualElement resultsOverlay;
         private VisualElement countdownOverlay;
@@ -77,6 +84,8 @@ namespace HitTheKit.Unity.Gameplay
         private Label resultBreakdownLabel;
         private Label resultPracticeLabel;
         private Label resultCalibrationLabel;
+        private Label practiceSectionLabel;
+        private Label practiceStatusLabel;
         private VisualElement resultPerformancePanel;
         private VisualElement chartCreatorResults;
         private Label chartCreatorSummaryLabel;
@@ -120,7 +129,11 @@ namespace HitTheKit.Unity.Gameplay
         private AudioSource metronomeSource;
         private AudioClip metronomeClip;
         private bool metronomeScheduled;
+        private bool metronomeSeekedWhilePaused;
         private bool resultRecorded;
+        private readonly GameplayPracticeLoop practiceLoop = new GameplayPracticeLoop();
+        private IReadOnlyList<GameplayPracticeRange> practiceSections = Array.Empty<GameplayPracticeRange>();
+        private int selectedPracticeSectionIndex;
         private ChartRecordingSession chartRecording;
         private ChartRecordingDraft chartDraft;
         private ChartDraftEditor chartDraftEditor;
@@ -145,6 +158,8 @@ namespace HitTheKit.Unity.Gameplay
         public GameplaySessionDefinition CurrentSession =>
             sessionCoordinator?.Session ?? GameplaySessionContext.Current;
         public double CurrentAttemptPracticeSeconds => practiceTimer.CurrentAttemptSeconds;
+        public GameplayPracticeRange ActivePracticeRange => practiceLoop.Range;
+        public IReadOnlyList<GameplayPracticeRange> PracticeSections => practiceSections;
         public int RecordedChartHitCount => chartRecording?.HitCount ?? chartDraft?.Hits.Count ?? 0;
         public string LastChartExportPath { get; private set; }
         public string LastChartPackagePath { get; private set; }
@@ -176,6 +191,7 @@ namespace HitTheKit.Unity.Gameplay
             BindNavigation();
             Subscribe();
             InitializeAudioFeedback();
+            InitializePracticeLab();
             InitializeChartCreator();
             SetTheme(CurrentSession.Theme);
             RefreshSessionCopy();
@@ -186,6 +202,7 @@ namespace HitTheKit.Unity.Gameplay
             HandleShortcuts();
             TrackPracticeTime();
             TryScheduleMetronome();
+            UpdatePracticeLoop();
             UpdatePulseState();
             RefreshPresentation();
         }
@@ -290,6 +307,12 @@ namespace HitTheKit.Unity.Gameplay
             resultRestartButton = root.Q<Button>("result-restart-button");
             resultMenuButton = root.Q<Button>("result-menu-button");
             resultApplyCalibrationButton = root.Q<Button>("result-apply-calibration");
+            practicePreviousSectionButton = root.Q<Button>("practice-previous-section");
+            practiceNextSectionButton = root.Q<Button>("practice-next-section");
+            practiceLoopSectionButton = root.Q<Button>("practice-loop-section");
+            practiceSetAButton = root.Q<Button>("practice-set-a");
+            practiceSetBButton = root.Q<Button>("practice-set-b");
+            practiceClearButton = root.Q<Button>("practice-clear");
             pauseOverlay = root.Q<VisualElement>("pause-overlay");
             resultsOverlay = root.Q<VisualElement>("results-overlay");
             countdownOverlay = root.Q<VisualElement>("countdown-overlay");
@@ -301,6 +324,8 @@ namespace HitTheKit.Unity.Gameplay
             resultBreakdownLabel = root.Q<Label>("result-breakdown");
             resultPracticeLabel = root.Q<Label>("result-practice");
             resultCalibrationLabel = root.Q<Label>("result-calibration");
+            practiceSectionLabel = root.Q<Label>("practice-section-label");
+            practiceStatusLabel = root.Q<Label>("practice-status");
             resultPerformancePanel = root.Q<VisualElement>("result-performance-panel");
             chartCreatorResults = root.Q<VisualElement>("chart-creator-results");
             chartCreatorSummaryLabel = root.Q<Label>("chart-creator-summary");
@@ -540,7 +565,18 @@ namespace HitTheKit.Unity.Gameplay
             if (RunState == GameplayRunState.Paused)
             {
                 songClock.ResumePlayback();
-                if (metronomeScheduled) metronomeSource?.UnPause();
+                if (metronomeScheduled && metronomeSource != null)
+                {
+                    if (metronomeSeekedWhilePaused)
+                    {
+                        metronomeSource.Play();
+                        metronomeSeekedWhilePaused = false;
+                    }
+                    else
+                    {
+                        metronomeSource.UnPause();
+                    }
+                }
                 RunState = songClock.PositionSeconds < 0 ? GameplayRunState.Countdown : GameplayRunState.Playing;
                 SetDisplayed(pauseOverlay, false);
             }
@@ -556,6 +592,8 @@ namespace HitTheKit.Unity.Gameplay
 
         public void RestartRun()
         {
+            practiceLoop.Clear();
+            RefreshPracticeStatus();
             FlushPracticeTime();
             songClock?.StopPreview();
             practiceTimer.ResetAttempt();
@@ -581,6 +619,158 @@ namespace HitTheKit.Unity.Gameplay
             SetDisplayed(resultsOverlay, false);
             SetJudgment("READY", "judgment--good");
         }
+
+        public void SelectPreviousPracticeSection()
+        {
+            if (practiceSections.Count == 0) return;
+            selectedPracticeSectionIndex = Math.Max(0, selectedPracticeSectionIndex - 1);
+            RefreshPracticeStatus();
+        }
+
+        public void SelectNextPracticeSection()
+        {
+            if (practiceSections.Count == 0) return;
+            selectedPracticeSectionIndex = Math.Min(practiceSections.Count - 1, selectedPracticeSectionIndex + 1);
+            RefreshPracticeStatus();
+        }
+
+        public void LoopSelectedPracticeSection()
+        {
+            if (practiceSections.Count == 0) return;
+            GameplayPracticeRange selected = practiceSections[selectedPracticeSectionIndex];
+            double duration = songClock?.Clock?.DurationSeconds ?? selected.EndSeconds;
+            double end = Math.Min(selected.EndSeconds, duration);
+            if (selected.StartSeconds >= end)
+            {
+                if (practiceStatusLabel != null) practiceStatusLabel.text = "SEZIONE FUORI DALLA DURATA AUDIO";
+                return;
+            }
+            practiceLoop.Select(new GameplayPracticeRange(selected.StartSeconds, end, selected.Label));
+            RestartPracticePass();
+            RefreshPracticeStatus();
+        }
+
+        public void SetPracticePointA()
+        {
+            practiceLoop.SetStart(CurrentClampedSongPosition());
+            RefreshPracticeStatus();
+        }
+
+        public void SetPracticePointB()
+        {
+            try
+            {
+                practiceLoop.SetEnd(CurrentClampedSongPosition());
+                RestartPracticePass();
+            }
+            catch (InvalidOperationException)
+            {
+                if (practiceStatusLabel != null) practiceStatusLabel.text = "IMPOSTA PRIMA IL PUNTO A";
+                return;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                if (practiceStatusLabel != null) practiceStatusLabel.text = "IL PUNTO B DEVE ESSERE DOPO A";
+                return;
+            }
+            RefreshPracticeStatus();
+        }
+
+        public void ClearPracticeLoop()
+        {
+            if (!practiceLoop.IsEnabled && !practiceLoop.PendingStartSeconds.HasValue) return;
+            RestartRun();
+        }
+
+        private void InitializePracticeLab()
+        {
+            GameplaySessionDefinition session = CurrentSession;
+            practiceSections = GameplayPracticeSections.Create(session.Bars, session.BeatsPerBar, session.Bpm);
+            selectedPracticeSectionIndex = 0;
+            RefreshPracticeStatus();
+        }
+
+        private void UpdatePracticeLoop()
+        {
+            if (!practiceLoop.IsEnabled || RunState == GameplayRunState.Paused ||
+                RunState == GameplayRunState.Results || songClock?.Clock == null || !songClock.Clock.IsScheduled)
+                return;
+            if (practiceLoop.ShouldRestart(Math.Max(0, songClock.PositionSeconds))) RestartPracticePass();
+        }
+
+        private void RestartPracticePass()
+        {
+            GameplayPracticeRange range = practiceLoop.Range;
+            if (range == null || matching == null || songClock?.Clock == null) return;
+
+            FlushPracticeTime();
+            resultRecorded = false;
+            scoreTracker.Reset();
+            keyboardCalibration.Reset();
+            midiCalibration.Reset();
+            performanceAnalyzer.Reset();
+            pulseDeadlines.Clear();
+            latestPulsePad = null;
+            matching.RestartSession(range.StartSeconds, range.EndSeconds);
+
+            double leadIn = PracticeLeadInBeats * 60.0 / CurrentSession.Bpm;
+            double playbackStart = Math.Max(0, range.StartSeconds - leadIn);
+            songClock.SeekPlayback(playbackStart);
+            SeekMetronome(playbackStart);
+            RunState = songClock.Clock.IsPaused ? GameplayRunState.Paused : GameplayRunState.Playing;
+            SetDisplayed(resultsOverlay, false);
+            SetJudgment("PRACTICE", "judgment--good");
+        }
+
+        private double CurrentClampedSongPosition()
+        {
+            if (songClock?.Clock == null || !songClock.Clock.IsScheduled) return 0;
+            double maximum = Math.Max(0, songClock.Clock.DurationSeconds - 0.001);
+            return Math.Min(maximum, Math.Max(0, songClock.PositionSeconds));
+        }
+
+        private void SeekMetronome(double positionSeconds)
+        {
+            if (!metronomeScheduled || metronomeSource == null || metronomeClip == null) return;
+            bool paused = songClock.Clock.IsPaused;
+            metronomeSource.Stop();
+            metronomeSource.time = Mathf.Clamp(
+                (float)positionSeconds,
+                0,
+                Math.Max(0, metronomeClip.length - 0.001f));
+            if (paused)
+            {
+                metronomeSeekedWhilePaused = true;
+            }
+            else
+            {
+                metronomeSource.Play();
+                metronomeSeekedWhilePaused = false;
+            }
+        }
+
+        private void RefreshPracticeStatus()
+        {
+            if (practiceSections.Count > 0 && practiceSectionLabel != null)
+                practiceSectionLabel.text = practiceSections[selectedPracticeSectionIndex].Label;
+            if (practiceStatusLabel == null) return;
+            if (practiceLoop.IsEnabled)
+            {
+                practiceStatusLabel.text = $"ATTIVO · {practiceLoop.Range.Label} · " +
+                    $"{FormatSeconds(practiceLoop.Range.StartSeconds)} → {FormatSeconds(practiceLoop.Range.EndSeconds)}";
+            }
+            else if (practiceLoop.PendingStartSeconds.HasValue)
+            {
+                practiceStatusLabel.text = $"A = {FormatSeconds(practiceLoop.PendingStartSeconds.Value)} · ORA IMPOSTA B";
+            }
+            else
+            {
+                practiceStatusLabel.text = "Loop disattivato · scegli una sezione o imposta A e B";
+            }
+        }
+
+        private static string FormatSeconds(double seconds) =>
+            TimeSpan.FromSeconds(seconds).ToString(@"mm\:ss", CultureInfo.InvariantCulture);
 
         private void UpdateRunState(double position, HitMatchingSnapshot snapshot)
         {
@@ -825,6 +1015,7 @@ namespace HitTheKit.Unity.Gameplay
             metronomeSource.clip = metronomeClip;
             metronomeSource.PlayScheduled(songClock.StartDspTime);
             metronomeScheduled = true;
+            metronomeSeekedWhilePaused = false;
         }
 
         private void PlayDrum(DrumPad pad, int velocity)
@@ -875,6 +1066,12 @@ namespace HitTheKit.Unity.Gameplay
             if (resultRestartButton != null) resultRestartButton.clicked += RestartRun;
             if (resultMenuButton != null) resultMenuButton.clicked += ReturnToMainMenu;
             if (resultApplyCalibrationButton != null) resultApplyCalibrationButton.clicked += ApplyCalibrationRecommendation;
+            if (practicePreviousSectionButton != null) practicePreviousSectionButton.clicked += SelectPreviousPracticeSection;
+            if (practiceNextSectionButton != null) practiceNextSectionButton.clicked += SelectNextPracticeSection;
+            if (practiceLoopSectionButton != null) practiceLoopSectionButton.clicked += LoopSelectedPracticeSection;
+            if (practiceSetAButton != null) practiceSetAButton.clicked += SetPracticePointA;
+            if (practiceSetBButton != null) practiceSetBButton.clicked += SetPracticePointB;
+            if (practiceClearButton != null) practiceClearButton.clicked += ClearPracticeLoop;
             if (chartSaveRawButton != null) chartSaveRawButton.clicked += SaveRawChart;
             if (chartSaveEighthButton != null) chartSaveEighthButton.clicked += SaveEighthChart;
             if (chartSaveSixteenthButton != null) chartSaveSixteenthButton.clicked += SaveSixteenthChart;
@@ -896,6 +1093,12 @@ namespace HitTheKit.Unity.Gameplay
             if (resultRestartButton != null) resultRestartButton.clicked -= RestartRun;
             if (resultMenuButton != null) resultMenuButton.clicked -= ReturnToMainMenu;
             if (resultApplyCalibrationButton != null) resultApplyCalibrationButton.clicked -= ApplyCalibrationRecommendation;
+            if (practicePreviousSectionButton != null) practicePreviousSectionButton.clicked -= SelectPreviousPracticeSection;
+            if (practiceNextSectionButton != null) practiceNextSectionButton.clicked -= SelectNextPracticeSection;
+            if (practiceLoopSectionButton != null) practiceLoopSectionButton.clicked -= LoopSelectedPracticeSection;
+            if (practiceSetAButton != null) practiceSetAButton.clicked -= SetPracticePointA;
+            if (practiceSetBButton != null) practiceSetBButton.clicked -= SetPracticePointB;
+            if (practiceClearButton != null) practiceClearButton.clicked -= ClearPracticeLoop;
             if (chartSaveRawButton != null) chartSaveRawButton.clicked -= SaveRawChart;
             if (chartSaveEighthButton != null) chartSaveEighthButton.clicked -= SaveEighthChart;
             if (chartSaveSixteenthButton != null) chartSaveSixteenthButton.clicked -= SaveSixteenthChart;
