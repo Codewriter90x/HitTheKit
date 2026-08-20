@@ -393,6 +393,12 @@
 .compact-setting-button { width: 48px; min-width: 48px; font-size: 13px; }
 .compact-setting-reset { width: 70px; min-width: 70px; margin-left: 6px; font-size: 9px; }
 .compact-setting-value { flex-grow: 1; min-width: 220px; color: rgb(205, 218, 228); -unity-text-align: middle-center; font-size: 11px; -unity-font-style: bold; }
+.sound-check-panel { margin-top: 10px; padding: 10px; border-width: 1px; border-color: rgba(91, 224, 255, 0.42); border-radius: 7px; background-color: rgba(2, 11, 22, 0.78); }
+.sound-check-title { color: rgb(91, 224, 255); font-size: 12px; -unity-font-style: bold; letter-spacing: 1px; }
+.sound-check-source, .sound-check-action { flex-grow: 1; min-height: 34px; margin-right: 4px; background-color: rgba(8, 23, 42, 0.96); border-width: 1px; border-color: rgba(93, 166, 216, 0.58); color: rgb(205, 218, 228); -unity-font-style: bold; font-size: 10px; }
+.sound-check-source--selected { border-color: rgb(91, 224, 255); color: white; background-color: rgba(0, 102, 135, 0.82); }
+.sound-check-start { margin-top: 8px; border-color: rgb(91, 224, 255); color: white; }
+.sound-check-status { min-height: 34px; margin-top: 7px; color: rgb(255, 202, 103); white-space: normal; -unity-text-align: middle-center; font-size: 10px; -unity-font-style: bold; }
 .keybinding-grid { margin-top: 7px; flex-direction: row; flex-wrap: wrap; }
 .keybinding-button { width: 24%; min-width: 145px; height: 34px; min-height: 34px; margin: 2px; padding: 0 5px; background-color: rgba(8, 23, 42, 0.96); border-width: 1px; border-color: rgba(93, 166, 216, 0.58); color: white; font-size: 9px; -unity-font-style: bold; }
 .keybinding-button--waiting { border-width: 2px; border-color: rgb(239, 169, 71); color: rgb(255, 210, 112); }

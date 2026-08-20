@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using HitTheKit.Core;
+using HitTheKit.Unity.Audio;
 using HitTheKit.Unity.Input;
 using HitTheKit.Unity.Gameplay;
 using HitTheKit.Unity.DeviceSetup;
@@ -128,6 +129,15 @@ namespace HitTheKit.Unity.MainMenu
         private Button midiOffsetResetButton;
         private Label midiOffsetValue;
         private Label calibrationHelp;
+        private Button soundCheckAudioButton;
+        private Button soundCheckKeyboardButton;
+        private Button soundCheckMidiButton;
+        private Button soundCheckStartButton;
+        private Button soundCheckApplyButton;
+        private Button soundCheckCancelButton;
+        private Label soundCheckTitle;
+        private Label soundCheckInstructions;
+        private Label soundCheckStatus;
         private Button bindingKickButton;
         private Button bindingSnareButton;
         private Button bindingHiHatButton;
@@ -181,6 +191,12 @@ namespace HitTheKit.Unity.MainMenu
         private DrumPad? pendingKeyBinding;
         private bool resetConfirmationPending;
         private bool resetDataConfirmationPending;
+        private readonly GuidedLatencySoundCheck soundCheck = new GuidedLatencySoundCheck();
+        private DrumInputSource selectedSoundCheckSource = DrumInputSource.Keyboard;
+        private AudioSource soundCheckAudioSource;
+        private AudioClip soundCheckPreviewClip;
+        private AudioClip soundCheckRunClip;
+        private bool soundCheckRecommendationApplied;
         private static readonly Vector2Int[] WindowSizes =
         {
             new Vector2Int(1280, 720),
@@ -214,6 +230,7 @@ namespace HitTheKit.Unity.MainMenu
         public string PendingChartAudioPath => pendingChartAudioPath;
         public bool IsSongAudioBindingVisible =>
             songAudioBindingOverlay != null && songAudioBindingOverlay.resolvedStyle.display != DisplayStyle.None;
+        public GuidedSoundCheckSnapshot SoundCheckSnapshot => soundCheck.Snapshot;
 
         private void Awake()
         {
@@ -245,6 +262,19 @@ namespace HitTheKit.Unity.MainMenu
         {
             if (!isBound || IsNavigationPending) return;
             if (onboardingVisible) return;
+            if (soundCheck.Snapshot.State == GuidedSoundCheckState.Running)
+            {
+                if (UnityEngine.Input.GetKeyDown(KeyCode.Escape))
+                {
+                    CancelSoundCheck();
+                    return;
+                }
+                HandleSoundCheckKeyboardInput();
+                soundCheck.Advance(Time.unscaledTimeAsDouble);
+                RenderSoundCheck();
+                RefreshInputStatus();
+                return;
+            }
             if (UnityEngine.Input.GetKeyDown(KeyCode.UpArrow))
             {
                 if (playVisible) MoveSongSelection(-1);
@@ -266,7 +296,13 @@ namespace HitTheKit.Unity.MainMenu
 
         private void OnDisable()
         {
+            CancelSoundCheck();
             Unbind();
+        }
+
+        private void OnDestroy()
+        {
+            ReleaseSoundCheckAudio();
         }
 
         public void Configure(
@@ -510,6 +546,15 @@ namespace HitTheKit.Unity.MainMenu
             midiOffsetResetButton = Required<Button>(root, "midi-offset-reset");
             midiOffsetValue = Required<Label>(root, "midi-offset-value");
             calibrationHelp = Required<Label>(root, "calibration-help");
+            soundCheckAudioButton = Required<Button>(root, "sound-check-audio");
+            soundCheckKeyboardButton = Required<Button>(root, "sound-check-keyboard");
+            soundCheckMidiButton = Required<Button>(root, "sound-check-midi");
+            soundCheckStartButton = Required<Button>(root, "sound-check-start");
+            soundCheckApplyButton = Required<Button>(root, "sound-check-apply");
+            soundCheckCancelButton = Required<Button>(root, "sound-check-cancel");
+            soundCheckTitle = Required<Label>(root, "sound-check-title");
+            soundCheckInstructions = Required<Label>(root, "sound-check-instructions");
+            soundCheckStatus = Required<Label>(root, "sound-check-status");
             bindingKickButton = Required<Button>(root, "binding-kick");
             bindingSnareButton = Required<Button>(root, "binding-snare");
             bindingHiHatButton = Required<Button>(root, "binding-hihat");
@@ -594,6 +639,12 @@ namespace HitTheKit.Unity.MainMenu
             midiOffsetDownButton.clicked += DecreaseMidiOffset;
             midiOffsetUpButton.clicked += IncreaseMidiOffset;
             midiOffsetResetButton.clicked += ResetMidiOffset;
+            soundCheckAudioButton.clicked += PlaySoundCheckPreview;
+            soundCheckKeyboardButton.clicked += SelectKeyboardSoundCheck;
+            soundCheckMidiButton.clicked += SelectMidiSoundCheck;
+            soundCheckStartButton.clicked += StartSoundCheck;
+            soundCheckApplyButton.clicked += ApplySoundCheckRecommendationFromButton;
+            soundCheckCancelButton.clicked += CancelSoundCheck;
             bindingKickButton.clicked += BeginKickBinding;
             bindingSnareButton.clicked += BeginSnareBinding;
             bindingHiHatButton.clicked += BeginHiHatBinding;
@@ -711,6 +762,12 @@ namespace HitTheKit.Unity.MainMenu
             midiOffsetDownButton.clicked -= DecreaseMidiOffset;
             midiOffsetUpButton.clicked -= IncreaseMidiOffset;
             midiOffsetResetButton.clicked -= ResetMidiOffset;
+            soundCheckAudioButton.clicked -= PlaySoundCheckPreview;
+            soundCheckKeyboardButton.clicked -= SelectKeyboardSoundCheck;
+            soundCheckMidiButton.clicked -= SelectMidiSoundCheck;
+            soundCheckStartButton.clicked -= StartSoundCheck;
+            soundCheckApplyButton.clicked -= ApplySoundCheckRecommendationFromButton;
+            soundCheckCancelButton.clicked -= CancelSoundCheck;
             bindingKickButton.clicked -= BeginKickBinding;
             bindingSnareButton.clicked -= BeginSnareBinding;
             bindingHiHatButton.clicked -= BeginHiHatBinding;
@@ -1068,8 +1125,15 @@ namespace HitTheKit.Unity.MainMenu
         private void SelectFullSpeed() => SelectStudySpeed(1.0);
         private void StartSelectedLesson() => StartLesson(selectedLesson, selectedStudySpeed);
 
-        private void HandleMenuDrumInput(DrumInputEvent input) =>
+        private void HandleMenuDrumInput(DrumInputEvent input)
+        {
+            if (soundCheck.Snapshot.State == GuidedSoundCheckState.Running)
+            {
+                RecordSoundCheckHit(DrumInputSource.Midi, Time.unscaledTimeAsDouble);
+                return;
+            }
             ProcessDrumInput(input, Time.unscaledTimeAsDouble);
+        }
 
         private void HandleExit()
         {
@@ -1144,6 +1208,132 @@ namespace HitTheKit.Unity.MainMenu
         private void DecreaseMidiOffset() => ChangeOffset(DrumInputSource.Midi, -0.005);
         private void IncreaseMidiOffset() => ChangeOffset(DrumInputSource.Midi, 0.005);
         private void ResetMidiOffset() => SetOffset(DrumInputSource.Midi, 0);
+
+        private void SelectKeyboardSoundCheck() => SelectSoundCheckSource(DrumInputSource.Keyboard);
+        private void SelectMidiSoundCheck() => SelectSoundCheckSource(DrumInputSource.Midi);
+
+        public void SelectSoundCheckSource(DrumInputSource source)
+        {
+            if (soundCheck.Snapshot.State == GuidedSoundCheckState.Running) return;
+            selectedSoundCheckSource = source;
+            soundCheck.Reset();
+            soundCheckRecommendationApplied = false;
+            RenderSoundCheck();
+        }
+
+        private void PlaySoundCheckPreview()
+        {
+            EnsureSoundCheckAudio();
+            soundCheckAudioSource.Stop();
+            soundCheckAudioSource.clip = soundCheckPreviewClip;
+            soundCheckAudioSource.Play();
+            soundCheckStatus.text = AudioMuted
+                ? (Language == MainMenuLanguage.Italian ? "AUDIO DISATTIVATO · riattivalo per sentire il click" : "AUDIO MUTED · enable it to hear the click")
+                : (Language == MainMenuLanguage.Italian ? "CLICK IN RIPRODUZIONE · verifica l'uscita audio" : "PLAYING CLICK · verify your audio output");
+        }
+
+        private void StartSoundCheck()
+        {
+            if (selectedSoundCheckSource == DrumInputSource.Midi &&
+                (menuMidiInput == null || menuMidiInput.State != GameplayMidiState.Connected))
+            {
+                soundCheckStatus.text = Language == MainMenuLanguage.Italian
+                    ? "MIDI NON CONNESSO · collega o configura la batteria prima del test"
+                    : "MIDI NOT CONNECTED · connect or configure the drum kit before testing";
+                return;
+            }
+            EnsureSoundCheckAudio();
+            soundCheckAudioSource.Stop();
+            soundCheckAudioSource.clip = soundCheckRunClip;
+            const double scheduleLeadSeconds = 0.1;
+            double dspStart = AudioSettings.dspTime + scheduleLeadSeconds;
+            soundCheckAudioSource.PlayScheduled(dspStart);
+            double firstMeasuredBeat = Time.unscaledTimeAsDouble + scheduleLeadSeconds + 4 * GuidedLatencySoundCheck.DefaultIntervalSeconds;
+            BeginSoundCheck(selectedSoundCheckSource, firstMeasuredBeat);
+        }
+
+        public void BeginSoundCheck(DrumInputSource source, double firstTargetTimeSeconds)
+        {
+            selectedSoundCheckSource = source;
+            soundCheckRecommendationApplied = false;
+            soundCheck.Begin(ToSoundCheckInput(source), firstTargetTimeSeconds);
+            RenderSoundCheck();
+        }
+
+        public bool RecordSoundCheckHit(DrumInputSource source, double timestampSeconds)
+        {
+            bool accepted = soundCheck.TryRecord(ToSoundCheckInput(source), timestampSeconds);
+            RenderSoundCheck();
+            return accepted;
+        }
+
+        public bool ApplySoundCheckRecommendation()
+        {
+            GuidedSoundCheckSnapshot snapshot = soundCheck.Snapshot;
+            if (!snapshot.CanApplyRecommendation || soundCheckRecommendationApplied) return false;
+            DrumInputSource source = FromSoundCheckInput(snapshot.Source);
+            double current = PlayerPreferencesRuntime.Current.Snapshot.OffsetFor(source);
+            soundCheckRecommendationApplied = true;
+            SetOffset(source, soundCheck.RecommendOffsetSeconds(current));
+            RenderSoundCheck();
+            return true;
+        }
+
+        private void ApplySoundCheckRecommendationFromButton() => ApplySoundCheckRecommendation();
+
+        public void CancelSoundCheck()
+        {
+            soundCheck.Reset();
+            soundCheckRecommendationApplied = false;
+            if (soundCheckAudioSource != null) soundCheckAudioSource.Stop();
+            if (isBound) RenderSoundCheck();
+        }
+
+        private void HandleSoundCheckKeyboardInput()
+        {
+            if (selectedSoundCheckSource != DrumInputSource.Keyboard) return;
+            PlayerPreferencesSnapshot preferences = PlayerPreferencesRuntime.Current.Snapshot;
+            if (UnityEngine.Input.GetKeyDown(preferences.KickKey) ||
+                UnityEngine.Input.GetKeyDown(preferences.SnareKey) ||
+                UnityEngine.Input.GetKeyDown(preferences.HiHatKey) ||
+                UnityEngine.Input.GetKeyDown(preferences.Tom1Key) ||
+                UnityEngine.Input.GetKeyDown(preferences.Tom2Key) ||
+                UnityEngine.Input.GetKeyDown(preferences.FloorTomKey) ||
+                UnityEngine.Input.GetKeyDown(preferences.CrashKey) ||
+                UnityEngine.Input.GetKeyDown(preferences.RideKey))
+                RecordSoundCheckHit(DrumInputSource.Keyboard, Time.unscaledTimeAsDouble);
+        }
+
+        private void EnsureSoundCheckAudio()
+        {
+            if (soundCheckAudioSource == null)
+            {
+                soundCheckAudioSource = gameObject.AddComponent<AudioSource>();
+                soundCheckAudioSource.playOnAwake = false;
+                soundCheckAudioSource.loop = false;
+                soundCheckAudioSource.spatialBlend = 0;
+                soundCheckAudioSource.volume = 0.55f;
+            }
+            if (soundCheckPreviewClip == null)
+                soundCheckPreviewClip = GeneratedClickTrackFactory.Create(120, 1, 2);
+            if (soundCheckRunClip == null)
+                soundCheckRunClip = GeneratedClickTrackFactory.Create(120, 4, 4);
+        }
+
+        private void ReleaseSoundCheckAudio()
+        {
+            if (soundCheckPreviewClip != null) Destroy(soundCheckPreviewClip);
+            if (soundCheckRunClip != null) Destroy(soundCheckRunClip);
+            soundCheckPreviewClip = null;
+            soundCheckRunClip = null;
+            soundCheckAudioSource = null;
+        }
+
+        private static GuidedSoundCheckInput ToSoundCheckInput(DrumInputSource source) =>
+            source == DrumInputSource.Midi ? GuidedSoundCheckInput.Midi : GuidedSoundCheckInput.Keyboard;
+
+        private static DrumInputSource FromSoundCheckInput(GuidedSoundCheckInput source) =>
+            source == GuidedSoundCheckInput.Midi ? DrumInputSource.Midi : DrumInputSource.Keyboard;
 
         private void ChangeOffset(DrumInputSource source, double delta)
         {
@@ -1729,6 +1919,7 @@ namespace HitTheKit.Unity.MainMenu
             calibrationHelp.text = italian
                 ? "Valori positivi compensano un input registrato in ritardo. Il risultato suggerisce una correzione dopo almeno 8 colpi."
                 : "Positive values compensate late input. Results suggest a correction after at least 8 hits.";
+            RenderSoundCheck();
             RenderKeyBindings();
             if (!pendingKeyBinding.HasValue && string.IsNullOrEmpty(bindingStatus.text))
                 bindingStatus.text = italian
@@ -1771,6 +1962,72 @@ namespace HitTheKit.Unity.MainMenu
             settingsBackupStatus.text = string.IsNullOrEmpty(backupStatusMessage)
                 ? GameplayProgressRuntime.Current.LastError
                 : backupStatusMessage;
+        }
+
+        private void RenderSoundCheck()
+        {
+            if (soundCheckStatus == null) return;
+            bool italian = Language == MainMenuLanguage.Italian;
+            GuidedSoundCheckSnapshot snapshot = soundCheck.Snapshot;
+            soundCheckTitle.text = italian ? "SOUND CHECK GUIDATO" : "GUIDED SOUND CHECK";
+            soundCheckInstructions.text = italian
+                ? "1. Prova il click. 2. Scegli l'input. 3. Ascolta 4 colpi, poi suona sui 12 successivi."
+                : "1. Test the click. 2. Choose input. 3. Listen for 4 beats, then play with the next 12.";
+            soundCheckAudioButton.text = italian ? "1 · PROVA AUDIO" : "1 · TEST AUDIO";
+            soundCheckKeyboardButton.text = italian ? "2 · TASTIERA" : "2 · KEYBOARD";
+            bool midiReady = menuMidiInput != null && menuMidiInput.State == GameplayMidiState.Connected;
+            soundCheckMidiButton.text = midiReady
+                ? "2 · MIDI"
+                : (italian ? "2 · MIDI NON CONNESSO" : "2 · MIDI NOT CONNECTED");
+            soundCheckStartButton.text = italian ? "3 · AVVIA CALIBRAZIONE" : "3 · START CALIBRATION";
+            soundCheckApplyButton.text = italian ? "APPLICA SUGGERIMENTO" : "APPLY SUGGESTION";
+            soundCheckCancelButton.text = italian ? "ANNULLA" : "CANCEL";
+            soundCheckKeyboardButton.EnableInClassList(
+                "sound-check-source--selected", selectedSoundCheckSource == DrumInputSource.Keyboard);
+            soundCheckMidiButton.EnableInClassList(
+                "sound-check-source--selected", selectedSoundCheckSource == DrumInputSource.Midi);
+            bool running = snapshot.State == GuidedSoundCheckState.Running;
+            soundCheckKeyboardButton.SetEnabled(!running);
+            soundCheckMidiButton.SetEnabled(!running && midiReady);
+            soundCheckStartButton.SetEnabled(!running);
+            soundCheckApplyButton.SetEnabled(snapshot.CanApplyRecommendation && !soundCheckRecommendationApplied);
+            soundCheckCancelButton.SetEnabled(snapshot.State != GuidedSoundCheckState.Idle);
+
+            if (snapshot.State == GuidedSoundCheckState.Idle)
+            {
+                soundCheckStatus.text = italian
+                    ? "PRONTO · elaborazione solo locale"
+                    : "READY · processed locally only";
+                return;
+            }
+            if (snapshot.State == GuidedSoundCheckState.Running)
+            {
+                soundCheckStatus.text = italian
+                    ? $"IN ASCOLTO · {snapshot.ResolvedCount}/{snapshot.TargetCount} · validi {snapshot.AcceptedCount} · mancati {snapshot.MissedCount}"
+                    : $"LISTENING · {snapshot.ResolvedCount}/{snapshot.TargetCount} · accepted {snapshot.AcceptedCount} · missed {snapshot.MissedCount}";
+                return;
+            }
+
+            TimingCalibrationSnapshot calibration = snapshot.Calibration;
+            if (!snapshot.CanApplyRecommendation)
+            {
+                soundCheckStatus.text = italian
+                    ? $"RIPROVA · servono {TimingCalibrationAdvisor.MinimumSamples} colpi validi, ricevuti {snapshot.AcceptedCount}"
+                    : $"TRY AGAIN · {TimingCalibrationAdvisor.MinimumSamples} valid hits required, received {snapshot.AcceptedCount}";
+                return;
+            }
+            double current = PlayerPreferencesRuntime.Current.Snapshot.OffsetFor(FromSoundCheckInput(snapshot.Source));
+            double suggested = soundCheck.RecommendOffsetSeconds(current);
+            if (soundCheckRecommendationApplied)
+            {
+                soundCheckStatus.text = italian
+                    ? $"APPLICATO · offset {FormatOffset(current)}"
+                    : $"APPLIED · offset {FormatOffset(current)}";
+                return;
+            }
+            soundCheckStatus.text = italian
+                ? $"COMPLETO · mediana {FormatOffset(calibration.MedianDeltaSeconds)} · suggerito {FormatOffset(suggested)}"
+                : $"COMPLETE · median {FormatOffset(calibration.MedianDeltaSeconds)} · suggested {FormatOffset(suggested)}";
         }
 
         private static string FormatOffset(double seconds)
