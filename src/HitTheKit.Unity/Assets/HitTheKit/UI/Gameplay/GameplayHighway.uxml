@@ -126,16 +126,58 @@
         <ui:VisualElement name="results-overlay" class="run-overlay" style="display: none;">
             <ui:VisualElement class="results-dialog">
                 <ui:Label text="BRANO COMPLETATO" class="eyebrow results-eyebrow" />
-                <ui:Label name="result-rank" text="S" class="result-rank" />
-                <ui:VisualElement class="results-metrics">
-                    <ui:VisualElement class="result-metric"><ui:Label text="SCORE" class="metric-label" /><ui:Label name="result-score" text="0" class="result-value" /></ui:VisualElement>
-                    <ui:VisualElement class="result-metric"><ui:Label text="ACCURACY" class="metric-label" /><ui:Label name="result-accuracy" text="100.0%" class="result-value" /></ui:VisualElement>
-                    <ui:VisualElement class="result-metric"><ui:Label text="MAX COMBO" class="metric-label" /><ui:Label name="result-combo" text="0" class="result-value" /></ui:VisualElement>
+                <ui:VisualElement name="result-performance-panel" class="result-performance-panel">
+                    <ui:Label name="result-rank" text="S" class="result-rank" />
+                    <ui:VisualElement class="results-metrics">
+                        <ui:VisualElement class="result-metric"><ui:Label text="SCORE" class="metric-label" /><ui:Label name="result-score" text="0" class="result-value" /></ui:VisualElement>
+                        <ui:VisualElement class="result-metric"><ui:Label text="ACCURACY" class="metric-label" /><ui:Label name="result-accuracy" text="100.0%" class="result-value" /></ui:VisualElement>
+                        <ui:VisualElement class="result-metric"><ui:Label text="MAX COMBO" class="metric-label" /><ui:Label name="result-combo" text="0" class="result-value" /></ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:Label name="result-breakdown" text="PERFECT 0   GOOD 0   EARLY/LATE 0   MISS 0" class="result-breakdown" />
+                    <ui:Label name="result-practice" text="FOCUS: COMPLETA UNA SESSIONE" class="result-practice" />
+                    <ui:Label name="result-calibration" text="CALIBRAZIONE: SERVONO 8 COLPI VALIDI" class="result-calibration" />
+                    <ui:Button name="result-apply-calibration" text="APPLICA CALIBRAZIONE" class="run-secondary-button result-calibration-button" />
                 </ui:VisualElement>
-                <ui:Label name="result-breakdown" text="PERFECT 0   GOOD 0   EARLY/LATE 0   MISS 0" class="result-breakdown" />
-                <ui:Label name="result-practice" text="FOCUS: COMPLETA UNA SESSIONE" class="result-practice" />
-                <ui:Label name="result-calibration" text="CALIBRAZIONE: SERVONO 8 COLPI VALIDI" class="result-calibration" />
-                <ui:Button name="result-apply-calibration" text="APPLICA CALIBRAZIONE" class="run-secondary-button result-calibration-button" />
+                <ui:VisualElement name="chart-creator-results" class="chart-creator-results" style="display: none;">
+                    <ui:Label text="REVISIONE TAKE" class="eyebrow chart-creator-eyebrow" />
+                    <ui:Label name="chart-creator-summary" text="0 COLPI REGISTRATI" class="chart-creator-summary" />
+                    <ui:Label text="Seleziona una nota per correggere tempo, dinamica e articolazione. Il pacchetto .htksong resta senza audio." class="chart-creator-copy" />
+                    <ui:VisualElement class="chart-waveform-panel">
+                        <ui:VisualElement name="chart-waveform-host" class="chart-waveform-host" />
+                        <ui:VisualElement class="chart-waveform-toolbar">
+                            <ui:Label name="chart-waveform-time" text="PLAYHEAD 0.000s" class="chart-waveform-time" />
+                            <ui:Button name="chart-waveform-zoom-in" text="ZOOM +" class="chart-waveform-button" />
+                            <ui:Button name="chart-waveform-zoom-out" text="ZOOM −" class="chart-waveform-button" />
+                            <ui:Button name="chart-waveform-reset" text="TUTTO" class="chart-waveform-button" />
+                            <ui:Button name="chart-waveform-preview" text="ASCOLTA DA QUI" class="chart-waveform-button chart-waveform-preview" />
+                            <ui:Button name="chart-waveform-stop" text="STOP" class="chart-waveform-button" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement class="chart-note-editor">
+                        <ui:ListView name="chart-note-list" class="chart-note-list" />
+                        <ui:VisualElement class="chart-note-controls">
+                            <ui:Label name="chart-note-selection" text="SELEZIONA UNA NOTA" class="chart-note-selection" />
+                            <ui:VisualElement class="chart-note-fields">
+                                <ui:TextField name="chart-note-time" label="TEMPO (s)" class="chart-note-time" />
+                                <ui:DropdownField name="chart-note-pad" label="STRUMENTO" class="chart-note-pad" />
+                                <ui:TextField name="chart-note-velocity" label="VELOCITY (1–127)" class="chart-note-velocity" />
+                                <ui:DropdownField name="chart-note-articulation" label="ARTICOLAZIONE" class="chart-note-articulation" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="chart-note-buttons">
+                                <ui:Button name="chart-note-add" text="AGGIUNGI" class="run-secondary-button chart-note-button" />
+                                <ui:Button name="chart-note-apply" text="APPLICA" class="run-primary-button chart-note-button" />
+                                <ui:Button name="chart-note-delete" text="ELIMINA" class="run-secondary-button chart-note-button chart-note-delete" />
+                            </ui:VisualElement>
+                            <ui:Label name="chart-note-status" class="chart-note-status" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement class="chart-creator-actions">
+                        <ui:Button name="chart-save-raw" text="SALVA RAW" class="run-secondary-button chart-save-button" />
+                        <ui:Button name="chart-save-eighth" text="SALVA 1/8" class="run-secondary-button chart-save-button" />
+                        <ui:Button name="chart-save-sixteenth" text="SALVA 1/16" class="run-primary-button chart-save-button" />
+                    </ui:VisualElement>
+                    <ui:Label name="chart-creator-status" class="chart-creator-status" />
+                </ui:VisualElement>
                 <ui:VisualElement class="result-actions">
                     <ui:Button name="result-restart-button" text="SUONA ANCORA" class="run-primary-button" />
                     <ui:Button name="result-menu-button" text="MENU PRINCIPALE" class="run-secondary-button" />

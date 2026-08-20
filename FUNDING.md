@@ -54,7 +54,7 @@ help without creating a recurring commitment:
   accessibility, and focused development time a meaningful one-time boost.
 
 Custom monthly and one-time support remains available through GitHub Sponsors.
-Rewards are digital, low-maintenance, privacy-conscious and independent of GPL
+Rewards are digital, low-maintenance, privacy-conscious and independent of MPL
 rights. Sponsorship does not purchase guaranteed features, roadmap control,
 private GoMyRO access, commercial-song rights or a commercial HitTheKit license.
 

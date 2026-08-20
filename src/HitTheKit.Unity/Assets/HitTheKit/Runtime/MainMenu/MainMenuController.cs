@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -29,6 +30,8 @@ namespace HitTheKit.Unity.MainMenu
         private VisualElement learnOverlay;
         private VisualElement settingsOverlay;
         private VisualElement onboardingOverlay;
+        private VisualElement chartAudioImportOverlay;
+        private VisualElement songAudioBindingOverlay;
         private Label eyebrow;
         private Label status;
         private Label learnHeading;
@@ -66,9 +69,26 @@ namespace HitTheKit.Unity.MainMenu
         private Button songSpeedNinetyButton;
         private Button songSpeedFullButton;
         private Button songPlayButton;
+        private Button songRecordButton;
+        private Button songBindAudioButton;
         private Button songRefreshButton;
         private Button songFolderButton;
         private Button songBackButton;
+        private Button songImportAudioButton;
+        private Label chartAudioFileLabel;
+        private TextField chartAudioTitleField;
+        private TextField chartAudioArtistField;
+        private TextField chartAudioBpmField;
+        private TextField chartAudioBarsField;
+        private TextField chartAudioBeatsField;
+        private Label chartAudioErrorLabel;
+        private Button chartAudioStartButton;
+        private Button chartAudioCancelButton;
+        private Label songAudioBindingSongLabel;
+        private Label songAudioBindingFileLabel;
+        private Label songAudioBindingErrorLabel;
+        private Button songAudioBindingConfirmButton;
+        private Button songAudioBindingCancelButton;
         private ScrollView learnList;
         private Label learnProgressCount;
         private Label learnProgressAccuracy;
@@ -146,8 +166,12 @@ namespace HitTheKit.Unity.MainMenu
         private int learnOpenedFrame = -1;
         private int playOpenedFrame = -1;
         private SongLibrarySnapshot songLibrary;
+        private HtkSongInboxResult packageInbox;
         private string selectedSongId;
         private string selectedSongDifficulty;
+        private string pendingChartAudioPath;
+        private string pendingSongAudioPath;
+        private string pendingSongAudioId;
         private double selectedSongSpeed = 1.0;
         private GameplayLessonId selectedLesson = GameplayLessonId.FirstPulse;
         private double selectedStudySpeed = 1.0;
@@ -185,6 +209,11 @@ namespace HitTheKit.Unity.MainMenu
         public string SelectedSongId => selectedSongId;
         public SongLibrarySnapshot SongLibrary => songLibrary;
         public MainMenuStageEnvironment StageEnvironment => stageEnvironment;
+        public bool IsChartAudioImportVisible =>
+            chartAudioImportOverlay != null && chartAudioImportOverlay.resolvedStyle.display != DisplayStyle.None;
+        public string PendingChartAudioPath => pendingChartAudioPath;
+        public bool IsSongAudioBindingVisible =>
+            songAudioBindingOverlay != null && songAudioBindingOverlay.resolvedStyle.display != DisplayStyle.None;
 
         private void Awake()
         {
@@ -420,9 +449,28 @@ namespace HitTheKit.Unity.MainMenu
             songSpeedNinetyButton = Required<Button>(root, "song-speed-ninety");
             songSpeedFullButton = Required<Button>(root, "song-speed-full");
             songPlayButton = Required<Button>(root, "song-play-button");
+            songRecordButton = Required<Button>(root, "song-record-button");
+            songBindAudioButton = Required<Button>(root, "song-bind-audio-button");
             songRefreshButton = Required<Button>(root, "song-refresh-button");
             songFolderButton = Required<Button>(root, "song-folder-button");
             songBackButton = Required<Button>(root, "song-back-button");
+            songImportAudioButton = Required<Button>(root, "song-import-audio-button");
+            chartAudioImportOverlay = Required<VisualElement>(root, "chart-audio-import-overlay");
+            chartAudioFileLabel = Required<Label>(root, "chart-audio-file");
+            chartAudioTitleField = Required<TextField>(root, "chart-audio-title");
+            chartAudioArtistField = Required<TextField>(root, "chart-audio-artist");
+            chartAudioBpmField = Required<TextField>(root, "chart-audio-bpm");
+            chartAudioBarsField = Required<TextField>(root, "chart-audio-bars");
+            chartAudioBeatsField = Required<TextField>(root, "chart-audio-beats");
+            chartAudioErrorLabel = Required<Label>(root, "chart-audio-error");
+            chartAudioStartButton = Required<Button>(root, "chart-audio-start");
+            chartAudioCancelButton = Required<Button>(root, "chart-audio-cancel");
+            songAudioBindingOverlay = Required<VisualElement>(root, "song-audio-binding-overlay");
+            songAudioBindingSongLabel = Required<Label>(root, "song-audio-binding-song");
+            songAudioBindingFileLabel = Required<Label>(root, "song-audio-binding-file");
+            songAudioBindingErrorLabel = Required<Label>(root, "song-audio-binding-error");
+            songAudioBindingConfirmButton = Required<Button>(root, "song-audio-binding-confirm");
+            songAudioBindingCancelButton = Required<Button>(root, "song-audio-binding-cancel");
             learnList = Required<ScrollView>(root, "learn-list");
             learnProgressCount = Required<Label>(root, "learn-progress-count");
             learnProgressAccuracy = Required<Label>(root, "learn-progress-accuracy");
@@ -516,9 +564,16 @@ namespace HitTheKit.Unity.MainMenu
             songSpeedNinetyButton.clicked += SelectNinetySongSpeed;
             songSpeedFullButton.clicked += SelectFullSongSpeed;
             songPlayButton.clicked += StartSelectedSongFromButton;
+            songRecordButton.clicked += StartChartCreatorFromButton;
+            songBindAudioButton.clicked += PickAudioForSelectedSong;
             songRefreshButton.clicked += RefreshSongLibrary;
             songFolderButton.clicked += OpenUserSongFolder;
             songBackButton.clicked += CloseSongLibrary;
+            songImportAudioButton.clicked += PickChartAuthoringAudio;
+            chartAudioStartButton.clicked += ImportAudioAndStartChartCreatorFromButton;
+            chartAudioCancelButton.clicked += CancelChartAuthoringAudio;
+            songAudioBindingConfirmButton.clicked += ConfirmSongAudioBindingFromButton;
+            songAudioBindingCancelButton.clicked += CancelSongAudioBinding;
             learnSpeedHalfButton.clicked += SelectHalfSpeed;
             learnSpeedThreeQuarterButton.clicked += SelectThreeQuarterSpeed;
             learnSpeedFullButton.clicked += SelectFullSpeed;
@@ -582,6 +637,8 @@ namespace HitTheKit.Unity.MainMenu
             RenderCopy();
             settingsVisible = false;
             SetOverlay(settingsOverlay, false);
+            SetOverlay(chartAudioImportOverlay, false);
+            SetOverlay(songAudioBindingOverlay, false);
             onboardingVisible = !PlayerPreferencesRuntime.Current.Snapshot.FirstRunCompleted;
             SetOverlay(onboardingOverlay, onboardingVisible);
             if (session.ReturnTarget == GameplayReturnTarget.LearningPath)
@@ -624,9 +681,16 @@ namespace HitTheKit.Unity.MainMenu
             songSpeedNinetyButton.clicked -= SelectNinetySongSpeed;
             songSpeedFullButton.clicked -= SelectFullSongSpeed;
             songPlayButton.clicked -= StartSelectedSongFromButton;
+            songRecordButton.clicked -= StartChartCreatorFromButton;
+            songBindAudioButton.clicked -= PickAudioForSelectedSong;
             songRefreshButton.clicked -= RefreshSongLibrary;
             songFolderButton.clicked -= OpenUserSongFolder;
             songBackButton.clicked -= CloseSongLibrary;
+            songImportAudioButton.clicked -= PickChartAuthoringAudio;
+            chartAudioStartButton.clicked -= ImportAudioAndStartChartCreatorFromButton;
+            chartAudioCancelButton.clicked -= CancelChartAuthoringAudio;
+            songAudioBindingConfirmButton.clicked -= ConfirmSongAudioBindingFromButton;
+            songAudioBindingCancelButton.clicked -= CancelSongAudioBinding;
             learnSpeedHalfButton.clicked -= SelectHalfSpeed;
             learnSpeedThreeQuarterButton.clicked -= SelectThreeQuarterSpeed;
             learnSpeedFullButton.clicked -= SelectFullSpeed;
@@ -698,10 +762,27 @@ namespace HitTheKit.Unity.MainMenu
 
         public void RefreshSongLibrary()
         {
+            try
+            {
+                packageInbox = new HtkSongPackageService().ImportInbox(SongLibraryRuntime.UserRoot);
+            }
+            catch (Exception exception)
+            {
+                packageInbox = null;
+                Debug.LogWarning($"Could not scan .htksong packages ({exception.GetType().Name}).", this);
+            }
             songLibrary = SongLibraryRuntime.Discover();
+            string importedSongId = packageInbox?.ImportedSongIds.Count > 0
+                ? packageInbox.ImportedSongIds[packageInbox.ImportedSongIds.Count - 1]
+                : null;
             if (songLibrary.Songs.Count == 0)
             {
                 selectedSongId = null;
+            }
+            else if (!string.IsNullOrEmpty(importedSongId) &&
+                     songLibrary.Songs.Any(song => string.Equals(song.Id, importedSongId, StringComparison.Ordinal)))
+            {
+                selectedSongId = importedSongId;
             }
             else if (string.IsNullOrEmpty(selectedSongId) ||
                      songLibrary.Songs.All(song => !string.Equals(song.Id, selectedSongId, StringComparison.Ordinal)))
@@ -740,6 +821,182 @@ namespace HitTheKit.Unity.MainMenu
         }
 
         private void StartSelectedSongFromButton() => StartSelectedSong();
+
+        public bool StartChartCreator()
+        {
+            SongLibraryEntry song = SelectedSong();
+            if (song == null || (!song.IsPlayable && !song.CanAuthorChart))
+            {
+                RenderSongLibrary();
+                return false;
+            }
+
+            GameplaySessionContext.SelectChartCreator(song, selectedSongSpeed, selectedSongDifficulty);
+            Navigate(MainMenuRoutes.GameplayScene, MainMenuDestination.Play);
+            return IsNavigationPending;
+        }
+
+        private void StartChartCreatorFromButton() => StartChartCreator();
+
+        private void PickChartAuthoringAudio()
+        {
+            try
+            {
+                string path = new MacOsChartAuthoringAudioPicker().PickAudioFile();
+                if (!string.IsNullOrWhiteSpace(path)) BeginChartAuthoringAudio(path);
+            }
+            catch (Exception exception)
+            {
+                songLibraryDiagnostic.text = (Language == MainMenuLanguage.Italian
+                    ? "IMPORT AUDIO NON RIUSCITO · "
+                    : "AUDIO IMPORT FAILED · ") + exception.Message;
+            }
+        }
+
+        public void BeginChartAuthoringAudio(string sourceAudioPath)
+        {
+            string path = ChartAuthoringAudioImporter.ValidateSource(sourceAudioPath);
+            pendingChartAudioPath = path;
+            chartAudioFileLabel.text = Path.GetFileName(path);
+            chartAudioTitleField.value = Path.GetFileNameWithoutExtension(path).Replace('_', ' ').Replace('-', ' ');
+            chartAudioArtistField.value = string.Empty;
+            chartAudioBpmField.value = string.Empty;
+            chartAudioBarsField.value = string.Empty;
+            chartAudioBeatsField.value = string.Empty;
+            chartAudioErrorLabel.text = Language == MainMenuLanguage.Italian
+                ? "Inserisci dati verificati per questa precisa versione audio."
+                : "Enter values verified for this exact audio version.";
+            SetOverlay(chartAudioImportOverlay, true);
+            chartAudioTitleField.Focus();
+        }
+
+        public bool ImportAudioAndStartChartCreator(string libraryRoot = null)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(pendingChartAudioPath))
+                    throw new InvalidOperationException("Select an audio file first.");
+                if (!TryParseDouble(chartAudioBpmField.value, out double bpm))
+                    throw new InvalidOperationException("BPM must be a positive number.");
+                if (!int.TryParse(chartAudioBarsField.value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int bars))
+                    throw new InvalidOperationException("Bars must be a positive whole number.");
+                if (!int.TryParse(chartAudioBeatsField.value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int beats))
+                    throw new InvalidOperationException("Beats per bar must be a positive whole number.");
+
+                var request = new ChartAuthoringAudioRequest(
+                    pendingChartAudioPath,
+                    chartAudioTitleField.value,
+                    chartAudioArtistField.value,
+                    bpm,
+                    bars,
+                    beats);
+                ChartAuthoringAudioImportResult imported = new ChartAuthoringAudioImporter().Import(
+                    request,
+                    string.IsNullOrWhiteSpace(libraryRoot) ? SongLibraryRuntime.UserRoot : libraryRoot,
+                    DateTimeOffset.UtcNow);
+
+                pendingChartAudioPath = null;
+                SetOverlay(chartAudioImportOverlay, false);
+                GameplaySessionContext.SelectChartCreator(imported.Song, 1.0, "easy");
+                Navigate(MainMenuRoutes.GameplayScene, MainMenuDestination.Play);
+                return IsNavigationPending;
+            }
+            catch (Exception exception)
+            {
+                chartAudioErrorLabel.text = (Language == MainMenuLanguage.Italian
+                    ? "CONTROLLA I DATI · "
+                    : "CHECK THE DETAILS · ") + exception.Message;
+                return false;
+            }
+        }
+
+        private void ImportAudioAndStartChartCreatorFromButton() => ImportAudioAndStartChartCreator();
+
+        private void CancelChartAuthoringAudio()
+        {
+            pendingChartAudioPath = null;
+            SetOverlay(chartAudioImportOverlay, false);
+        }
+
+        private void PickAudioForSelectedSong()
+        {
+            try
+            {
+                SongLibraryEntry song = SelectedSong();
+                if (song == null || !song.CanBindAudio)
+                    throw new InvalidOperationException("Select an imported chart awaiting local audio.");
+                string path = new MacOsChartAuthoringAudioPicker().PickAudioFile();
+                if (!string.IsNullOrWhiteSpace(path)) BeginSongAudioBinding(path);
+            }
+            catch (Exception exception)
+            {
+                songLibraryDiagnostic.text = (Language == MainMenuLanguage.Italian
+                    ? "ASSOCIAZIONE AUDIO NON RIUSCITA · "
+                    : "AUDIO BINDING FAILED · ") + exception.Message;
+            }
+        }
+
+        public void BeginSongAudioBinding(string sourceAudioPath)
+        {
+            SongLibraryEntry song = SelectedSong();
+            if (song == null || !song.CanBindAudio)
+                throw new InvalidOperationException("Select an imported chart awaiting local audio.");
+            pendingSongAudioPath = ChartAuthoringAudioImporter.ValidateSource(sourceAudioPath);
+            pendingSongAudioId = song.Id;
+            songAudioBindingSongLabel.text = $"{song.Title.ToUpperInvariant()} · {song.Artist.ToUpperInvariant()}";
+            songAudioBindingFileLabel.text = Path.GetFileName(pendingSongAudioPath);
+            songAudioBindingErrorLabel.text = Language == MainMenuLanguage.Italian
+                ? "Conferma di avere il diritto di usare questa copia audio locale."
+                : "Confirm that you may use this local audio copy.";
+            SetOverlay(songAudioBindingOverlay, true);
+        }
+
+        public bool ConfirmSongAudioBinding(string libraryRoot = null)
+        {
+            try
+            {
+                SongLibraryEntry song = songLibrary?.Songs.FirstOrDefault(value =>
+                    string.Equals(value.Id, pendingSongAudioId, StringComparison.Ordinal));
+                if (song == null || string.IsNullOrWhiteSpace(pendingSongAudioPath))
+                    throw new InvalidOperationException("Choose a song and an audio file first.");
+                new SongAudioBindingService().Bind(
+                    song,
+                    pendingSongAudioPath,
+                    string.IsNullOrWhiteSpace(libraryRoot) ? SongLibraryRuntime.UserRoot : libraryRoot);
+                selectedSongId = song.Id;
+                pendingSongAudioPath = null;
+                pendingSongAudioId = null;
+                SetOverlay(songAudioBindingOverlay, false);
+                RefreshSongLibrary();
+                songLibraryDiagnostic.text = Language == MainMenuLanguage.Italian
+                    ? "AUDIO LOCALE ASSOCIATO · BRANO PRONTO"
+                    : "LOCAL AUDIO BOUND · SONG READY";
+                return SelectedSong()?.IsPlayable == true;
+            }
+            catch (Exception exception)
+            {
+                songAudioBindingErrorLabel.text = (Language == MainMenuLanguage.Italian
+                    ? "ASSOCIAZIONE NON RIUSCITA · "
+                    : "BINDING FAILED · ") + exception.Message;
+                return false;
+            }
+        }
+
+        private void ConfirmSongAudioBindingFromButton() => ConfirmSongAudioBinding();
+
+        private void CancelSongAudioBinding()
+        {
+            pendingSongAudioPath = null;
+            pendingSongAudioId = null;
+            SetOverlay(songAudioBindingOverlay, false);
+        }
+
+        private static bool TryParseDouble(string value, out double result)
+        {
+            if (double.TryParse(value, NumberStyles.Float, CultureInfo.CurrentCulture, out result) && result > 0)
+                return true;
+            return double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out result) && result > 0;
+        }
 
         public void SelectSongSpeed(double speedMultiplier)
         {
@@ -1182,6 +1439,7 @@ namespace HitTheKit.Unity.MainMenu
             songLibrarySource.text = italian
                 ? "BUNDLED + CARTELLA UTENTE"
                 : "BUNDLED + USER FOLDER";
+            songImportAudioButton.text = italian ? "IMPORTA AUDIO E CREA" : "IMPORT AUDIO & CREATE";
 
             songList.Clear();
             for (int index = 0; index < songLibrary.Songs.Count; index++)
@@ -1228,7 +1486,11 @@ namespace HitTheKit.Unity.MainMenu
                     ? "AGGIUNGI UNA CARTELLA CON song.json."
                     : "ADD A FOLDER CONTAINING song.json.";
                 songPlayButton.SetEnabled(false);
+                songRecordButton.SetEnabled(false);
+                songBindAudioButton.SetEnabled(false);
+                songBindAudioButton.style.display = DisplayStyle.None;
                 songPlayButton.text = italian ? "NESSUN BRANO" : "NO SONGS";
+                songRecordButton.text = italian ? "REGISTRA CHART" : "RECORD CHART";
                 SetSongSpeedControlsEnabled(false);
                 RenderSongSpeedSelection();
                 return;
@@ -1251,14 +1513,19 @@ namespace HitTheKit.Unity.MainMenu
             songEffectiveBpm.text = selected.Bpm.HasValue
                 ? $"{selected.Bpm.Value:0.#} BPM  →  {selected.Bpm.Value * selectedSongSpeed:0.#} BPM"
                 : "—";
-            songSpeedNote.text = selected.IsPlayable
-                ? (italian
-                    ? "Audio e chart rallentano insieme."
-                    : "Audio and chart slow down together.")
+            bool canRecordChart = selected.IsPlayable || selected.CanAuthorChart;
+            songSpeedNote.text = canRecordChart
+                ? selected.IsPlayable
+                    ? (italian
+                        ? "Audio e chart rallentano insieme."
+                        : "Audio and chart slow down together.")
+                    : (italian
+                        ? "L'audio rallenta mentre registri la prima chart."
+                        : "Audio slows down while you record the first chart.")
                 : (italian
                     ? "Disponibile quando audio e chart sono pronti."
                     : "Available when audio and chart are ready.");
-            SetSongSpeedControlsEnabled(selected.IsPlayable);
+            SetSongSpeedControlsEnabled(canRecordChart);
             RenderSongSpeedSelection();
             songDetailReadiness.EnableInClassList("song-detail-readiness--missing", !selected.IsPlayable);
             if (selected.IsPlayable)
@@ -1270,18 +1537,44 @@ namespace HitTheKit.Unity.MainMenu
             }
             else
             {
-                songDetailReadiness.text = SongAvailabilityLabel(selected, italian);
+                songDetailReadiness.text = selected.CanAuthorChart
+                    ? (italian
+                        ? "✓ AUDIO PRONTO · CHART DA REGISTRARE"
+                        : "✓ AUDIO READY · CHART TO RECORD")
+                    : SongAvailabilityLabel(selected, italian);
                 songPlayButton.text = italian ? "CONTENUTI NON DISPONIBILI" : "CONTENT UNAVAILABLE";
             }
             songPlayButton.SetEnabled(selected.IsPlayable);
+            songRecordButton.SetEnabled(canRecordChart);
+            songRecordButton.text = selected.CanAuthorChart && !selected.IsPlayable
+                ? (italian ? "REGISTRA PRIMA CHART" : "RECORD FIRST CHART")
+                : (italian ? "REGISTRA CHART" : "RECORD CHART");
+            songBindAudioButton.style.display = selected.CanBindAudio ? DisplayStyle.Flex : DisplayStyle.None;
+            songBindAudioButton.SetEnabled(selected.CanBindAudio);
+            songBindAudioButton.text = italian ? "ASSOCIA AUDIO LOCALE" : "BIND LOCAL AUDIO";
             songRefreshButton.text = italian ? "AGGIORNA LIBRERIA" : "REFRESH LIBRARY";
             songFolderButton.text = italian ? "APRI CARTELLA BRANI" : "OPEN SONG FOLDER";
             songBackButton.text = italian ? "INDIETRO" : "BACK";
-            songLibraryDiagnostic.text = songLibrary.Diagnostics.Count == 0
-                ? (italian
-                    ? "CATALOGO: song.json · BINDING LOCALI OPZIONALI"
-                    : "CATALOG: song.json · OPTIONAL LOCAL BINDINGS")
-                : $"{songLibrary.Diagnostics.Count} " + (italian ? "CARTELLE IGNORATE" : "FOLDERS IGNORED");
+            if (packageInbox?.ImportedSongIds.Count > 0)
+            {
+                songLibraryDiagnostic.text = italian
+                    ? $"PACCHETTO .htksong IMPORTATO · {packageInbox.ImportedSongIds.Count}"
+                    : $".htksong PACKAGE IMPORTED · {packageInbox.ImportedSongIds.Count}";
+            }
+            else if (packageInbox?.Diagnostics.Count > 0)
+            {
+                songLibraryDiagnostic.text = italian
+                    ? $"{packageInbox.Diagnostics.Count} PACCHETTI .htksong IGNORATI"
+                    : $"{packageInbox.Diagnostics.Count} .htksong PACKAGES IGNORED";
+            }
+            else
+            {
+                songLibraryDiagnostic.text = songLibrary.Diagnostics.Count == 0
+                    ? (italian
+                        ? "CATALOGO: CARTELLE + PACCHETTI .htksong"
+                        : "CATALOG: FOLDERS + .htksong PACKAGES")
+                    : $"{songLibrary.Diagnostics.Count} " + (italian ? "CARTELLE IGNORATE" : "FOLDERS IGNORED");
+            }
         }
 
         private void SetSongSpeedControlsEnabled(bool enabled)

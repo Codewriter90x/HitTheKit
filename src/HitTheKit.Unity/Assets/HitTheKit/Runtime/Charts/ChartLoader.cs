@@ -75,7 +75,17 @@ namespace HitTheKit.Unity.Charts
                 }
 
                 DrumPad pad = ParsePad(noteDto.pad, index);
-                notes.Add(new IndexedChartNote(new ChartNote(noteDto.time, pad), index));
+                int? velocity = noteDto.velocity == int.MinValue ? (int?)null : noteDto.velocity;
+                DrumArticulation articulation = ParseArticulation(noteDto.articulation, pad, index);
+                try
+                {
+                    notes.Add(new IndexedChartNote(
+                        new ChartNote(noteDto.time, pad, velocity, articulation), index));
+                }
+                catch (ArgumentException exception)
+                {
+                    throw new ChartLoadException($"Chart note at index {index} is invalid: {exception.Message}", exception);
+                }
             }
 
             notes.Sort((left, right) =>
@@ -161,6 +171,34 @@ namespace HitTheKit.Unity.Charts
             }
         }
 
+        private static DrumArticulation ParseArticulation(string value, DrumPad pad, int index)
+        {
+            DrumArticulation articulation;
+            switch (value)
+            {
+                case null:
+                case "default": articulation = DrumArticulation.Default; break;
+                case "head": articulation = DrumArticulation.Head; break;
+                case "rim": articulation = DrumArticulation.Rim; break;
+                case "bow": articulation = DrumArticulation.Bow; break;
+                case "edge": articulation = DrumArticulation.Edge; break;
+                case "bell": articulation = DrumArticulation.Bell; break;
+                case "closed": articulation = DrumArticulation.Closed; break;
+                case "halfOpen": articulation = DrumArticulation.HalfOpen; break;
+                case "open": articulation = DrumArticulation.Open; break;
+                case "pedal": articulation = DrumArticulation.Pedal; break;
+                case "choke": articulation = DrumArticulation.Choke; break;
+                default:
+                    throw new ChartLoadException(
+                        $"Chart note at index {index} has unknown articulation '{value}'.");
+            }
+
+            if (!DrumArticulationValidator.IsValid(pad, articulation))
+                throw new ChartLoadException(
+                    $"Chart note at index {index} articulation '{value}' is invalid for pad '{pad}'.");
+            return articulation;
+        }
+
         private static bool IsFinite(double value)
         {
             return !double.IsNaN(value) && !double.IsInfinity(value);
@@ -190,6 +228,8 @@ namespace HitTheKit.Unity.Charts
         {
             public double time = double.NaN;
             public string pad;
+            public int velocity = int.MinValue;
+            public string articulation;
         }
     }
 }

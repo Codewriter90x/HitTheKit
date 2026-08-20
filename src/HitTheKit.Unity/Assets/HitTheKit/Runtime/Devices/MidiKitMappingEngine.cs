@@ -232,8 +232,28 @@ namespace HitTheKit.Unity.Devices
                 pad,
                 hit.Velocity,
                 hit.TimestampSeconds.Value,
-                DrumInputSource.Midi);
+                DrumInputSource.Midi,
+                ToDrumArticulation(hit.Articulation));
             return MvpDrumInputMappingStatus.Mapped;
+        }
+
+        private static DrumArticulation ToDrumArticulation(KitArticulation articulation)
+        {
+            switch (articulation)
+            {
+                case KitArticulation.Default: return DrumArticulation.Default;
+                case KitArticulation.Head: return DrumArticulation.Head;
+                case KitArticulation.Rim: return DrumArticulation.Rim;
+                case KitArticulation.Bow: return DrumArticulation.Bow;
+                case KitArticulation.Edge: return DrumArticulation.Edge;
+                case KitArticulation.Bell: return DrumArticulation.Bell;
+                case KitArticulation.Closed: return DrumArticulation.Closed;
+                case KitArticulation.HalfOpen: return DrumArticulation.HalfOpen;
+                case KitArticulation.Open: return DrumArticulation.Open;
+                case KitArticulation.Pedal: return DrumArticulation.Pedal;
+                case KitArticulation.Choke: return DrumArticulation.Choke;
+                default: throw new ArgumentOutOfRangeException(nameof(articulation));
+            }
         }
     }
 }

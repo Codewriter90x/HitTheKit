@@ -45,6 +45,7 @@ without creating an unreviewed second source of truth.
 - [DSP song clock](development/dsp-song-clock.md)
 - [Chart timeline](development/chart-timeline.md)
 - [Practice Lab](development/practice-lab.md)
+- [Chart Creator foundation](development/chart-creator.md)
 - [Demo-song vertical slice](development/demo-song-vertical-slice.md)
 - [Keyboard hit matching](development/keyboard-hit-matching.md)
 - [Pad visuals](development/pad-visuals.md)
@@ -70,8 +71,11 @@ without creating an unreviewed second source of truth.
 ## Rights and governance
 
 - [Asset provenance](legal/ASSET_PROVENANCE.md)
+- [Contributor License Agreement draft](legal/CONTRIBUTOR_LICENSE_AGREEMENT_DRAFT.md)
+- [CLA adoption checklist](legal/CLA_ADOPTION_CHECKLIST.md)
 - [Dual-licensing readiness report](legal/dual-licensing-readiness-report.md)
-- [Dual-licensing decision record](governance/dual-licensing-decision.md)
+- [MPL Community license decision](governance/mpl-community-license-decision.md)
+- [Historical GPL dual-licensing proposal](governance/dual-licensing-decision.md)
 - [Commercial-license draft](legal/COMMERCIAL-LICENSE-DRAFT.md)
 - [Project governance](../GOVERNANCE.md)
 - [License](../LICENSE)

@@ -17,6 +17,7 @@ namespace HitTheKit.Unity.Gameplay
         [SerializeField] private TextAsset firstGrooveChart;
         private TextAsset generatedLessonChart;
         private TextAsset runtimeChartAsset;
+        private TextAsset authoringChartAsset;
 
         public GameplaySessionDefinition Session { get; private set; }
         public bool IsConfigured { get; private set; }
@@ -73,6 +74,12 @@ namespace HitTheKit.Unity.Gameplay
                     runtimeChartAsset = new TextAsset(File.ReadAllText(Session.ChartFilePath));
                     runtimeChartAsset.name = $"Imported song {Session.SongId}";
                     return runtimeChartAsset;
+                case GameplaySessionChart.AuthoringEmpty:
+                    authoringChartAsset = new TextAsset(
+                        "{\n  \"version\": 1,\n  \"offsetSeconds\": 0,\n  \"difficulties\": {\n    \"" +
+                        Session.Difficulty + "\": []\n  }\n}\n");
+                    authoringChartAsset.name = $"New chart for {Session.SongId}";
+                    return authoringChartAsset;
                 default: throw new ArgumentOutOfRangeException(nameof(chart));
             }
         }
@@ -88,6 +95,11 @@ namespace HitTheKit.Unity.Gameplay
             {
                 Destroy(runtimeChartAsset);
                 runtimeChartAsset = null;
+            }
+            if (authoringChartAsset != null)
+            {
+                Destroy(authoringChartAsset);
+                authoringChartAsset = null;
             }
         }
     }

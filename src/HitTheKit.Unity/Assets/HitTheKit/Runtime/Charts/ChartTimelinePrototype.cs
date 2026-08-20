@@ -78,7 +78,14 @@ namespace HitTheKit.Unity.Charts
         {
             var result = new ChartNote[source.Count];
             for (int index = 0; index < result.Length; index++)
-                result[index] = new ChartNote(source[index].EffectiveTimeSeconds, source[index].Note.Pad);
+            {
+                ChartNote note = source[index].Note;
+                result[index] = new ChartNote(
+                    source[index].EffectiveTimeSeconds,
+                    note.Pad,
+                    note.Velocity,
+                    note.Articulation);
+            }
             return Array.AsReadOnly(result);
         }
 

@@ -4,9 +4,9 @@ Thank you for helping make HitTheKit more reliable, accessible, and useful.
 
 Before participating, read the [Code of Conduct](CODE_OF_CONDUCT.md),
 [support guide](SUPPORT.md), and [project governance](GOVERNANCE.md).
-HitTheKit is intended to remain available under both an open-source GPL license
-and a possible separate commercial-license path. That model requires clear
-copyright permissions for every substantial contribution.
+HitTheKit is intended to remain available under both the open-source MPL-2.0
+Community license and a possible separate commercial-license path. That model
+requires clear copyright permissions for every substantial contribution.
 
 ## Current contribution policy
 
@@ -74,6 +74,14 @@ A Contributor License Agreement, copyright assignment, or another contribution
 mechanism may be introduced after professional legal review. This document is
 not a CLA, does not transfer copyright, and does not create an implied
 assignment or commercial-license grant.
+
+A Harmony-based copyright-license CLA is currently being evaluated in
+[`docs/legal/CONTRIBUTOR_LICENSE_AGREEMENT_DRAFT.md`](docs/legal/CONTRIBUTOR_LICENSE_AGREEMENT_DRAFT.md),
+with unresolved adoption gates recorded in
+[`docs/legal/CLA_ADOPTION_CHECKLIST.md`](docs/legal/CLA_ADOPTION_CHECKLIST.md).
+Both documents are non-operative drafts. Do not sign or rely on them. Opening a
+pull request, issue, or discussion does not accept the draft, and no CLA
+automation or electronic acceptance process is active.
 
 Until a reviewed mechanism exists, maintainers should not merge a substantial
 external code or asset contribution merely because it was submitted under the
