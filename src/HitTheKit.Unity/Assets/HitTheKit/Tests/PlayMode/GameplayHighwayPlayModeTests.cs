@@ -61,6 +61,8 @@ namespace HitTheKit.Unity.Tests
             Assert.That(document.rootVisualElement.Q<Button>("result-practice-weakest"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<Label>("auto-tempo-status"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<Button>("auto-tempo-advance"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Label>("ghost-status"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Button>("result-ghost-restart"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<Button>("pause-button"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<VisualElement>("countdown-overlay"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<ChartWaveformView>("chart-waveform"), Is.Not.Null);
@@ -76,6 +78,30 @@ namespace HitTheKit.Unity.Tests
             Assert.That(document.rootVisualElement.Q<Button>("theme-arcade"), Is.Null);
             Assert.That(document.rootVisualElement.Q<Button>("theme-concert"), Is.Null);
             Assert.That(document.rootVisualElement.Q<Button>("theme-precision"), Is.Null);
+        }
+
+        [UnityTest]
+        public IEnumerator Ghost_replay_is_local_visual_only_and_does_not_change_score()
+        {
+            AsyncOperation load = SceneManager.LoadSceneAsync("GameplayPrototype", LoadSceneMode.Single);
+            while (!load.isDone) yield return null;
+            yield return null;
+
+            GameplayHighwayController controller = Object.FindAnyObjectByType<GameplayHighwayController>();
+            Assert.That(controller, Is.Not.Null);
+            Assert.That(controller.CaptureGhostHit(
+                new HitTheKit.Unity.Input.DrumInputEvent(
+                    DrumPad.Kick, 108, 1.25, HitTheKit.Unity.Input.DrumInputSource.Test), null), Is.True);
+            Assert.That(controller.CurrentGhostTakeHitCount, Is.EqualTo(1));
+            Assert.That(controller.BeginGhostReplay(), Is.True);
+            yield return null;
+
+            Assert.That(controller.GhostHits, Has.Count.EqualTo(1));
+            Assert.That(controller.Surface.GhostHits, Has.Count.EqualTo(1));
+            Assert.That(controller.GhostHits[0].Pad, Is.EqualTo(DrumPad.Kick));
+            Assert.That(controller.ScoreSnapshot.Score, Is.Zero,
+                "Ghost markers must never feed the matcher or scoring engine.");
+            Assert.That(controller.CurrentGhostTakeHitCount, Is.Zero);
         }
 
         [UnityTest]

@@ -89,11 +89,13 @@ namespace HitTheKit.Unity.Tests
             var surface = new GameplayHighwaySurface();
 
             surface.SetTheme(GameplayPresentationTheme.PrecisionGrid);
-            surface.SetFrame(timeline.Notes, 0, 4, DrumPad.Kick, 1);
+            var ghost = new[] { new GhostReplayHit(1.05, DrumPad.Snare, 96, HitGrade.Late) };
+            surface.SetFrame(timeline.Notes, 0, 4, DrumPad.Kick, 1, ghost);
 
             Assert.That(surface.Theme, Is.EqualTo(GameplayPresentationTheme.PrecisionGrid));
             Assert.That(surface.Notes.Select(note => note.Note.Pad),
                 Is.EquivalentTo(Enum.GetValues(typeof(DrumPad)).Cast<DrumPad>()));
+            Assert.That(surface.GhostHits, Is.EqualTo(ghost));
         }
 
         [Test]

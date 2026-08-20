@@ -572,6 +572,8 @@
 .auto-tempo-button { width: 300px; min-height: 38px; margin-top: 8px; margin-bottom: 0; }
 .result-calibration { min-height: 32px; color: rgb(91, 224, 255); font-size: 12px; -unity-font-style: bold; -unity-text-align: middle-center; white-space: normal; }
 .result-calibration-button { align-self: center; width: 300px; min-height: 38px; margin-top: 8px; margin-bottom: 10px; }
+.result-ghost-button { align-self: center; width: 340px; min-height: 40px; margin-top: 2px; margin-bottom: 9px; border-color: rgba(255, 255, 255, 0.56); }
+.ghost-status { margin-top: 7px; padding-top: 6px; border-top-width: 1px; border-top-color: rgba(255, 255, 255, 0.18); color: rgba(255, 255, 255, 0.76); font-size: 9px; -unity-font-style: bold; white-space: normal; }
 .chart-creator-results { width: 100%; margin-top: 8px; padding: 12px; background-color: rgba(4, 22, 30, 0.96); border-width: 1px; border-color: rgba(65, 219, 255, 0.72); border-radius: 6px; }
 .chart-creator-eyebrow { color: rgb(91, 224, 255); }
 .chart-creator-summary { margin-top: 6px; color: white; font-size: 19px; -unity-font-style: bold; -unity-text-align: middle-center; }

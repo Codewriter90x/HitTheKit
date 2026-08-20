@@ -79,6 +79,7 @@
                 <ui:VisualElement class="hud-panel rail-card current-input-card">
                     <ui:Label text="CURRENT INPUT" class="rail-title" />
                     <ui:Label name="current-input" text="IN ATTESA DEL PRIMO COLPO" class="current-input" />
+                    <ui:Label name="ghost-status" text="GHOST · COMPLETA UN TENTATIVO" class="ghost-status" />
                 </ui:VisualElement>
                 <ui:VisualElement class="hud-panel rail-card key-guide">
                     <ui:Label text="CONTROLLI" class="rail-title" />
@@ -147,6 +148,7 @@
                     </ui:VisualElement>
                     <ui:Label name="result-calibration" text="CALIBRAZIONE: SERVONO 8 COLPI VALIDI" class="result-calibration" />
                     <ui:Button name="result-apply-calibration" text="APPLICA CALIBRAZIONE" class="run-secondary-button result-calibration-button" />
+                    <ui:Button name="result-ghost-restart" text="RIPROVA CON GHOST" class="run-secondary-button result-ghost-button" />
                 </ui:VisualElement>
                 <ui:VisualElement name="chart-creator-results" class="chart-creator-results" style="display: none;">
                     <ui:Label text="REVISIONE TAKE" class="eyebrow chart-creator-eyebrow" />
