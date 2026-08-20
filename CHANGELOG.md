@@ -28,6 +28,8 @@ semantico a partire dalla prima release pubblica stabile.
 - sound check guidato per la compensazione locale della latenza;
 - Ghost Replay visuale locale, isolato da matcher e punteggio;
 - palco reattivo procedurale con movimento ridotto e contrasto elevato.
+- pannello risultati scorrevole con controlli diagnostici e azioni sempre
+  separati e leggibili.
 
 ### Changed
 
