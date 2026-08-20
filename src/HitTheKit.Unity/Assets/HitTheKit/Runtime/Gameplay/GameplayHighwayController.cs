@@ -31,6 +31,7 @@ namespace HitTheKit.Unity.Gameplay
         [SerializeField] private GameplaySessionCoordinator sessionCoordinator;
         [SerializeField] private AudioSource drumFeedbackSource;
         [SerializeField] private Texture2D arcadeNeonBackground;
+        [SerializeField] private Texture2D arcadeNeonDrumKit;
         [SerializeField] private Texture2D concertStageBackground;
         [SerializeField] private Texture2D precisionGridBackground;
 
@@ -41,6 +42,7 @@ namespace HitTheKit.Unity.Gameplay
 
         private VisualElement root;
         private VisualElement background;
+        private VisualElement kitArtwork;
         private VisualElement progressFill;
         private Label scoreLabel;
         private Label trackNameLabel;
@@ -280,6 +282,15 @@ namespace HitTheKit.Unity.Gameplay
                     : new StyleBackground(texture);
             }
 
+            if (kitArtwork != null)
+            {
+                bool showArcadeKit = theme == GameplayPresentationTheme.ArcadeNeon && arcadeNeonDrumKit != null;
+                kitArtwork.style.display = showArcadeKit ? DisplayStyle.Flex : DisplayStyle.None;
+                kitArtwork.style.backgroundImage = showArcadeKit
+                    ? new StyleBackground(arcadeNeonDrumKit)
+                    : new StyleBackground(StyleKeyword.None);
+            }
+
             surface?.SetTheme(theme);
             reactiveStageSurface?.SetTheme(theme);
             if (impactCueLabel != null)
@@ -291,8 +302,9 @@ namespace HitTheKit.Unity.Gameplay
             }
             if (kitGuidanceLabel != null)
             {
-                kitGuidanceLabel.style.display = showInstructionalKit ? DisplayStyle.Flex : DisplayStyle.None;
-                if (!showInstructionalKit) kitGuidanceLabel.text = string.Empty;
+                bool showGuidance = showInstructionalKit && theme != GameplayPresentationTheme.ArcadeNeon;
+                kitGuidanceLabel.style.display = showGuidance ? DisplayStyle.Flex : DisplayStyle.None;
+                if (!showGuidance) kitGuidanceLabel.text = string.Empty;
             }
             ThemeChanged?.Invoke(theme);
         }
@@ -305,6 +317,7 @@ namespace HitTheKit.Unity.Gameplay
 
             root = candidateRoot;
             background = root.Q<VisualElement>("gameplay-background");
+            kitArtwork = root.Q<VisualElement>("kit-artwork");
             progressFill = root.Q<VisualElement>("song-progress-fill");
             scoreLabel = root.Q<Label>("score-value");
             trackNameLabel = root.Q<Label>("track-name");
@@ -437,25 +450,31 @@ namespace HitTheKit.Unity.Gameplay
             targetsHost.Clear();
             kickHost.Clear();
 
-            IReadOnlyList<GameplayLaneDefinition> lanes = GameplayHighwayLanes.All;
-            for (int index = 0; index < GameplayHighwayLanes.HighwayLaneCount; index++)
+            DrumPad[] displayOrder =
             {
-                GameplayLaneDefinition lane = lanes[index];
-                VisualElement target = CreateTarget(lane, isKick: false);
+                DrumPad.HiHat,
+                DrumPad.Snare,
+                DrumPad.Tom1,
+                DrumPad.Tom2,
+                DrumPad.Kick,
+                DrumPad.FloorTom,
+                DrumPad.Crash,
+                DrumPad.Ride
+            };
+            for (int index = 0; index < displayOrder.Length; index++)
+            {
+                GameplayLaneDefinition lane = GameplayHighwayLanes.Find(displayOrder[index]);
+                VisualElement target = CreateTarget(lane, isKick: lane.Pad == DrumPad.Kick);
                 targetsHost.Add(target);
                 targets.Add(lane.Pad, target);
             }
-
-            GameplayLaneDefinition kick = GameplayHighwayLanes.Find(DrumPad.Kick);
-            VisualElement kickTarget = CreateTarget(kick, isKick: true);
-            kickHost.Add(kickTarget);
-            targets.Add(kick.Pad, kickTarget);
         }
 
         private static VisualElement CreateTarget(GameplayLaneDefinition lane, bool isKick)
         {
             var target = new VisualElement { name = $"target-{lane.Id}" };
-            target.AddToClassList(isKick ? "kick-target" : "lane-target");
+            target.AddToClassList("lane-target");
+            if (isKick) target.AddToClassList("kick-target");
             target.AddToClassList($"lane--{lane.Id}");
             target.style.borderTopColor = lane.Color;
             target.style.borderRightColor = lane.Color;

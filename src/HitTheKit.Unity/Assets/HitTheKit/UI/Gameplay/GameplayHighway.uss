@@ -31,10 +31,10 @@
     -unity-background-scale-mode: scale-and-crop;
 }
 
-.gameplay-background { opacity: 0.88; }
-.reactive-stage-host { opacity: 1; }
+.gameplay-background { opacity: 1; }
+.reactive-stage-host { opacity: 0.72; }
 .reactive-stage-surface { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
-.gameplay-vignette { background-color: rgba(0, 4, 12, 0.16); }
+.gameplay-vignette { background-color: rgba(0, 4, 12, 0.08); }
 
 .reactive-stage-status {
     position: absolute;
@@ -179,8 +179,8 @@
 
 .highway-column {
     position: absolute;
-    left: 8%;
-    right: 8%;
+    left: 3%;
+    right: 3%;
     top: 0;
     bottom: 0;
     flex-grow: 1;
@@ -191,14 +191,14 @@
 
 .highway-aura {
     position: absolute;
-    left: 12%;
-    right: 12%;
+    left: 10%;
+    right: 10%;
     top: 0;
-    bottom: 145px;
-    background-color: rgba(18, 99, 168, 0.08);
-    border-left-width: 1px;
-    border-right-width: 1px;
-    border-color: rgba(102, 220, 255, 0.16);
+    bottom: 96px;
+    background-color: rgba(18, 99, 168, 0.04);
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-color: rgba(102, 220, 255, 0.24);
 }
 
 .highway-host {
@@ -282,11 +282,26 @@
 
 .kit-visual-host {
     position: absolute;
-    left: 8%;
-    right: 8%;
-    bottom: 154px;
-    height: 204px;
-    min-height: 204px;
+    left: 1%;
+    right: 1%;
+    bottom: 88px;
+    height: 350px;
+    min-height: 350px;
+}
+
+.kit-artwork {
+    position: absolute;
+    left: 3%;
+    right: 3%;
+    bottom: -110px;
+    height: 720px;
+    min-height: 720px;
+    -unity-background-scale-mode: scale-to-fit;
+    opacity: 0.98;
+}
+
+.kit-visual-host {
+    background-color: rgba(0, 0, 0, 0);
 }
 
 .gameplay-kit-surface {
@@ -295,13 +310,8 @@
     top: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(1, 7, 15, 0.48);
-    border-top-width: 1px;
-    border-color: rgba(108, 190, 235, 0.24);
-    border-top-left-radius: 46px;
-    border-top-right-radius: 46px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
 }
 
 .kit-piece {
@@ -310,7 +320,7 @@
     align-items: center;
     justify-content: center;
     border-width: 2px;
-    background-color: rgba(3, 9, 17, 0.78);
+    background-color: rgba(0, 0, 0, 0);
     transition-property: scale, opacity, background-color, border-color;
     transition-duration: 0.08s;
 }
@@ -379,7 +389,7 @@
     right: -8%;
     bottom: 36%;
     -unity-text-align: middle-center;
-    color: white;
+    color: rgba(255, 255, 255, 0);
     font-size: 10px;
     -unity-font-style: bold;
     -unity-text-outline-width: 1px;
@@ -394,6 +404,7 @@
     bottom: 17%;
     -unity-text-align: middle-center;
     font-size: 7px;
+    color: rgba(255, 255, 255, 0);
     -unity-font-style: bold;
     letter-spacing: 1px;
 }
@@ -468,22 +479,22 @@
 
 .targets-host {
     position: relative;
-    height: 104px;
-    min-height: 104px;
+    height: 108px;
+    min-height: 108px;
     flex-direction: row;
     align-items: stretch;
     justify-content: center;
-    margin-left: 4%;
-    margin-right: 4%;
+    margin-left: 2%;
+    margin-right: 2%;
 }
 
 .lane-target {
     flex-grow: 1;
-    min-width: 66px;
+    min-width: 62px;
     margin-left: 3px;
     margin-right: 3px;
     padding: 8px 7px;
-    background-color: rgba(3, 8, 17, 0.88);
+    background-color: rgba(3, 8, 17, 0.90);
     border-width: 2px;
     border-radius: 12px;
     justify-content: center;
@@ -508,26 +519,20 @@
 .target-subtitle { color: var(--muted); font-size: 9px; -unity-text-align: middle-center; margin-top: 5px; }
 .target--active { scale: 1.06; background-color: rgba(255, 255, 255, 0.30); }
 
-.kick-target-host {
-    position: relative;
-    height: 80px;
-    min-height: 80px;
-    align-items: center;
-    justify-content: center;
-}
+.kick-target-host { display: none; }
 .kick-target {
-    width: 38%;
-    height: 68px;
-    padding: 7px 20px;
+    width: auto;
+    height: auto;
+    padding: 8px 7px;
     border-width: 2px;
-    border-radius: 15px;
-    background-color: rgba(27, 5, 25, 0.88);
+    border-radius: 12px;
+    background-color: rgba(35, 5, 33, 0.92);
     justify-content: center;
     transition-property: scale, background-color;
     transition-duration: 0.08s;
 }
-.kick-target .target-name { font-size: 17px; }
-.kick-target .target-subtitle { font-size: 11px; }
+.kick-target .target-name { font-size: 12px; }
+.kick-target .target-subtitle { font-size: 9px; }
 
 .footer-strip {
     height: 31px;
@@ -720,8 +725,22 @@
 .theme--precision-grid .target-key { border-radius: 1px; }
 .theme--precision-grid .kick-target { border-radius: 3px; width: 78%; border-width: 1px; background-color: rgba(24, 7, 8, 0.58); }
 
-.theme--arcade-neon .environment-identity { background-color: rgba(2, 7, 17, 0.74); }
-.theme--arcade-neon .lane-target { border-width: 2px; background-color: rgba(4, 9, 24, 0.82); }
+.theme--arcade-neon .side-rail,
+.theme--arcade-neon .session-kicker,
+.theme--arcade-neon .reactive-stage-status,
+.theme--arcade-neon .environment-identity,
+.theme--arcade-neon .kit-guidance-label { display: none; }
+.theme--arcade-neon .gameplay-kit-surface { opacity: 0; }
+.theme--arcade-neon .impact-cue { display: none; }
+.theme--arcade-neon .judgment-label {
+    top: 28%;
+    bottom: auto;
+}
+.theme--arcade-neon .lane-target {
+    border-width: 2px;
+    background-color: rgba(4, 9, 24, 0.88);
+}
+.theme--arcade-neon .kick-target { background-color: rgba(42, 4, 37, 0.92); }
 
 @media (max-width: 1250px) {
     .gameplay-shell { padding-left: 12px; padding-right: 12px; }

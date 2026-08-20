@@ -54,24 +54,37 @@ final result: passed
 
 ## Comparison history
 
-1. The first pass established the arena, highway, HUD and drum-target hierarchy,
-   but the right diagnostic rail overlapped the Ride target.
-2. The second pass widened the highway, strengthened the impact line and moved
-   the diagnostic rails above the target row. A redundant keyboard guide could
-   still compete with the rightmost target.
-3. The final pass removed that redundant guide, preserved the full target row,
-   increased impact-line contrast and verified the selected concept and runtime
-   screen together at the same normalized viewport.
+1. The foundation pass established the arena, highway, HUD and target hierarchy,
+   but still used a procedural instructional kit and secondary diagnostic rails.
+2. The asset pass introduced an original photorealistic neon arena and a separate
+   realistic kit cutout. The first kit was rejected because it contained extra
+   toms and cymbals beyond the eight playable targets.
+3. The corrected kit was generated with exactly three cymbals (hi-hat, crash and
+   ride) and five drums (snare, two rack toms, floor tom and kick). Its neon rim
+   colors now match the target cards below it.
+4. The composition pass enlarged the kit into the foreground, lifted it behind
+   the target row, aligned all eight highway lanes with the eight bottom targets,
+   converted kick from a full-width bar into its own lane, strengthened note glow
+   and raised the impact line to match the reference perspective.
+5. The final pass removed the redundant on-kit label overlays in Arcade Neon,
+   kept the timing judgment clear, and compared the source and runtime screen at
+   the same normalized 1366×768 viewport.
 
 ## Final assessment
 
 - The note highway is the dominant visual element.
 - Combo, score, accuracy and song progress occupy distinct, readable regions.
 - The impact line is bright and unambiguous.
-- Lane markers and drum targets use both color and text/shape cues.
+- The foreground kit uses exactly the eight playable components requested by the
+  maintainer, with no extra drums or cymbals.
+- Lane markers, drum rims and bottom targets share one ordered color system:
+  hi-hat, snare, Tom 1, Tom 2, kick, floor tom, crash and ride.
+- Kick now occupies the same fifth visual lane as its fifth bottom target instead
+  of appearing as a disconnected full-highway bar.
 - No P0, P1 or P2 clipping, overlap or hierarchy defect remains in the verified
   16:9 viewport.
-- Residual P3 difference: the runtime uses the existing stylized/procedural drum
-  stage rather than the photorealistic kit used in the aspirational concept.
+- Residual P3 difference: the concept uses bespoke pictograms inside every target
+  card, while the runtime keeps the existing keyboard key plus beginner/technical
+  labels so the controls remain immediately usable.
 
 Final result: `passed`

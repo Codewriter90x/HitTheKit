@@ -13,19 +13,33 @@ namespace HitTheKit.Unity.Tests
     {
         private static readonly string[] EnvironmentBackgroundPaths =
         {
-            "Assets/HitTheKit/UI/Gameplay/Backgrounds/arcade-neon-environment-v2.png",
+            "Assets/HitTheKit/UI/Gameplay/Backgrounds/arcade-neon-arena-v3.png",
             "Assets/HitTheKit/UI/Gameplay/Backgrounds/concert-stage-environment-v2.png",
             "Assets/HitTheKit/UI/Gameplay/Backgrounds/precision-grid-environment-v2.png"
         };
 
+        private const string ArcadeDrumKitPath =
+            "Assets/HitTheKit/UI/Gameplay/Backgrounds/arcade-neon-drum-kit.png";
+
         [Test]
-        public void Defines_complete_unique_drum_lane_set_with_distinct_kick_track()
+        public void Defines_complete_unique_drum_lane_set_aligned_with_the_bottom_targets()
         {
             Assert.That(GameplayHighwayLanes.All, Has.Count.EqualTo(8));
             Assert.That(GameplayHighwayLanes.All.Select(lane => lane.Pad), Is.Unique);
             Assert.That(GameplayHighwayLanes.All.Select(lane => lane.Id), Is.Unique);
-            Assert.That(GameplayHighwayLanes.HighwayLaneCount, Is.EqualTo(7));
-            Assert.That(GameplayHighwayLanes.HighwayIndex(DrumPad.Kick), Is.EqualTo(-1));
+            Assert.That(GameplayHighwayLanes.HighwayLaneCount, Is.EqualTo(8));
+            Assert.That(GameplayHighwayLanes.All.Select(lane => lane.Pad), Is.EqualTo(new[]
+            {
+                DrumPad.HiHat,
+                DrumPad.Snare,
+                DrumPad.Tom1,
+                DrumPad.Tom2,
+                DrumPad.Kick,
+                DrumPad.FloorTom,
+                DrumPad.Crash,
+                DrumPad.Ride
+            }));
+            Assert.That(GameplayHighwayLanes.HighwayIndex(DrumPad.Kick), Is.EqualTo(4));
             Assert.That(GameplayHighwayLanes.Find(DrumPad.Kick).Subtitle, Is.EqualTo("GRANCASSA"));
         }
 
@@ -50,12 +64,13 @@ namespace HitTheKit.Unity.Tests
 
             Assert.That(new[] { arcade.Title, concert.Title, precision.Title }, Is.Unique);
             Assert.That(new[] { arcade.NoteShape, concert.NoteShape, precision.NoteShape }, Is.Unique);
-            Assert.That(arcade.ShowsInstructionalKit, Is.False);
+            Assert.That(arcade.ShowsInstructionalKit, Is.True,
+                "The selected Arena Highway presentation layers the playable colored kit over the arena art.");
             Assert.That(concert.ShowsInstructionalKit, Is.False);
             Assert.That(precision.ShowsInstructionalKit, Is.True,
                 "The colored perspective kit is the opt-in Precision Grid presentation.");
-            Assert.That(concert.StrikeRatio, Is.LessThan(arcade.StrikeRatio),
-                "The concert layout must leave the foreground drum kit visible.");
+            Assert.That(arcade.StrikeRatio, Is.LessThan(concert.StrikeRatio),
+                "The arena layout lifts the impact line above its foreground drum kit.");
             Assert.That(precision.HorizonRatio, Is.GreaterThan(arcade.HorizonRatio),
                 "The technical chamber uses a deliberately flatter training perspective.");
             Assert.That(arcade.BottomRightRatio - arcade.BottomLeftRatio,
@@ -73,6 +88,11 @@ namespace HitTheKit.Unity.Tests
             Assert.That(textures.Select(AssetDatabase.GetAssetPath), Is.Unique);
             Assert.That(textures.All(texture => texture.width >= 1600), Is.True);
             Assert.That(textures.All(texture => texture.height >= 900), Is.True);
+
+            Texture2D drumKit = AssetDatabase.LoadAssetAtPath<Texture2D>(ArcadeDrumKitPath);
+            Assert.That(drumKit, Is.Not.Null);
+            Assert.That(drumKit.width, Is.GreaterThanOrEqualTo(1600));
+            Assert.That(drumKit.height, Is.GreaterThanOrEqualTo(900));
         }
 
         [Test]
@@ -215,8 +235,8 @@ namespace HitTheKit.Unity.Tests
         [Test]
         public void Highway_uses_a_broad_impact_zone_and_bounded_multi_pass_note_glow()
         {
-            Assert.That(GameplayHighwaySurface.ImpactZoneHalfHeight, Is.GreaterThanOrEqualTo(12f));
-            Assert.That(GameplayHighwaySurface.NoteGlowPasses, Is.EqualTo(4));
+            Assert.That(GameplayHighwaySurface.ImpactZoneHalfHeight, Is.GreaterThanOrEqualTo(15f));
+            Assert.That(GameplayHighwaySurface.NoteGlowPasses, Is.EqualTo(6));
         }
 
         [Test]

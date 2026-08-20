@@ -9,8 +9,8 @@ namespace HitTheKit.Unity.Gameplay
 {
     public sealed class GameplayHighwaySurface : VisualElement
     {
-        public const float ImpactZoneHalfHeight = 13f;
-        public const int NoteGlowPasses = 4;
+        public const float ImpactZoneHalfHeight = 15f;
+        public const int NoteGlowPasses = 6;
         private IReadOnlyList<TimelineNote> notes = Array.Empty<TimelineNote>();
         private IReadOnlyList<GhostReplayHit> ghostHits = Array.Empty<GhostReplayHit>();
         private double songPositionSeconds;
@@ -160,17 +160,10 @@ namespace HitTheKit.Unity.Gameplay
             float eased = normalized * normalized;
             float y = Mathf.Lerp(horizonY, strikeY, eased);
             float x;
-            if (pad == DrumPad.Kick)
-            {
-                x = Mathf.Lerp((topLeft + topRight) * 0.5f, (bottomLeft + bottomRight) * 0.5f, eased);
-            }
-            else
-            {
-                int laneIndex = GameplayHighwayLanes.HighwayIndex(pad);
-                if (laneIndex < 0) return;
-                float ratio = (laneIndex + 0.5f) / GameplayHighwayLanes.HighwayLaneCount;
-                x = Mathf.Lerp(Mathf.Lerp(topLeft, topRight, ratio), Mathf.Lerp(bottomLeft, bottomRight, ratio), eased);
-            }
+            int laneIndex = GameplayHighwayLanes.HighwayIndex(pad);
+            if (laneIndex < 0) return;
+            float ratio = (laneIndex + 0.5f) / GameplayHighwayLanes.HighwayLaneCount;
+            x = Mathf.Lerp(Mathf.Lerp(topLeft, topRight, ratio), Mathf.Lerp(bottomLeft, bottomRight, ratio), eased);
 
             float radiusX = Mathf.Lerp(4f, pad == DrumPad.Kick ? 27f : 18f, eased);
             float radiusY = Mathf.Lerp(3f, 11f, eased);
@@ -209,12 +202,23 @@ namespace HitTheKit.Unity.Gameplay
 
             if (pad == DrumPad.Kick)
             {
-                float width = Mathf.Lerp((topRight - topLeft) * 0.72f, (bottomRight - bottomLeft) * 0.72f, eased);
+                int kickLaneIndex = GameplayHighwayLanes.HighwayIndex(pad);
+                float kickLaneCount = GameplayHighwayLanes.HighwayLaneCount;
+                float kickRatio = (kickLaneIndex + 0.5f) / kickLaneCount;
+                float centerX = Mathf.Lerp(
+                    Mathf.Lerp(topLeft, topRight, kickRatio),
+                    Mathf.Lerp(bottomLeft, bottomRight, kickRatio),
+                    eased);
+                float width = Mathf.Lerp(
+                    (topRight - topLeft) / kickLaneCount * 0.76f,
+                    (bottomRight - bottomLeft) / kickLaneCount * 0.76f,
+                    eased);
                 float height = Mathf.Lerp(4f, 13f, eased);
-                var center = new Vector2((topLeft + topRight) * 0.5f, y);
+                var center = new Vector2(centerX, y);
                 float approach = Mathf.Clamp01((normalized - 0.58f) / 0.42f);
                 if (approach > 0)
-                    StrokeLine(painter, center, new Vector2((bottomLeft + bottomRight) * 0.5f, strikeY),
+                    StrokeLine(painter, center,
+                        new Vector2(Mathf.Lerp(bottomLeft, bottomRight, kickRatio), strikeY),
                         WithAlpha(color, 0.10f + approach * 0.24f), Mathf.Lerp(2f, 7f, approach));
                 DrawKickGlow(painter, shape, center, width, height, color);
                 DrawKickNote(painter, shape, center, width, height, color);
@@ -228,8 +232,8 @@ namespace HitTheKit.Unity.Gameplay
             float topX = Mathf.Lerp(topLeft, topRight, laneRatio);
             float bottomX = Mathf.Lerp(bottomLeft, bottomRight, laneRatio);
             float x = Mathf.Lerp(topX, bottomX, eased);
-            float radiusX = Mathf.Lerp(5f, 27f, eased);
-            float radiusY = Mathf.Lerp(3.5f, 16f, eased);
+            float radiusX = Mathf.Lerp(5f, 30f, eased);
+            float radiusY = Mathf.Lerp(3.5f, 18f, eased);
             var noteCenter = new Vector2(x, y);
             float bottomXForLane = Mathf.Lerp(bottomLeft, bottomRight, laneRatio);
             float laneApproach = Mathf.Clamp01((normalized - 0.58f) / 0.42f);
@@ -250,8 +254,8 @@ namespace HitTheKit.Unity.Gameplay
         {
             for (int pass = NoteGlowPasses; pass >= 1; pass--)
             {
-                float scale = 1f + pass * 0.26f;
-                Color glow = WithAlpha(color, 0.045f + (NoteGlowPasses - pass) * 0.025f);
+                float scale = 1f + pass * 0.24f;
+                Color glow = WithAlpha(color, 0.04f + (NoteGlowPasses - pass) * 0.022f);
                 switch (shape)
                 {
                     case GameplayNoteShape.ArcadeDiamond:
@@ -305,8 +309,8 @@ namespace HitTheKit.Unity.Gameplay
         {
             for (int pass = NoteGlowPasses; pass >= 1; pass--)
             {
-                float scale = 1f + pass * 0.18f;
-                Color glow = WithAlpha(color, 0.045f + (NoteGlowPasses - pass) * 0.025f);
+                float scale = 1f + pass * 0.17f;
+                Color glow = WithAlpha(color, 0.04f + (NoteGlowPasses - pass) * 0.022f);
                 switch (shape)
                 {
                     case GameplayNoteShape.ArcadeDiamond:

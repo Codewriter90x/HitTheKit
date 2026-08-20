@@ -117,6 +117,7 @@ namespace HitTheKit.Unity.Tests
         [UnityTest]
         public IEnumerator Arena_hud_keeps_the_highway_dominant_and_primary_metrics_separate()
         {
+            GameplaySessionContext.SelectFreePlay(GameplayPresentationTheme.ArcadeNeon);
             AsyncOperation load = SceneManager.LoadSceneAsync("GameplayPrototype", LoadSceneMode.Single);
             while (!load.isDone) yield return null;
             yield return null;
@@ -131,6 +132,8 @@ namespace HitTheKit.Unity.Tests
             VisualElement combo = root.Q<VisualElement>(className: "live-combo-panel");
             VisualElement score = root.Q<VisualElement>(className: "score-panel");
             VisualElement aura = root.Q<VisualElement>(className: "highway-aura");
+            VisualElement kitArtwork = root.Q<VisualElement>("kit-artwork");
+            VisualElement targets = root.Q<VisualElement>("targets-host");
 
             Assert.That(content, Is.Not.Null);
             Assert.That(highway, Is.Not.Null);
@@ -138,10 +141,17 @@ namespace HitTheKit.Unity.Tests
             Assert.That(combo, Is.Not.Null);
             Assert.That(score, Is.Not.Null);
             Assert.That(aura, Is.Not.Null);
+            Assert.That(kitArtwork, Is.Not.Null);
+            Assert.That(targets, Is.Not.Null);
             Assert.That(highway.worldBound.width, Is.GreaterThan(content.worldBound.width * 0.72f));
             Assert.That(track.worldBound.center.x, Is.LessThan(combo.worldBound.center.x));
             Assert.That(combo.worldBound.center.x, Is.LessThan(score.worldBound.center.x));
             Assert.That(aura.worldBound.width, Is.GreaterThan(highway.worldBound.width * 0.60f));
+            Assert.That(controller.IsInstructionalKitVisible, Is.True);
+            Assert.That(kitArtwork.resolvedStyle.display, Is.EqualTo(DisplayStyle.Flex));
+            Assert.That(targets.childCount, Is.EqualTo(8));
+            Assert.That(targets[4].name, Is.EqualTo("target-kick"),
+                "The kick target must sit at the center of the visual drum-kit order.");
         }
 
         [UnityTest]

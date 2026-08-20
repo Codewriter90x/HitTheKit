@@ -62,8 +62,8 @@ namespace HitTheKit.Unity.Gameplay
             {
                 case GameplayPresentationTheme.ArcadeNeon:
                     return new GameplayEnvironmentProfile(
-                        "ARCADE NEON", "HOLOGRAPHIC RUNWAY", GameplayNoteShape.ArcadeDiamond, false,
-                        0.055f, 0.89f, 0.36f, 0.64f, 0.035f, 0.965f);
+                        "ARCADE NEON", "HOLOGRAPHIC RUNWAY", GameplayNoteShape.ArcadeDiamond, true,
+                        0.055f, 0.60f, 0.36f, 0.64f, 0.055f, 0.945f);
                 case GameplayPresentationTheme.ConcertStage:
                     return new GameplayEnvironmentProfile(
                         "CONCERT STAGE", "LIVE DRUM ARENA", GameplayNoteShape.ConcertDisc, false,
@@ -108,21 +108,21 @@ namespace HitTheKit.Unity.Gameplay
     {
         private static readonly GameplayLaneDefinition[] definitions =
         {
-            Lane(DrumPad.HiHat, "hi-hat", "HI-HAT", "CHARLESTON", "K", "62E87C"),
-            Lane(DrumPad.Snare, "snare", "SNARE", "RULLANTE", "J", "B77BFF"),
+            Lane(DrumPad.HiHat, "hi-hat", "HI-HAT", "CHARLESTON", "K", "F6D84A"),
+            Lane(DrumPad.Snare, "snare", "SNARE", "RULLANTE", "J", "55ED8E"),
             Lane(DrumPad.Tom1, "tom-1", "TOM 1", "ALTO", "G", "45C9FF"),
-            Lane(DrumPad.Tom2, "tom-2", "TOM 2", "MEDIO", "H", "4D8DFF"),
-            Lane(DrumPad.FloorTom, "floor-tom", "FLOOR TOM", "TIMPANO", "L", "FFC04D"),
+            Lane(DrumPad.Tom2, "tom-2", "TOM 2", "MEDIO", "H", "B77BFF"),
+            Lane(DrumPad.Kick, "kick", "KICK", "GRANCASSA", "F", "FF4F70"),
+            Lane(DrumPad.FloorTom, "floor-tom", "FLOOR TOM", "TIMPANO", "L", "42E3EE"),
             Lane(DrumPad.Crash, "crash", "CRASH", "PIATTO", "D", "FF685E"),
-            Lane(DrumPad.Ride, "ride", "RIDE", "PIATTO", "S", "6C7CFF"),
-            Lane(DrumPad.Kick, "kick", "KICK", "GRANCASSA", "F", "FF4F70")
+            Lane(DrumPad.Ride, "ride", "RIDE", "PIATTO", "S", "FFC04D")
         };
 
         private static readonly IReadOnlyList<GameplayLaneDefinition> readOnly =
             Array.AsReadOnly(definitions);
 
         public static IReadOnlyList<GameplayLaneDefinition> All => readOnly;
-        public static int HighwayLaneCount => definitions.Length - 1;
+        public static int HighwayLaneCount => definitions.Length;
 
         public static GameplayLaneDefinition Find(DrumPad pad)
         {

@@ -22,14 +22,14 @@ namespace HitTheKit.Unity.Gameplay
             pickingMode = PickingMode.Ignore;
             AddToClassList("gameplay-kit-surface");
 
-            AddPiece(DrumPad.Crash, 4, 4, 25, 23, "kit-piece--cymbal");
-            AddPiece(DrumPad.Ride, 71, 4, 25, 23, "kit-piece--cymbal");
-            AddPiece(DrumPad.Tom1, 31, 25, 17, 25, "kit-piece--drum");
-            AddPiece(DrumPad.Tom2, 52, 25, 17, 25, "kit-piece--drum");
-            AddPiece(DrumPad.HiHat, 3, 38, 22, 23, "kit-piece--cymbal");
-            AddPiece(DrumPad.Snare, 23, 50, 20, 28, "kit-piece--drum");
-            AddPiece(DrumPad.FloorTom, 75, 47, 21, 31, "kit-piece--drum");
-            AddPiece(DrumPad.Kick, 41, 49, 22, 44, "kit-piece--kick");
+            AddPiece(DrumPad.Crash, 14, 2, 22, 19, "kit-piece--cymbal");
+            AddPiece(DrumPad.Ride, 68, 2, 22, 19, "kit-piece--cymbal");
+            AddPiece(DrumPad.Tom1, 31, 22, 19, 23, "kit-piece--drum");
+            AddPiece(DrumPad.Tom2, 51, 22, 19, 23, "kit-piece--drum");
+            AddPiece(DrumPad.HiHat, 3, 30, 20, 18, "kit-piece--cymbal");
+            AddPiece(DrumPad.Snare, 20, 45, 23, 25, "kit-piece--drum");
+            AddPiece(DrumPad.FloorTom, 66, 44, 25, 34, "kit-piece--drum");
+            AddPiece(DrumPad.Kick, 41, 44, 20, 43, "kit-piece--kick");
         }
 
         public int PieceCount => pieces.Count;
@@ -197,8 +197,7 @@ namespace HitTheKit.Unity.Gameplay
                     throw new ArgumentException("Target state pad does not match this kit piece.", nameof(state));
 
                 CurrentState = state;
-                Color dim = new Color(lane.Color.r, lane.Color.g, lane.Color.b, 0.12f);
-                Color outline = new Color(lane.Color.r, lane.Color.g, lane.Color.b, 0.48f + (0.52f * state.Intensity));
+                Color outline = new Color(lane.Color.r, lane.Color.g, lane.Color.b, 0.20f + (0.80f * state.Intensity));
                 Color active = Color.Lerp(
                     new Color(lane.Color.r, lane.Color.g, lane.Color.b, 0.18f),
                     new Color(lane.Color.r, lane.Color.g, lane.Color.b, 0.96f),
@@ -208,14 +207,14 @@ namespace HitTheKit.Unity.Gameplay
                 style.borderRightColor = outline;
                 style.borderBottomColor = outline;
                 style.borderLeftColor = outline;
-                style.backgroundColor = state.Intensity > 0 ? dim : new Color(0.02f, 0.04f, 0.07f, 0.76f);
-                style.opacity = 0.72f + (state.Intensity * 0.28f);
+                style.backgroundColor = Color.clear;
+                style.opacity = 0.38f + (state.Intensity * 0.62f);
 
                 SetZone(edgeZone, state.Zone == GameplayKitZone.Edge || state.Zone == GameplayKitZone.Rim, active);
                 SetZone(bodyZone, state.Zone == GameplayKitZone.Bow || state.Zone == GameplayKitZone.Head, active);
                 SetZone(centerZone, state.Zone == GameplayKitZone.Bell, active);
                 SetZone(pedalZone, state.Zone == GameplayKitZone.Pedal, active);
-                zoneLabel.style.color = state.Intensity > 0 ? lane.Color : new Color(0.65f, 0.72f, 0.80f, 0.78f);
+                zoneLabel.style.color = Color.clear;
                 EnableInClassList("kit-piece--active", state.Intensity > 0.01f);
                 EnableInClassList("kit-piece--hit", state.IsHitPulse);
             }
