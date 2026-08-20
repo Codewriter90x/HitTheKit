@@ -140,6 +140,11 @@
                         <ui:Label name="result-error-map" text="Completa il brano per analizzare sezioni e pezzi." class="result-error-map" />
                         <ui:Button name="result-practice-weakest" text="ALLENA IL PUNTO DEBOLE" class="run-secondary-button result-practice-weakest" />
                     </ui:VisualElement>
+                    <ui:VisualElement class="auto-tempo-panel">
+                        <ui:Label text="AUTO TEMPO COACH" class="auto-tempo-kicker" />
+                        <ui:Label name="auto-tempo-status" text="Completa il tentativo per ricevere il prossimo tempo." class="auto-tempo-status" />
+                        <ui:Button name="auto-tempo-advance" text="PASSA AL PROSSIMO TEMPO" class="run-secondary-button auto-tempo-button" />
+                    </ui:VisualElement>
                     <ui:Label name="result-calibration" text="CALIBRAZIONE: SERVONO 8 COLPI VALIDI" class="result-calibration" />
                     <ui:Button name="result-apply-calibration" text="APPLICA CALIBRAZIONE" class="run-secondary-button result-calibration-button" />
                 </ui:VisualElement>

@@ -68,6 +68,7 @@ namespace HitTheKit.Unity.Gameplay
         private Button resultMenuButton;
         private Button resultApplyCalibrationButton;
         private Button resultPracticeWeakestButton;
+        private Button autoTempoAdvanceButton;
         private Button practicePreviousSectionButton;
         private Button practiceNextSectionButton;
         private Button practiceLoopSectionButton;
@@ -86,6 +87,7 @@ namespace HitTheKit.Unity.Gameplay
         private Label resultPracticeLabel;
         private Label resultCalibrationLabel;
         private Label resultErrorMapLabel;
+        private Label autoTempoStatusLabel;
         private Label practiceSectionLabel;
         private Label practiceStatusLabel;
         private VisualElement resultPerformancePanel;
@@ -135,6 +137,8 @@ namespace HitTheKit.Unity.Gameplay
         private bool metronomeScheduled;
         private bool metronomeSeekedWhilePaused;
         private bool resultRecorded;
+        private GameplayAutoTempoRecommendation autoTempoRecommendation;
+        private bool isChangingTempo;
         private readonly GameplayPracticeLoop practiceLoop = new GameplayPracticeLoop();
         private IReadOnlyList<GameplayPracticeRange> practiceSections = Array.Empty<GameplayPracticeRange>();
         private int selectedPracticeSectionIndex;
@@ -313,6 +317,7 @@ namespace HitTheKit.Unity.Gameplay
             resultMenuButton = root.Q<Button>("result-menu-button");
             resultApplyCalibrationButton = root.Q<Button>("result-apply-calibration");
             resultPracticeWeakestButton = root.Q<Button>("result-practice-weakest");
+            autoTempoAdvanceButton = root.Q<Button>("auto-tempo-advance");
             practicePreviousSectionButton = root.Q<Button>("practice-previous-section");
             practiceNextSectionButton = root.Q<Button>("practice-next-section");
             practiceLoopSectionButton = root.Q<Button>("practice-loop-section");
@@ -331,6 +336,7 @@ namespace HitTheKit.Unity.Gameplay
             resultPracticeLabel = root.Q<Label>("result-practice");
             resultCalibrationLabel = root.Q<Label>("result-calibration");
             resultErrorMapLabel = root.Q<Label>("result-error-map");
+            autoTempoStatusLabel = root.Q<Label>("auto-tempo-status");
             practiceSectionLabel = root.Q<Label>("practice-section-label");
             practiceStatusLabel = root.Q<Label>("practice-status");
             resultPerformancePanel = root.Q<VisualElement>("result-performance-panel");
@@ -866,6 +872,7 @@ namespace HitTheKit.Unity.Gameplay
                     $"EARLY/LATE {matchingSnapshot.EarlyCount + matchingSnapshot.LateCount}   MISS {matchingSnapshot.MissCount}";
                 RenderPracticeRecommendation();
                 RenderErrorMap();
+                RenderAutoTempoRecommendation(matchingSnapshot, score);
                 RenderCalibrationRecommendation();
                 SetDisplayed(chartCreatorResults, false);
             }
@@ -1091,6 +1098,7 @@ namespace HitTheKit.Unity.Gameplay
             if (resultMenuButton != null) resultMenuButton.clicked += ReturnToMainMenu;
             if (resultApplyCalibrationButton != null) resultApplyCalibrationButton.clicked += ApplyCalibrationRecommendation;
             if (resultPracticeWeakestButton != null) resultPracticeWeakestButton.clicked += PracticeWeakestArea;
+            if (autoTempoAdvanceButton != null) autoTempoAdvanceButton.clicked += ApplyAutoTempoRecommendation;
             if (practicePreviousSectionButton != null) practicePreviousSectionButton.clicked += SelectPreviousPracticeSection;
             if (practiceNextSectionButton != null) practiceNextSectionButton.clicked += SelectNextPracticeSection;
             if (practiceLoopSectionButton != null) practiceLoopSectionButton.clicked += LoopSelectedPracticeSection;
@@ -1119,6 +1127,7 @@ namespace HitTheKit.Unity.Gameplay
             if (resultMenuButton != null) resultMenuButton.clicked -= ReturnToMainMenu;
             if (resultApplyCalibrationButton != null) resultApplyCalibrationButton.clicked -= ApplyCalibrationRecommendation;
             if (resultPracticeWeakestButton != null) resultPracticeWeakestButton.clicked -= PracticeWeakestArea;
+            if (autoTempoAdvanceButton != null) autoTempoAdvanceButton.clicked -= ApplyAutoTempoRecommendation;
             if (practicePreviousSectionButton != null) practicePreviousSectionButton.clicked -= SelectPreviousPracticeSection;
             if (practiceNextSectionButton != null) practiceNextSectionButton.clicked -= SelectNextPracticeSection;
             if (practiceLoopSectionButton != null) practiceLoopSectionButton.clicked -= LoopSelectedPracticeSection;
@@ -1511,6 +1520,33 @@ namespace HitTheKit.Unity.Gameplay
             if (weakestPracticeError == null || weakestPracticeError.Section.Index >= practiceSections.Count) return;
             selectedPracticeSectionIndex = weakestPracticeError.Section.Index;
             LoopSelectedPracticeSection();
+        }
+
+        private void RenderAutoTempoRecommendation(
+            HitMatchingSnapshot matchingSnapshot,
+            GameplayScoreSnapshot score)
+        {
+            if (autoTempoStatusLabel == null || autoTempoAdvanceButton == null) return;
+            autoTempoRecommendation = GameplayAutoTempoCoach.Evaluate(CurrentSession, score, matchingSnapshot);
+            autoTempoStatusLabel.text = autoTempoRecommendation.Message;
+            autoTempoAdvanceButton.SetEnabled(autoTempoRecommendation.CanAdvance);
+            if (autoTempoRecommendation.CanAdvance)
+                autoTempoAdvanceButton.text = $"PROSSIMO TEMPO · {autoTempoRecommendation.NextSpeed:0.##}×";
+            else if (autoTempoRecommendation.Status == GameplayAutoTempoStatus.Mastered)
+                autoTempoAdvanceButton.text = "TEMPO OBIETTIVO RAGGIUNTO";
+            else if (autoTempoRecommendation.Status == GameplayAutoTempoStatus.Unavailable)
+                autoTempoAdvanceButton.text = "AUTO TEMPO NON DISPONIBILE";
+            else
+                autoTempoAdvanceButton.text = "RIPETI PER SBLOCCARE";
+        }
+
+        public void ApplyAutoTempoRecommendation()
+        {
+            if (isChangingTempo || autoTempoRecommendation == null || !autoTempoRecommendation.CanAdvance) return;
+            isChangingTempo = true;
+            GameplaySessionContext.Select(
+                GameplaySessionFactory.AtSpeed(CurrentSession, autoTempoRecommendation.NextSpeed));
+            SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
         }
 
         private static string PadLabel(DrumPad pad)

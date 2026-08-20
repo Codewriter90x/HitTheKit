@@ -59,6 +59,8 @@ namespace HitTheKit.Unity.Tests
             Assert.That(document.rootVisualElement.Q<VisualElement>("results-overlay"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<Label>("result-error-map"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<Button>("result-practice-weakest"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Label>("auto-tempo-status"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Button>("auto-tempo-advance"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<Button>("pause-button"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<VisualElement>("countdown-overlay"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<ChartWaveformView>("chart-waveform"), Is.Not.Null);

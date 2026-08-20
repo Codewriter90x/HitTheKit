@@ -333,6 +333,50 @@ namespace HitTheKit.Unity.Gameplay
             return Math.Max(CountInBeats, (int)Math.Ceiling(MinimumSongCountInSeconds * effectiveBpm / 60.0));
         }
 
+        public static GameplaySessionDefinition AtSpeed(
+            GameplaySessionDefinition session,
+            double speedMultiplier)
+        {
+            if (session == null) throw new ArgumentNullException(nameof(session));
+            if (session.Kind == GameplaySessionKind.Lesson)
+            {
+                if (!session.LessonId.HasValue) throw new InvalidOperationException("Lesson session is missing its lesson ID.");
+                return Lesson(session.LessonId.Value, speedMultiplier, session.Theme);
+            }
+            if (string.IsNullOrWhiteSpace(session.SongId))
+                throw new InvalidOperationException("Auto Tempo requires a lesson or Song Library session.");
+            if (!GameplaySongSpeeds.IsSupported(speedMultiplier))
+                throw new ArgumentOutOfRangeException(nameof(speedMultiplier));
+
+            double originalBpm = session.Bpm / session.SpeedMultiplier;
+            double effectiveBpm = originalBpm * speedMultiplier;
+            string metadata = session.Metadata
+                .Replace($"{session.Bpm:0.#} BPM", $"{effectiveBpm:0.#} BPM")
+                .Replace($"{session.SpeedMultiplier:0.##}×", $"{speedMultiplier:0.##}×");
+            return new GameplaySessionDefinition(
+                session.Kind,
+                session.Chart,
+                session.Difficulty,
+                speedMultiplier,
+                effectiveBpm,
+                session.Bars,
+                session.BeatsPerBar,
+                SongCountInBeats(effectiveBpm),
+                session.UseGeneratedSong,
+                session.Theme,
+                session.ReturnTarget,
+                session.Title,
+                session.Subtitle,
+                metadata,
+                session.Kicker,
+                session.ReturnButtonLabel,
+                null,
+                session.SongId,
+                session.ChartFilePath,
+                session.AudioFilePath,
+                session.IsChartCreator);
+        }
+
         private static bool ContainsDifficulty(IReadOnlyList<string> values, string selected)
         {
             if (values == null) return false;
