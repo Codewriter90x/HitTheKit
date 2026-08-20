@@ -46,8 +46,9 @@ final result: passed
 ## Source and implementation
 
 - Source reference: `mockup/gameplay-visual-direction-01-arena-highway.png`
-- Implemented screen: `mockup/gameplay-visual-implementation-final.png`
-- Side-by-side comparison: `mockup/gameplay-visual-comparison-final.png`
+- Selected target reference: `mockup/gameplay-visual-direction-01-arena-highway.png`
+- Implemented screen: `mockup/gameplay-target-controls-final.png`
+- Side-by-side comparison: `mockup/gameplay-target-controls-comparison.png`
 - Reference source dimensions: 1672 x 941
 - Captured player viewport: 1366 x 768 (1920 x 1080 logical player surface)
 - State: Neon Circuit gameplay, approximately three seconds after launch
@@ -62,13 +63,16 @@ final result: passed
 3. The corrected kit was generated with exactly three cymbals (hi-hat, crash and
    ride) and five drums (snare, two rack toms, floor tom and kick). Its neon rim
    colors now match the target cards below it.
-4. The composition pass enlarged the kit into the foreground, lifted it behind
-   the target row, aligned all eight highway lanes with the eight bottom targets,
+4. The lane pass aligned all eight highway lanes with the eight bottom targets,
    converted kick from a full-width bar into its own lane, strengthened note glow
    and raised the impact line to match the reference perspective.
-5. The final pass removed the redundant on-kit label overlays in Arcade Neon,
-   kept the timing judgment clear, and compared the source and runtime screen at
-   the same normalized 1366×768 viewport.
+5. The target-control pass reproduced the selected mockup's exact semantic order:
+   Charleston cross, Rullante circle, Tom 1 square, Tom 2 circle, Cassa capsule,
+   Floor Tom diamond, Crash triangle and Ride square. Each card now includes a
+   dedicated instrument image instead of a text glyph or placeholder.
+6. The final depth pass reduced and lowered the physical kit, moved it behind the
+   highway layer and removed Arcade-only shortcut letters, so the road remains
+   fully readable while the eight colored controls match the supplied composition.
 
 ## Final assessment
 
@@ -81,10 +85,15 @@ final result: passed
   hi-hat, snare, Tom 1, Tom 2, kick, floor tom, crash and ride.
 - Kick now occupies the same fifth visual lane as its fifth bottom target instead
   of appearing as a disconnected full-highway bar.
+- Arcade notes use the same color/geometry vocabulary as the bottom controls:
+  circles, squares, diamond, triangle and kick capsule remain identifiable without
+  relying on color alone.
+- The physical kit begins in the lower/rear stage and never occludes the road or
+  impact line. Its visual role is spatial grounding rather than foreground chrome.
 - No P0, P1 or P2 clipping, overlap or hierarchy defect remains in the verified
   16:9 viewport.
-- Residual P3 difference: the concept uses bespoke pictograms inside every target
-  card, while the runtime keeps the existing keyboard key plus beginner/technical
-  labels so the controls remain immediately usable.
+- Residual P3 difference: the generated instrument thumbnails are more detailed
+  than the concept's thin line icons, but preserve the same hierarchy and are
+  clearer at the verified player resolution.
 
-Final result: `passed`
+final result: passed

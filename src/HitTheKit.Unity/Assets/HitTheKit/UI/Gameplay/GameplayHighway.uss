@@ -291,13 +291,13 @@
 
 .kit-artwork {
     position: absolute;
-    left: 3%;
-    right: 3%;
-    bottom: -110px;
-    height: 720px;
-    min-height: 720px;
+    left: 18%;
+    right: 18%;
+    bottom: 44px;
+    height: 410px;
+    min-height: 410px;
     -unity-background-scale-mode: scale-to-fit;
-    opacity: 0.98;
+    opacity: 0.90;
 }
 
 .kit-visual-host {
@@ -479,8 +479,8 @@
 
 .targets-host {
     position: relative;
-    height: 108px;
-    min-height: 108px;
+    height: 126px;
+    min-height: 126px;
     flex-direction: row;
     align-items: stretch;
     justify-content: center;
@@ -493,30 +493,57 @@
     min-width: 62px;
     margin-left: 3px;
     margin-right: 3px;
-    padding: 8px 7px;
+    padding: 5px 6px 7px 6px;
     background-color: rgba(3, 8, 17, 0.90);
     border-width: 2px;
-    border-radius: 12px;
+    border-radius: 13px;
     justify-content: center;
     transition-property: scale, background-color;
     transition-duration: 0.08s;
 }
 
-.target-header { flex-direction: row; align-items: center; justify-content: center; }
+.target-header {
+    height: 29px;
+    min-height: 29px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+.target-symbol {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+}
 .target-key {
-    min-width: 23px;
-    height: 23px;
-    margin-right: 6px;
+    min-width: 20px;
+    height: 20px;
+    margin-left: 4px;
     border-width: 1px;
     border-color: rgba(230, 242, 255, 0.55);
     border-radius: 5px;
     background-color: rgba(0, 0, 0, 0.35);
     -unity-text-align: middle-center;
-    font-size: 11px;
+    font-size: 9px;
     -unity-font-style: bold;
 }
-.target-name { font-size: 12px; -unity-font-style: bold; white-space: normal; }
-.target-subtitle { color: var(--muted); font-size: 9px; -unity-text-align: middle-center; margin-top: 5px; }
+.target-instrument-icon {
+    width: 52px;
+    height: 47px;
+    min-height: 47px;
+    align-self: center;
+    margin-top: -2px;
+    margin-bottom: -2px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+.target-name {
+    font-size: 11px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    letter-spacing: 0.5px;
+}
+.target-subtitle { color: var(--muted); font-size: 8px; -unity-text-align: middle-center; margin-top: 1px; }
 .target--active { scale: 1.06; background-color: rgba(255, 255, 255, 0.30); }
 
 .kick-target-host { display: none; }
@@ -531,6 +558,7 @@
     transition-property: scale, background-color;
     transition-duration: 0.08s;
 }
+.kick-target .target-instrument-icon { width: 54px; height: 49px; min-height: 49px; }
 .kick-target .target-name { font-size: 12px; }
 .kick-target .target-subtitle { font-size: 9px; }
 
@@ -709,6 +737,7 @@
     background-color: rgba(18, 12, 9, 0.58);
 }
 .theme--concert-stage .target-key { border-radius: 12px; background-color: rgba(0, 0, 0, 0.58); }
+.theme--concert-stage .target-instrument-icon { display: none; }
 .theme--concert-stage .target-subtitle { display: none; }
 .theme--concert-stage .kick-target-host { height: 94px; min-height: 94px; }
 .theme--concert-stage .kick-target { width: 38%; height: 82px; border-radius: 41px; border-width: 3px; background-color: rgba(15, 9, 7, 0.62); }
@@ -723,6 +752,7 @@
 .theme--precision-grid .side-rail { padding-bottom: 66px; }
 .theme--precision-grid .lane-target { border-radius: 2px; border-width: 1px; background-color: rgba(3, 12, 21, 0.62); }
 .theme--precision-grid .target-key { border-radius: 1px; }
+.theme--precision-grid .target-instrument-icon { height: 32px; min-height: 32px; }
 .theme--precision-grid .kick-target { border-radius: 3px; width: 78%; border-width: 1px; background-color: rgba(24, 7, 8, 0.58); }
 
 .theme--arcade-neon .side-rail,
@@ -738,9 +768,20 @@
 }
 .theme--arcade-neon .lane-target {
     border-width: 2px;
-    background-color: rgba(4, 9, 24, 0.88);
+    background-color: rgba(2, 7, 18, 0.91);
 }
-.theme--arcade-neon .kick-target { background-color: rgba(42, 4, 37, 0.92); }
+.theme--arcade-neon .target-subtitle { display: none; }
+.theme--arcade-neon .target-key { display: none; }
+.theme--arcade-neon .kick-target {
+    margin-top: -8px;
+    margin-bottom: -5px;
+    padding-top: 7px;
+    background-color: rgba(47, 4, 40, 0.94);
+    border-top-width: 3px;
+    border-left-width: 3px;
+    border-right-width: 3px;
+}
+.theme--arcade-neon .kick-target .target-name { color: rgb(255, 217, 247); }
 
 @media (max-width: 1250px) {
     .gameplay-shell { padding-left: 12px; padding-right: 12px; }

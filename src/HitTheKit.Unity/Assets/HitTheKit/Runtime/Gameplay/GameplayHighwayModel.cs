@@ -19,6 +19,16 @@ namespace HitTheKit.Unity.Gameplay
         PrecisionOutline
     }
 
+    public enum GameplayLaneSymbol
+    {
+        Cross,
+        Circle,
+        Square,
+        Diamond,
+        Triangle,
+        Capsule
+    }
+
     public readonly struct GameplayEnvironmentProfile
     {
         private GameplayEnvironmentProfile(
@@ -86,7 +96,9 @@ namespace HitTheKit.Unity.Gameplay
             string label,
             string subtitle,
             string key,
-            Color color)
+            Color color,
+            GameplayLaneSymbol targetSymbol,
+            GameplayLaneSymbol noteSymbol)
         {
             Pad = pad;
             Id = id;
@@ -94,6 +106,8 @@ namespace HitTheKit.Unity.Gameplay
             Subtitle = subtitle;
             Key = key;
             Color = color;
+            TargetSymbol = targetSymbol;
+            NoteSymbol = noteSymbol;
         }
 
         public DrumPad Pad { get; }
@@ -102,20 +116,22 @@ namespace HitTheKit.Unity.Gameplay
         public string Subtitle { get; }
         public string Key { get; }
         public Color Color { get; }
+        public GameplayLaneSymbol TargetSymbol { get; }
+        public GameplayLaneSymbol NoteSymbol { get; }
     }
 
     public static class GameplayHighwayLanes
     {
         private static readonly GameplayLaneDefinition[] definitions =
         {
-            Lane(DrumPad.HiHat, "hi-hat", "HI-HAT", "CHARLESTON", "K", "F6D84A"),
-            Lane(DrumPad.Snare, "snare", "SNARE", "RULLANTE", "J", "55ED8E"),
-            Lane(DrumPad.Tom1, "tom-1", "TOM 1", "ALTO", "G", "45C9FF"),
-            Lane(DrumPad.Tom2, "tom-2", "TOM 2", "MEDIO", "H", "B77BFF"),
-            Lane(DrumPad.Kick, "kick", "KICK", "GRANCASSA", "F", "FF4F70"),
-            Lane(DrumPad.FloorTom, "floor-tom", "FLOOR TOM", "TIMPANO", "L", "42E3EE"),
-            Lane(DrumPad.Crash, "crash", "CRASH", "PIATTO", "D", "FF685E"),
-            Lane(DrumPad.Ride, "ride", "RIDE", "PIATTO", "S", "FFC04D")
+            Lane(DrumPad.HiHat, "hi-hat", "CHARLESTON", "HI-HAT", "K", "62E87C", GameplayLaneSymbol.Cross, GameplayLaneSymbol.Circle),
+            Lane(DrumPad.Snare, "snare", "RULLANTE", "SNARE", "J", "B77BFF", GameplayLaneSymbol.Circle, GameplayLaneSymbol.Circle),
+            Lane(DrumPad.Tom1, "tom-1", "TOM 1", "ALTO", "G", "45C9FF", GameplayLaneSymbol.Square, GameplayLaneSymbol.Square),
+            Lane(DrumPad.Tom2, "tom-2", "TOM 2", "MEDIO", "H", "FFC04D", GameplayLaneSymbol.Circle, GameplayLaneSymbol.Circle),
+            Lane(DrumPad.Kick, "kick", "CASSA", "GRANCASSA", "F", "FF4F70", GameplayLaneSymbol.Capsule, GameplayLaneSymbol.Capsule),
+            Lane(DrumPad.FloorTom, "floor-tom", "FLOOR TOM", "TIMPANO", "L", "B77BFF", GameplayLaneSymbol.Diamond, GameplayLaneSymbol.Diamond),
+            Lane(DrumPad.Crash, "crash", "CRASH", "PIATTO", "D", "FF685E", GameplayLaneSymbol.Triangle, GameplayLaneSymbol.Triangle),
+            Lane(DrumPad.Ride, "ride", "RIDE", "PIATTO", "S", "42E3EE", GameplayLaneSymbol.Square, GameplayLaneSymbol.Square)
         };
 
         private static readonly IReadOnlyList<GameplayLaneDefinition> readOnly =
@@ -150,10 +166,12 @@ namespace HitTheKit.Unity.Gameplay
             string label,
             string subtitle,
             string key,
-            string htmlColor)
+            string htmlColor,
+            GameplayLaneSymbol targetSymbol,
+            GameplayLaneSymbol noteSymbol)
         {
             ColorUtility.TryParseHtmlString($"#{htmlColor}", out Color color);
-            return new GameplayLaneDefinition(pad, id, label, subtitle, key, color);
+            return new GameplayLaneDefinition(pad, id, label, subtitle, key, color, targetSymbol, noteSymbol);
         }
     }
 

@@ -21,6 +21,14 @@ namespace HitTheKit.Unity.Tests
         private const string ArcadeDrumKitPath =
             "Assets/HitTheKit/UI/Gameplay/Backgrounds/arcade-neon-drum-kit.png";
 
+        private static readonly string[] TargetIconPaths =
+        {
+            "Assets/HitTheKit/UI/Gameplay/Icons/target-hi-hat.png",
+            "Assets/HitTheKit/UI/Gameplay/Icons/target-drum.png",
+            "Assets/HitTheKit/UI/Gameplay/Icons/target-cymbal.png",
+            "Assets/HitTheKit/UI/Gameplay/Icons/target-kick.png"
+        };
+
         [Test]
         public void Defines_complete_unique_drum_lane_set_aligned_with_the_bottom_targets()
         {
@@ -41,6 +49,31 @@ namespace HitTheKit.Unity.Tests
             }));
             Assert.That(GameplayHighwayLanes.HighwayIndex(DrumPad.Kick), Is.EqualTo(4));
             Assert.That(GameplayHighwayLanes.Find(DrumPad.Kick).Subtitle, Is.EqualTo("GRANCASSA"));
+        }
+
+        [Test]
+        public void Arena_targets_use_the_mockup_symbol_color_and_label_language()
+        {
+            (DrumPad pad, string label, string color, GameplayLaneSymbol target, GameplayLaneSymbol note)[] expected =
+            {
+                (DrumPad.HiHat, "CHARLESTON", "62E87C", GameplayLaneSymbol.Cross, GameplayLaneSymbol.Circle),
+                (DrumPad.Snare, "RULLANTE", "B77BFF", GameplayLaneSymbol.Circle, GameplayLaneSymbol.Circle),
+                (DrumPad.Tom1, "TOM 1", "45C9FF", GameplayLaneSymbol.Square, GameplayLaneSymbol.Square),
+                (DrumPad.Tom2, "TOM 2", "FFC04D", GameplayLaneSymbol.Circle, GameplayLaneSymbol.Circle),
+                (DrumPad.Kick, "CASSA", "FF4F70", GameplayLaneSymbol.Capsule, GameplayLaneSymbol.Capsule),
+                (DrumPad.FloorTom, "FLOOR TOM", "B77BFF", GameplayLaneSymbol.Diamond, GameplayLaneSymbol.Diamond),
+                (DrumPad.Crash, "CRASH", "FF685E", GameplayLaneSymbol.Triangle, GameplayLaneSymbol.Triangle),
+                (DrumPad.Ride, "RIDE", "42E3EE", GameplayLaneSymbol.Square, GameplayLaneSymbol.Square)
+            };
+
+            foreach ((DrumPad pad, string label, string color, GameplayLaneSymbol target, GameplayLaneSymbol note) in expected)
+            {
+                GameplayLaneDefinition lane = GameplayHighwayLanes.Find(pad);
+                Assert.That(lane.Label, Is.EqualTo(label));
+                Assert.That(ColorUtility.ToHtmlStringRGB(lane.Color), Is.EqualTo(color));
+                Assert.That(lane.TargetSymbol, Is.EqualTo(target));
+                Assert.That(lane.NoteSymbol, Is.EqualTo(note));
+            }
         }
 
         [Test]
@@ -93,6 +126,11 @@ namespace HitTheKit.Unity.Tests
             Assert.That(drumKit, Is.Not.Null);
             Assert.That(drumKit.width, Is.GreaterThanOrEqualTo(1600));
             Assert.That(drumKit.height, Is.GreaterThanOrEqualTo(900));
+
+            Texture2D[] targetIcons = TargetIconPaths.Select(AssetDatabase.LoadAssetAtPath<Texture2D>).ToArray();
+            Assert.That(targetIcons, Has.All.Not.Null);
+            Assert.That(targetIcons.Select(AssetDatabase.GetAssetPath), Is.Unique);
+            Assert.That(targetIcons.All(texture => texture.width == 512 && texture.height == 512), Is.True);
         }
 
         [Test]

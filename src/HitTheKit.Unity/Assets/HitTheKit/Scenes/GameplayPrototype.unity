@@ -1010,6 +1010,10 @@ MonoBehaviour:
   drumFeedbackSource: {fileID: 1889723003}
   arcadeNeonBackground: {fileID: 2800000, guid: 42bcebe26ffe4761b9c5af9b155302c7, type: 3}
   arcadeNeonDrumKit: {fileID: 2800000, guid: 55f51a3c602d4688adc5bf30de9f12a5, type: 3}
+  targetHiHatIcon: {fileID: 2800000, guid: 98265a3f1ad4459981bb54fb950f3b6f, type: 3}
+  targetDrumIcon: {fileID: 2800000, guid: ee3a29029a6949c2af0549fc9d0a6a75, type: 3}
+  targetCymbalIcon: {fileID: 2800000, guid: 62356826371b4fde863363602c4df79b, type: 3}
+  targetKickIcon: {fileID: 2800000, guid: db6f694cf21f4d6baf36da48ee1680e5, type: 3}
   concertStageBackground: {fileID: 2800000, guid: 82d15af498f74ca0a5e62d94367b1832, type: 3}
   precisionGridBackground: {fileID: 2800000, guid: 5a0c8d7fe52a4b3199471c2db4968ef0, type: 3}
   initialTheme: 0

@@ -240,13 +240,14 @@ namespace HitTheKit.Unity.Gameplay
             if (laneApproach > 0)
                 StrokeLine(painter, noteCenter, new Vector2(bottomXForLane, strikeY),
                     WithAlpha(color, 0.10f + laneApproach * 0.26f), Mathf.Lerp(1.5f, 5f, laneApproach));
-            DrawLaneGlow(painter, shape, noteCenter, radiusX, radiusY, color);
-            DrawLaneNote(painter, shape, noteCenter, radiusX, radiusY, color);
+            DrawLaneGlow(painter, shape, lane.NoteSymbol, noteCenter, radiusX, radiusY, color);
+            DrawLaneNote(painter, shape, lane.NoteSymbol, noteCenter, radiusX, radiusY, color);
         }
 
         private static void DrawLaneGlow(
             Painter2D painter,
             GameplayNoteShape shape,
+            GameplayLaneSymbol symbol,
             Vector2 center,
             float radiusX,
             float radiusY,
@@ -259,7 +260,7 @@ namespace HitTheKit.Unity.Gameplay
                 switch (shape)
                 {
                     case GameplayNoteShape.ArcadeDiamond:
-                        FillDiamond(painter, center, radiusX * scale, radiusY * scale, glow);
+                        FillLaneSymbol(painter, symbol, center, radiusX * scale, radiusY * scale, glow);
                         break;
                     case GameplayNoteShape.ConcertDisc:
                         FillRegularPolygon(painter, center, radiusX * scale, radiusY * scale, 10, glow);
@@ -274,6 +275,7 @@ namespace HitTheKit.Unity.Gameplay
         private static void DrawLaneNote(
             Painter2D painter,
             GameplayNoteShape shape,
+            GameplayLaneSymbol symbol,
             Vector2 center,
             float radiusX,
             float radiusY,
@@ -282,8 +284,7 @@ namespace HitTheKit.Unity.Gameplay
             switch (shape)
             {
                 case GameplayNoteShape.ArcadeDiamond:
-                    FillDiamond(painter, center, radiusX, radiusY, color);
-                    FillDiamond(painter, center, radiusX * 0.45f, radiusY * 0.45f, Color.white);
+                    DrawArcadeLaneSymbol(painter, symbol, center, radiusX, radiusY, color);
                     break;
                 case GameplayNoteShape.ConcertDisc:
                     FillRegularPolygon(painter, center, radiusX, radiusY, 10, color);
@@ -296,6 +297,71 @@ namespace HitTheKit.Unity.Gameplay
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(shape));
+            }
+        }
+
+        private static void FillLaneSymbol(
+            Painter2D painter,
+            GameplayLaneSymbol symbol,
+            Vector2 center,
+            float radiusX,
+            float radiusY,
+            Color color)
+        {
+            switch (symbol)
+            {
+                case GameplayLaneSymbol.Square:
+                    FillRegularPolygon(painter, center, radiusX, radiusY, 4, color, Mathf.PI * 0.25f);
+                    break;
+                case GameplayLaneSymbol.Diamond:
+                    FillDiamond(painter, center, radiusX, radiusY, color);
+                    break;
+                case GameplayLaneSymbol.Triangle:
+                    FillRegularPolygon(painter, center, radiusX, radiusY, 3, color);
+                    break;
+                case GameplayLaneSymbol.Capsule:
+                    FillQuad(painter,
+                        new Vector2(center.x - radiusX, center.y - radiusY * 0.55f),
+                        new Vector2(center.x + radiusX, center.y - radiusY * 0.55f),
+                        new Vector2(center.x + radiusX, center.y + radiusY * 0.55f),
+                        new Vector2(center.x - radiusX, center.y + radiusY * 0.55f), color);
+                    break;
+                default:
+                    FillRegularPolygon(painter, center, radiusX, radiusY, 12, color);
+                    break;
+            }
+        }
+
+        private static void DrawArcadeLaneSymbol(
+            Painter2D painter,
+            GameplayLaneSymbol symbol,
+            Vector2 center,
+            float radiusX,
+            float radiusY,
+            Color color)
+        {
+            FillLaneSymbol(painter, symbol, center, radiusX, radiusY, color);
+            Color hollow = new Color(0.015f, 0.035f, 0.075f, 0.92f);
+            FillLaneSymbol(painter, symbol, center, radiusX * 0.63f, radiusY * 0.58f, hollow);
+
+            switch (symbol)
+            {
+                case GameplayLaneSymbol.Square:
+                    StrokeRegularPolygon(painter, center, radiusX * 0.82f, radiusY * 0.78f, 4,
+                        Color.white, 1.0f, Mathf.PI * 0.25f);
+                    break;
+                case GameplayLaneSymbol.Diamond:
+                    StrokeRegularPolygon(painter, center, radiusX * 0.82f, radiusY * 0.78f, 4,
+                        Color.white, 1.0f);
+                    break;
+                case GameplayLaneSymbol.Triangle:
+                    StrokeRegularPolygon(painter, center, radiusX * 0.82f, radiusY * 0.78f, 3,
+                        Color.white, 1.0f);
+                    break;
+                default:
+                    StrokeRegularPolygon(painter, center, radiusX * 0.82f, radiusY * 0.76f, 12,
+                        Color.white, 1.0f);
+                    break;
             }
         }
 
@@ -314,7 +380,11 @@ namespace HitTheKit.Unity.Gameplay
                 switch (shape)
                 {
                     case GameplayNoteShape.ArcadeDiamond:
-                        FillDiamond(painter, center, width * scale * 0.5f, height * scale, glow);
+                        FillQuad(painter,
+                            new Vector2(center.x - width * scale * 0.5f, center.y - height * scale * 0.55f),
+                            new Vector2(center.x + width * scale * 0.5f, center.y - height * scale * 0.55f),
+                            new Vector2(center.x + width * scale * 0.5f, center.y + height * scale * 0.55f),
+                            new Vector2(center.x - width * scale * 0.5f, center.y + height * scale * 0.55f), glow);
                         break;
                     case GameplayNoteShape.ConcertDisc:
                         FillRegularPolygon(painter, center, width * scale * 0.40f, height * scale * 1.15f, 10, glow);
@@ -342,7 +412,16 @@ namespace HitTheKit.Unity.Gameplay
             switch (shape)
             {
                 case GameplayNoteShape.ArcadeDiamond:
-                    FillDiamond(painter, center, width * 0.5f, height, color);
+                    FillQuad(painter,
+                        new Vector2(center.x - width * 0.5f, center.y - height * 0.55f),
+                        new Vector2(center.x + width * 0.5f, center.y - height * 0.55f),
+                        new Vector2(center.x + width * 0.5f, center.y + height * 0.55f),
+                        new Vector2(center.x - width * 0.5f, center.y + height * 0.55f), color);
+                    FillQuad(painter,
+                        new Vector2(center.x - width * 0.38f, center.y - height * 0.22f),
+                        new Vector2(center.x + width * 0.38f, center.y - height * 0.22f),
+                        new Vector2(center.x + width * 0.38f, center.y + height * 0.22f),
+                        new Vector2(center.x - width * 0.38f, center.y + height * 0.22f), Color.white);
                     break;
                 case GameplayNoteShape.ConcertDisc:
                     FillRegularPolygon(painter, center, width * 0.40f, height * 1.15f, 10, color);

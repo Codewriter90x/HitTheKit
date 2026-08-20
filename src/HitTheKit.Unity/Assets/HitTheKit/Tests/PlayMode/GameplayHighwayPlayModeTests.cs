@@ -152,6 +152,18 @@ namespace HitTheKit.Unity.Tests
             Assert.That(targets.childCount, Is.EqualTo(8));
             Assert.That(targets[4].name, Is.EqualTo("target-kick"),
                 "The kick target must sit at the center of the visual drum-kit order.");
+            foreach (GameplayLaneDefinition lane in GameplayHighwayLanes.All)
+            {
+                GameplayTargetSymbol symbol = root.Q<GameplayTargetSymbol>($"target-symbol-{lane.Id}");
+                VisualElement icon = root.Q<VisualElement>($"target-icon-{lane.Id}");
+                Assert.That(symbol, Is.Not.Null, $"Missing geometric target symbol for {lane.Id}.");
+                Assert.That(symbol.Symbol, Is.EqualTo(lane.TargetSymbol));
+                Assert.That(icon, Is.Not.Null, $"Missing instrument art for {lane.Id}.");
+                Assert.That(icon.resolvedStyle.backgroundImage.texture, Is.Not.Null,
+                    $"Target {lane.Id} must use a real instrument texture, not a placeholder glyph.");
+            }
+            Assert.That(kitArtwork.worldBound.yMin, Is.GreaterThan(highway.worldBound.yMin + highway.worldBound.height * 0.26f),
+                "The physical kit must stay in the rear/lower stage and leave the highway readable.");
         }
 
         [UnityTest]

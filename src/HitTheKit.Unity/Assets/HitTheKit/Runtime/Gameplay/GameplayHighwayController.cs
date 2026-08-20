@@ -32,6 +32,10 @@ namespace HitTheKit.Unity.Gameplay
         [SerializeField] private AudioSource drumFeedbackSource;
         [SerializeField] private Texture2D arcadeNeonBackground;
         [SerializeField] private Texture2D arcadeNeonDrumKit;
+        [SerializeField] private Texture2D targetHiHatIcon;
+        [SerializeField] private Texture2D targetDrumIcon;
+        [SerializeField] private Texture2D targetCymbalIcon;
+        [SerializeField] private Texture2D targetKickIcon;
         [SerializeField] private Texture2D concertStageBackground;
         [SerializeField] private Texture2D precisionGridBackground;
 
@@ -470,7 +474,7 @@ namespace HitTheKit.Unity.Gameplay
             }
         }
 
-        private static VisualElement CreateTarget(GameplayLaneDefinition lane, bool isKick)
+        private VisualElement CreateTarget(GameplayLaneDefinition lane, bool isKick)
         {
             var target = new VisualElement { name = $"target-{lane.Id}" };
             target.AddToClassList("lane-target");
@@ -483,18 +487,51 @@ namespace HitTheKit.Unity.Gameplay
 
             var header = new VisualElement();
             header.AddToClassList("target-header");
+            var symbol = new GameplayTargetSymbol(lane.TargetSymbol, lane.Color)
+            {
+                name = $"target-symbol-{lane.Id}"
+            };
             var key = new Label(lane.Key);
             key.AddToClassList("target-key");
+            header.Add(symbol);
+            header.Add(key);
+            target.Add(header);
+
+            Texture2D iconTexture = TargetIconFor(lane.Pad);
+            var icon = new VisualElement { name = $"target-icon-{lane.Id}" };
+            icon.AddToClassList("target-instrument-icon");
+            if (iconTexture != null) icon.style.backgroundImage = new StyleBackground(iconTexture);
+            target.Add(icon);
+
             var name = new Label(lane.Label);
             name.AddToClassList("target-name");
-            header.Add(key);
-            header.Add(name);
-            target.Add(header);
+            target.Add(name);
 
             var subtitle = new Label(lane.Subtitle);
             subtitle.AddToClassList("target-subtitle");
             target.Add(subtitle);
             return target;
+        }
+
+        private Texture2D TargetIconFor(DrumPad pad)
+        {
+            switch (pad)
+            {
+                case DrumPad.HiHat:
+                    return targetHiHatIcon;
+                case DrumPad.Snare:
+                case DrumPad.Tom1:
+                case DrumPad.Tom2:
+                case DrumPad.FloorTom:
+                    return targetDrumIcon;
+                case DrumPad.Crash:
+                case DrumPad.Ride:
+                    return targetCymbalIcon;
+                case DrumPad.Kick:
+                    return targetKickIcon;
+                default:
+                    return null;
+            }
         }
 
         private void RefreshPresentation()

@@ -76,13 +76,13 @@
 
             <ui:VisualElement class="highway-column">
                 <ui:VisualElement class="highway-aura" />
+                <ui:VisualElement name="kit-artwork" class="kit-artwork" />
                 <ui:VisualElement name="highway-host" class="highway-host" />
                 <ui:VisualElement class="environment-identity">
                     <ui:Label name="environment-title" text="ARCADE NEON" class="environment-title" />
                     <ui:Label name="environment-subtitle" text="HOLOGRAPHIC RUNWAY" class="environment-subtitle" />
                 </ui:VisualElement>
                 <ui:Label name="kit-guidance-label" text="SEGUI I COLORI: LA NOTA E IL PEZZO SI ACCENDONO INSIEME" class="kit-guidance-label" />
-                <ui:VisualElement name="kit-artwork" class="kit-artwork" />
                 <ui:VisualElement name="kit-visual-host" class="kit-visual-host" />
                 <ui:VisualElement name="countdown-overlay" class="countdown-overlay">
                     <ui:Label text="PREPARATI" class="countdown-heading" />
