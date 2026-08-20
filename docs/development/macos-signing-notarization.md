@@ -72,7 +72,10 @@ is the simpler and safer release procedure.
 `build-macos-distribution-app.sh` builds the native arm64 CoreMIDI plug-in,
 synchronizes the managed Core assembly, and asks Unity to create a non-
 Development macOS player. The bundle identifier remains
-`com.codewriter90x.hitthekit`.
+`com.codewriter90x.hitthekit`. Before signing, it installs the MPL license,
+project notice, third-party notices, licensing overview, and an exact-revision
+`SOURCE-CODE.txt` under `Contents/Resources/Legal`. The final DMG exposes the
+same `Legal/` directory at its top level.
 
 `sign-macos-app.sh` signs a staged copy and replaces the input only after the
 staged bundle passes strict verification. It signs every nested Mach-O first,

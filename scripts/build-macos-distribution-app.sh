@@ -21,6 +21,13 @@ fail() {
 [ ! -e "$APP_PATH" ] || fail "output already exists: $APP_PATH"
 [ -x "$UNITY_PATH" ] || fail "Unity 6000.5.6f1 was not found at: $UNITY_PATH"
 
+SOURCE_COMMIT=${HITTHEKIT_SOURCE_COMMIT:-}
+if [ -z "$SOURCE_COMMIT" ]; then
+  [ -z "$(git -C "$REPOSITORY_ROOT" status --porcelain)" ] ||
+    fail "the release candidate must be committed and clean before building"
+  SOURCE_COMMIT=$(git -C "$REPOSITORY_ROOT" rev-parse HEAD)
+fi
+
 OUTPUT_ROOT=$(dirname -- "$APP_PATH")
 mkdir -p "$OUTPUT_ROOT"
 APP_PATH=$(cd "$OUTPUT_ROOT" && pwd)/$(basename -- "$APP_PATH")
@@ -58,6 +65,9 @@ PLIST="$APP_PATH/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$PLIST"
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" "$PLIST"
 "$REPOSITORY_ROOT/scripts/apply-macos-app-icon.sh" "$APP_PATH"
+HITTHEKIT_SOURCE_COMMIT="$SOURCE_COMMIT" \
+  "$REPOSITORY_ROOT/scripts/install-distribution-notices.sh" \
+  "$APP_PATH/Contents/Resources/Legal" "$VERSION"
 EXECUTABLE=$(/usr/libexec/PlistBuddy -c "Print :CFBundleExecutable" "$PLIST")
 MAIN_BINARY="$APP_PATH/Contents/MacOS/$EXECUTABLE"
 

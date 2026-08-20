@@ -9,7 +9,8 @@ come completata.
 - [x] Provenienza e SHA-256 di tutti gli asset visuali correnti registrati e verificati in CI.
 - [x] Test core e MIDI disponibili senza Unity.
 - [x] CI, CodeQL e aggiornamenti dipendenze configurati.
-- [ ] Revisione professionale della compatibilità GPL/Unity e dei termini di distribuzione, obbligatoria prima di qualsiasi binario pubblico o licenza commerciale separata.
+- [x] Licenza Community migrata a MPL-2.0 per evitare il precedente conflitto di copyleft dell'intera opera con Unity.
+- [ ] Verifica della licenza MPL, dei termini Unity e del modello contributivo sull'esatto candidato binario.
 - [x] Prima pubblicazione limitata a sorgenti e sito; nessun binario Unity pubblico.
 - [x] Strategia scelta: nuovo repository pubblico pulito da uno snapshot dell'HEAD, senza cronologia privata.
 - [x] Repository storico destinato a `HitTheKit-private-archive`, con tag e release mantenuti privati.

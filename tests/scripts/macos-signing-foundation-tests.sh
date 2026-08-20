@@ -76,6 +76,36 @@ grep -q 'apply-macos-app-icon.sh.*APP_PATH' \
   "$REPOSITORY_ROOT/scripts/package-game-macos-arm64.sh"
 grep -q 'apply-macos-app-icon.sh.*APP_PATH' \
   "$REPOSITORY_ROOT/scripts/build-macos-distribution-app.sh"
+grep -q 'install-distribution-notices.sh' \
+  "$REPOSITORY_ROOT/scripts/build-macos-distribution-app.sh"
+grep -q 'Contents/Resources/Legal' \
+  "$REPOSITORY_ROOT/scripts/build-macos-distribution-app.sh"
+grep -q 'SOURCE_COMMIT=.*HITTHEKIT_SOURCE_COMMIT' \
+  "$REPOSITORY_ROOT/scripts/build-macos-distribution-app.sh"
+grep -q 'release candidate must be committed and clean' \
+  "$REPOSITORY_ROOT/scripts/build-macos-distribution-app.sh"
+
+LEGAL_TEST_ROOT="$TEMP_ROOT/legal"
+HITTHEKIT_SOURCE_COMMIT="$(git -C "$REPOSITORY_ROOT" rev-parse HEAD)" \
+  "$REPOSITORY_ROOT/scripts/install-distribution-notices.sh" \
+  "$LEGAL_TEST_ROOT" 0.5.0 >/dev/null
+[ -f "$LEGAL_TEST_ROOT/LICENSE" ]
+[ -f "$LEGAL_TEST_ROOT/NOTICE" ]
+[ -f "$LEGAL_TEST_ROOT/THIRD_PARTY_NOTICES.md" ]
+[ -f "$LEGAL_TEST_ROOT/LICENSING.md" ]
+[ -f "$LEGAL_TEST_ROOT/SOURCE-CODE.txt" ]
+grep -Fq "$(git -C "$REPOSITORY_ROOT" rev-parse HEAD)" \
+  "$LEGAL_TEST_ROOT/SOURCE-CODE.txt"
+grep -Fq 'https://github.com/Codewriter90x/HitTheKit/tree/' \
+  "$LEGAL_TEST_ROOT/SOURCE-CODE.txt"
+grep -q 'ditto.*LEGAL_SOURCE.*STAGE_ROOT/Legal' \
+  "$REPOSITORY_ROOT/scripts/package-macos-dmg.sh"
+
+if grep -Eq 'codesign .*--deep.*--sign|codesign .*--sign.*--deep' \
+  "$REPOSITORY_ROOT/scripts/package-game-macos-arm64.sh"; then
+  echo "Ad-hoc playtest signing must not use --deep as its signing strategy." >&2
+  exit 1
+fi
 
 grep -q -- '--options runtime --timestamp' "$REPOSITORY_ROOT/scripts/sign-macos-app.sh"
 # shellcheck disable=SC2016

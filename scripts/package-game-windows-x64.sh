@@ -20,8 +20,16 @@ OUTPUT_ROOT=${OUTPUT_ROOT:-"$REPOSITORY_ROOT/artifacts/game/windows-x64-$VERSION
 [ ! -e "$OUTPUT_ROOT" ] || fail "output directory already exists: $OUTPUT_ROOT"
 [ -x "$UNITY_PATH" ] || fail "Unity 6000.5.6f1 was not found at: $UNITY_PATH"
 
+SOURCE_COMMIT=${HITTHEKIT_SOURCE_COMMIT:-}
+if [ -z "$SOURCE_COMMIT" ]; then
+  [ -z "$(git -C "$REPOSITORY_ROOT" status --porcelain)" ] ||
+    fail "the playtest source must be committed and clean before packaging"
+  SOURCE_COMMIT=$(git -C "$REPOSITORY_ROOT" rev-parse HEAD)
+fi
+
 UNITY_APP=$(CDPATH='' cd -- "$(dirname -- "$UNITY_PATH")/../.." && pwd)
-WINDOWS_SUPPORT="$UNITY_APP/Contents/PlaybackEngines/WindowsStandaloneSupport"
+UNITY_INSTALL_ROOT=$(CDPATH='' cd -- "$UNITY_APP/.." && pwd)
+WINDOWS_SUPPORT="$UNITY_INSTALL_ROOT/PlaybackEngines/WindowsStandaloneSupport"
 [ -d "$WINDOWS_SUPPORT" ] || \
   fail "Unity Windows Build Support (Mono) is not installed for 6000.5.6f1"
 
@@ -56,6 +64,10 @@ UNEXPECTED_PLUGIN=$(find "$PLAYER_ROOT" -iname '*HitTheKitCoreMidi*' -print -qui
 [ -z "$UNEXPECTED_PLUGIN" ] || \
   fail "macOS CoreMIDI plug-in leaked into the Windows package: $UNEXPECTED_PLUGIN"
 
+HITTHEKIT_SOURCE_COMMIT="$SOURCE_COMMIT" \
+  "$REPOSITORY_ROOT/scripts/install-distribution-notices.sh" \
+  "$PLAYER_ROOT/Legal" "$VERSION"
+
 printf '%s\n' \
   'HitTheKit Windows x64 playtest' \
   '' \
@@ -66,6 +78,7 @@ printf '%s\n' \
   'Electronic-drum MIDI is not implemented on Windows yet.' \
   'This playtest package is unsigned and is not approved for public release.' \
   'Verify the published SHA-256 before running any future release package.' \
+  'License, notices, and exact source information are in Legal/.' \
   > "$PLAYER_ROOT/README-FIRST.txt"
 
 ditto --norsrc --noextattr -c -k --keepParent "$PLAYER_ROOT" "$ZIP_PATH"

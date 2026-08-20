@@ -52,7 +52,7 @@ namespace HitTheKit.Unity.Matching
         {
             lastInput = input;
             lastEventSongTimeSeconds = input.SongTimeSeconds;
-            var hit = new DrumHit(input.Pad, input.SongTimeSeconds, input.Velocity);
+            var hit = new DrumHit(input.Pad, input.SongTimeSeconds, input.Velocity, input.Articulation);
             bool matched = matcher.TryMatch(notes, hit, out result);
             if (matched)
             {

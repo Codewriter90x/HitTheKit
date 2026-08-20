@@ -113,7 +113,11 @@
                             <ui:Label name="song-detail-readiness" class="song-detail-readiness" />
                         </ui:ScrollView>
                         <ui:VisualElement class="song-play-actions">
-                            <ui:Button name="song-play-button" text="SUONA ORA" class="song-play-button" />
+                            <ui:VisualElement class="song-primary-actions">
+                                <ui:Button name="song-play-button" text="SUONA ORA" class="song-play-button" />
+                                <ui:Button name="song-record-button" text="REGISTRA CHART" class="song-record-button" />
+                                <ui:Button name="song-bind-audio-button" text="ASSOCIA AUDIO LOCALE" class="song-record-button song-bind-audio-button" style="display: none;" />
+                            </ui:VisualElement>
                             <ui:Label text="INVIO O DOPPIO KICK" class="song-play-hint" />
                         </ui:VisualElement>
                     </ui:VisualElement>
@@ -122,10 +126,64 @@
                 <ui:VisualElement class="song-library-footer">
                     <ui:Label name="song-library-diagnostic" class="song-library-diagnostic" />
                     <ui:VisualElement class="song-library-actions">
+                        <ui:Button name="song-import-audio-button" text="IMPORTA AUDIO E CREA" class="song-library-secondary song-import-audio-button" />
                         <ui:Button name="song-refresh-button" text="AGGIORNA LIBRERIA" class="song-library-secondary" />
                         <ui:Button name="song-folder-button" text="APRI CARTELLA BRANI" class="song-library-secondary" />
                         <ui:Button name="song-back-button" text="INDIETRO" class="song-library-secondary" />
                     </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="chart-audio-import-overlay" class="modal-layer chart-audio-import-layer" style="display: none;">
+            <ui:VisualElement class="modal-panel chart-audio-import-panel">
+                <ui:Label text="CHART CREATOR · NUOVO BRANO" class="modal-eyebrow" />
+                <ui:Label text="IMPORTA LA BASE AUDIO" class="chart-audio-import-title" />
+                <ui:Label name="chart-audio-file" class="chart-audio-file" />
+                <ui:Label text="L'audio viene copiato soltanto nella tua libreria locale. Il pacchetto .htksong conterrà esclusivamente la chart." class="chart-audio-import-copy" />
+                <ui:VisualElement class="chart-audio-fields">
+                    <ui:VisualElement class="chart-audio-field chart-audio-field--wide">
+                        <ui:Label text="TITOLO" class="chart-audio-field-label" />
+                        <ui:TextField name="chart-audio-title" class="chart-audio-text-field" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="chart-audio-field chart-audio-field--wide">
+                        <ui:Label text="ARTISTA / AUTORE" class="chart-audio-field-label" />
+                        <ui:TextField name="chart-audio-artist" class="chart-audio-text-field" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="chart-audio-field-row">
+                        <ui:VisualElement class="chart-audio-field">
+                            <ui:Label text="BPM VERIFICATI" class="chart-audio-field-label" />
+                            <ui:TextField name="chart-audio-bpm" class="chart-audio-text-field" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="chart-audio-field">
+                            <ui:Label text="BATTUTE" class="chart-audio-field-label" />
+                            <ui:TextField name="chart-audio-bars" class="chart-audio-text-field" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="chart-audio-field">
+                            <ui:Label text="BEAT PER BATTUTA" class="chart-audio-field-label" />
+                            <ui:TextField name="chart-audio-beats" class="chart-audio-text-field" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Label name="chart-audio-error" class="chart-audio-error" />
+                <ui:VisualElement class="modal-actions chart-audio-actions">
+                    <ui:Button name="chart-audio-cancel" text="ANNULLA" class="modal-secondary" />
+                    <ui:Button name="chart-audio-start" text="IMPORTA E REGISTRA" class="modal-primary" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="song-audio-binding-overlay" class="modal-layer chart-audio-import-layer" style="display: none;">
+            <ui:VisualElement class="modal-panel song-audio-binding-panel">
+                <ui:Label text="PACCHETTO .HTKSONG" class="modal-eyebrow" />
+                <ui:Label text="ASSOCIA LA TUA COPIA AUDIO" class="chart-audio-import-title" />
+                <ui:Label name="song-audio-binding-song" class="song-audio-binding-song" />
+                <ui:Label name="song-audio-binding-file" class="chart-audio-file" />
+                <ui:Label text="Il file viene copiato nella cartella locale del brano. Non viene aggiunto né al pacchetto .htksong né al repository." class="chart-audio-import-copy" />
+                <ui:Label name="song-audio-binding-error" class="chart-audio-error" />
+                <ui:VisualElement class="modal-actions chart-audio-actions">
+                    <ui:Button name="song-audio-binding-cancel" text="ANNULLA" class="modal-secondary" />
+                    <ui:Button name="song-audio-binding-confirm" text="ASSOCIA E VERIFICA" class="modal-primary" />
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
@@ -263,6 +321,21 @@
                         <ui:Button name="midi-offset-reset" text="RESET" class="compact-setting-reset" />
                     </ui:VisualElement>
                     <ui:Label name="calibration-help" text="Valori positivi compensano un input registrato in ritardo." class="theme-settings-description" />
+                    <ui:VisualElement class="sound-check-panel">
+                        <ui:Label name="sound-check-title" text="SOUND CHECK GUIDATO" class="sound-check-title" />
+                        <ui:Label name="sound-check-instructions" text="1. Prova il click. 2. Scegli l'input. 3. Ascolta 4 colpi, poi suona sui 12 successivi." class="theme-settings-description" />
+                        <ui:Button name="sound-check-audio" text="1 · PROVA AUDIO" class="setting-row setting-row--compact" />
+                        <ui:VisualElement class="compact-setting-row">
+                            <ui:Button name="sound-check-keyboard" text="2 · TASTIERA" class="sound-check-source sound-check-source--selected" />
+                            <ui:Button name="sound-check-midi" text="2 · MIDI" class="sound-check-source" />
+                        </ui:VisualElement>
+                        <ui:Button name="sound-check-start" text="3 · AVVIA CALIBRAZIONE" class="setting-row sound-check-start" />
+                        <ui:Label name="sound-check-status" text="PRONTO · nessun dato viene inviato o registrato online" class="sound-check-status" />
+                        <ui:VisualElement class="compact-setting-row">
+                            <ui:Button name="sound-check-apply" text="APPLICA SUGGERIMENTO" class="sound-check-action" />
+                            <ui:Button name="sound-check-cancel" text="ANNULLA" class="sound-check-action" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement class="player-settings-block">
                     <ui:Label text="TASTIERA" class="modal-eyebrow" />
@@ -308,7 +381,7 @@
                 </ui:VisualElement>
                 <ui:VisualElement class="player-settings-block">
                     <ui:Label text="INFORMAZIONI &amp; DATI" class="modal-eyebrow" />
-                    <ui:Label name="about-value" text="HitTheKit 0.5.0 · GPL-3.0 · nessuna telemetria applicativa" class="theme-settings-description" />
+                    <ui:Label name="about-value" text="HitTheKit 0.5.0 · MPL-2.0 · nessuna telemetria applicativa" class="theme-settings-description" />
                     <ui:Button name="reset-preferences" text="RIPRISTINA IMPOSTAZIONI" class="setting-row setting-row--compact" />
                     <ui:Button name="reset-local-data" text="CANCELLA PROGRESSI E CONFIGURAZIONE" class="setting-row setting-row--compact setting-row--danger" />
                     <ui:Label name="reset-status" class="progress-settings-status" />

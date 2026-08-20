@@ -5,6 +5,8 @@ semantico a partire dalla prima release pubblica stabile.
 
 ## [Unreleased]
 
+## [0.6.0-beta.1] - 2026-08-20
+
 ### Added
 
 - build e packaging Windows x64 keyboard-only con esclusione verificata di CoreMIDI;
@@ -19,13 +21,22 @@ semantico a partire dalla prima release pubblica stabile.
 - metronomo opzionale sincronizzato al clock DSP della sessione;
 - controlli CI, CodeQL, Dependabot e template per contributi;
 - documentazione privacy, sicurezza e pubblicazione.
+- Chart Creator locale con import audio, registrazione, editing delle note,
+  waveform, scrubbing e pacchetti portabili `.htksong` senza audio incorporato;
+- Practice Lab con loop di sezioni e punti A/B;
+- Performance Error Map e Auto Tempo Coach basati sui risultati reali;
+- sound check guidato per la compensazione locale della latenza;
+- Ghost Replay visuale locale, isolato da matcher e punteggio;
+- palco reattivo procedurale con movimento ridotto e contrasto elevato.
+- pannello risultati scorrevole con controlli diagnostici e azioni sempre
+  separati e leggibili.
 
 ### Changed
 
 - timestamp MIDI preservati fino al clock della canzone;
 - catalogo incluso limitato a contenuti originali o esempi locali neutrali;
 - toolchain xUnit aggiornata per rimuovere dipendenze transitive vulnerabili;
-- identità applicazione impostata su HitTheKit 0.5.0.
+- identità applicazione impostata su HitTheKit 0.6.0.
 
 ### Removed
 

@@ -4,8 +4,8 @@
 </p>
 
 <p align="center">
-  <img alt="Version 0.5.0 pre-release" src="https://img.shields.io/badge/version-0.5.0--pre--release-ff4fa3">
-  <img alt="License GPL-3.0-only" src="https://img.shields.io/badge/license-GPL--3.0--only-2fe0ff">
+  <img alt="Version 0.6.0 beta" src="https://img.shields.io/badge/version-0.6.0--beta.1-ff4fa3">
+  <img alt="License MPL-2.0" src="https://img.shields.io/badge/license-MPL--2.0-2fe0ff">
   <img alt="Unity 6" src="https://img.shields.io/badge/Unity-6000.5.6f1-ffffff">
   <img alt="MIDI support macOS only" src="https://img.shields.io/badge/MIDI-macOS%20CoreMIDI-f6a623">
   <a href="https://github.com/sponsors/Codewriter90x"><img alt="Sponsor HitTheKit" src="https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-EA4AAA?logo=githubsponsors&logoColor=white"></a>
@@ -66,10 +66,10 @@ for HitTheKit.
 ## Project status
 
 > [!IMPORTANT]
-> HitTheKit is an active pre-release project. This public repository distributes
-> source code and the website only. No Unity player binary is currently approved
-> for public distribution. Historical builds and private development history are
-> intentionally excluded.
+> HitTheKit is an active pre-release project. Signed and notarized Apple-silicon
+> beta builds, when available, are published only through the official GitHub
+> prereleases. They are tester-facing candidates rather than stable releases.
+> Historical private builds and private development history remain excluded.
 
 | Capability | Current status |
 | --- | --- |
@@ -77,7 +77,7 @@ for HitTheKit.
 | Electronic-drum MIDI | macOS Apple Silicon through CoreMIDI |
 | Learning path | 12 playable lessons; 12 more planned |
 | Included music | Original rights-clean demo only |
-| Public binary | Not yet approved for distribution |
+| Public binary | macOS Apple-silicon beta only; see GitHub Releases |
 
 Current limitations and release gates are tracked in
 [SUPPORT.md](SUPPORT.md) and the
@@ -176,8 +176,9 @@ hardware result, improve documentation or pick a
 ## Licensing and content boundary
 
 Original project code is licensed under
-[GPL-3.0-only](LICENSE). A possible separate commercial-license path is under
-preparation and remains subject to legal review; see [LICENSING.md](LICENSING.md).
+[MPL-2.0](LICENSE). A separate commercial-license path remains available only
+through a written agreement; see [LICENSING.md](LICENSING.md). Existing copies
+previously received under GPL-3.0-only retain those rights.
 
 The public repository does not include commercial songs, recordings, charts,
 lyrics or artwork. Third-party names describe compatibility only. HitTheKit is

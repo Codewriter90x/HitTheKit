@@ -1,10 +1,10 @@
 # HitTheKit Name and Branding
 
-The GPL license for HitTheKit source code does not itself grant trademark
+The MPL-2.0 license for HitTheKit source code does not itself grant trademark
 rights in the HitTheKit name, logo, or other project branding. No claim that a
 mark is registered is made here.
 
-The GPL permits recipients to copy, modify, and distribute covered code under
+MPL-2.0 permits recipients to copy, modify, and distribute covered code under
 its terms. A fork may identify the code it came from in a truthful, descriptive
 way, but should not imply sponsorship, endorsement, certification, or official
 status that has not been granted.
@@ -14,7 +14,7 @@ brand for a modified, competing, private-label, or commercial product. Any
 separate branding permission should be documented in writing.
 
 This guidance is provisional and requires legal review. It does not restrict
-the copyright permissions granted by the GPL.
+the copyright permissions granted by MPL-2.0.
 
 ## Third-party names
 

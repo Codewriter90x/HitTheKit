@@ -25,6 +25,7 @@ namespace HitTheKit.Unity.Audio
         private string externalAudioPath;
         private double audioPlaybackSpeed = 1.0;
         private UnityWebRequest audioRequest;
+        private bool seekedWhilePaused;
 
         public DspSongClock Clock { get; private set; }
         public double StartDspTime => Clock != null && Clock.IsScheduled ? Clock.StartDspTime : double.NaN;
@@ -37,6 +38,7 @@ namespace HitTheKit.Unity.Audio
         public double CountInSeconds => countInBeats * 60.0 / bpm;
         public string ExternalAudioPath => externalAudioPath;
         public double AudioPlaybackSpeed => audioPlaybackSpeed;
+        public bool IsPreviewing { get; private set; }
         public string LoadError { get; private set; }
 
         public void Configure(
@@ -141,7 +143,15 @@ namespace HitTheKit.Unity.Audio
         {
             if (Clock == null || !Clock.IsPaused) return;
             Clock.Resume();
-            audioSource.UnPause();
+            if (seekedWhilePaused)
+            {
+                audioSource.Play();
+                seekedWhilePaused = false;
+            }
+            else
+            {
+                audioSource.UnPause();
+            }
         }
 
         public void RestartPlayback()
@@ -153,8 +163,60 @@ namespace HitTheKit.Unity.Audio
             completedLogged = false;
         }
 
+        public void SeekPlayback(double positionSeconds)
+        {
+            if (generatedClip == null || Clock == null || !Clock.IsScheduled)
+                throw new InvalidOperationException("Song playback must be scheduled before seeking.");
+            if (double.IsNaN(positionSeconds) || double.IsInfinity(positionSeconds) ||
+                positionSeconds < 0 || positionSeconds >= Clock.DurationSeconds)
+                throw new ArgumentOutOfRangeException(nameof(positionSeconds));
+
+            bool wasPaused = Clock.IsPaused;
+            double clipPosition = Math.Min(
+                generatedClip.length - (1.0 / Math.Max(1, generatedClip.frequency)),
+                positionSeconds * audioPlaybackSpeed);
+
+            audioSource.Stop();
+            audioSource.time = (float)Math.Max(0, clipPosition);
+            Clock.Seek(positionSeconds);
+            if (wasPaused)
+            {
+                seekedWhilePaused = true;
+            }
+            else
+            {
+                audioSource.Play();
+                seekedWhilePaused = false;
+            }
+            startedLogged = positionSeconds >= 0;
+            completedLogged = false;
+        }
+
+        public void PreviewFromSourceTime(double sourceTimeSeconds, double speed = 1.0)
+        {
+            if (generatedClip == null || audioSource == null)
+                throw new InvalidOperationException("Song audio is not loaded.");
+            if (double.IsNaN(sourceTimeSeconds) || double.IsInfinity(sourceTimeSeconds) ||
+                sourceTimeSeconds < 0 || sourceTimeSeconds >= generatedClip.length)
+                throw new ArgumentOutOfRangeException(nameof(sourceTimeSeconds));
+            if (double.IsNaN(speed) || double.IsInfinity(speed) || speed <= 0 || speed > 3)
+                throw new ArgumentOutOfRangeException(nameof(speed));
+            audioSource.Stop();
+            audioSource.pitch = (float)speed;
+            audioSource.time = (float)sourceTimeSeconds;
+            audioSource.Play();
+            IsPreviewing = true;
+        }
+
+        public void StopPreview()
+        {
+            if (audioSource != null) audioSource.Stop();
+            IsPreviewing = false;
+        }
+
         private void SchedulePlayback()
         {
+            IsPreviewing = false;
             audioSource.clip = generatedClip;
             audioSource.pitch = (float)audioPlaybackSpeed;
             var timeSource = new UnityDspTimeSource();
@@ -162,6 +224,7 @@ namespace HitTheKit.Unity.Audio
             Clock = new DspSongClock(timeSource);
             Clock.Schedule(startDspTime, generatedClip.length / audioPlaybackSpeed);
             audioSource.PlayScheduled(startDspTime);
+            seekedWhilePaused = false;
         }
 
         private void Update()

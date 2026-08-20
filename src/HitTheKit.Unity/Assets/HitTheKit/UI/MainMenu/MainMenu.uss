@@ -393,6 +393,12 @@
 .compact-setting-button { width: 48px; min-width: 48px; font-size: 13px; }
 .compact-setting-reset { width: 70px; min-width: 70px; margin-left: 6px; font-size: 9px; }
 .compact-setting-value { flex-grow: 1; min-width: 220px; color: rgb(205, 218, 228); -unity-text-align: middle-center; font-size: 11px; -unity-font-style: bold; }
+.sound-check-panel { margin-top: 10px; padding: 10px; border-width: 1px; border-color: rgba(91, 224, 255, 0.42); border-radius: 7px; background-color: rgba(2, 11, 22, 0.78); }
+.sound-check-title { color: rgb(91, 224, 255); font-size: 12px; -unity-font-style: bold; letter-spacing: 1px; }
+.sound-check-source, .sound-check-action { flex-grow: 1; min-height: 34px; margin-right: 4px; background-color: rgba(8, 23, 42, 0.96); border-width: 1px; border-color: rgba(93, 166, 216, 0.58); color: rgb(205, 218, 228); -unity-font-style: bold; font-size: 10px; }
+.sound-check-source--selected { border-color: rgb(91, 224, 255); color: white; background-color: rgba(0, 102, 135, 0.82); }
+.sound-check-start { margin-top: 8px; border-color: rgb(91, 224, 255); color: white; }
+.sound-check-status { min-height: 34px; margin-top: 7px; color: rgb(255, 202, 103); white-space: normal; -unity-text-align: middle-center; font-size: 10px; -unity-font-style: bold; }
 .keybinding-grid { margin-top: 7px; flex-direction: row; flex-wrap: wrap; }
 .keybinding-button { width: 24%; min-width: 145px; height: 34px; min-height: 34px; margin: 2px; padding: 0 5px; background-color: rgba(8, 23, 42, 0.96); border-width: 1px; border-color: rgba(93, 166, 216, 0.58); color: white; font-size: 9px; -unity-font-style: bold; }
 .keybinding-button--waiting { border-width: 2px; border-color: rgb(239, 169, 71); color: rgb(255, 210, 112); }
@@ -950,7 +956,9 @@
 .song-detail-readiness { margin-top: 10px; padding: 7px 8px; flex-shrink: 0; color: rgb(78, 221, 137); background-color: rgba(6, 45, 28, 0.74); border-left-width: 3px; border-left-color: rgb(78, 221, 137); font-size: 9px; -unity-font-style: bold; white-space: normal; }
 .song-detail-readiness--missing { color: rgb(244, 182, 86); background-color: rgba(52, 29, 8, 0.78); border-left-color: rgb(231, 151, 56); }
 .song-play-actions { flex-shrink: 0; margin-top: 9px; padding-top: 9px; background-color: rgb(8, 13, 18); border-top-width: 1px; border-top-color: rgba(76, 130, 160, 0.48); }
+.song-primary-actions { flex-direction: row; }
 .song-play-button {
+    flex-grow: 1;
     height: 50px;
     min-height: 50px;
     border-width: 2px;
@@ -962,6 +970,23 @@
     -unity-font-style: bold;
     letter-spacing: 0.7px;
 }
+.song-record-button {
+    width: 22%;
+    min-width: 80px;
+    height: 50px;
+    min-height: 50px;
+    margin-left: 5px;
+    border-width: 1px;
+    border-color: rgb(236, 167, 73);
+    border-radius: 5px;
+    background-color: rgb(49, 28, 10);
+    color: rgb(255, 206, 130);
+    font-size: 8px;
+    -unity-font-style: bold;
+    letter-spacing: 0.5px;
+}
+.song-record-button:hover, .song-record-button:focus { background-color: rgb(101, 54, 12); border-color: white; }
+.song-record-button:disabled { opacity: 0.42; }
 .song-play-button:hover, .song-play-button:focus { background-color: rgb(8, 132, 171); border-color: white; scale: 1.025; }
 .song-play-button:disabled { opacity: 0.42; scale: 1; }
 .song-play-hint { margin-top: 7px; color: rgb(115, 182, 203); font-size: 8px; -unity-font-style: bold; -unity-text-align: middle-center; }
@@ -983,6 +1008,51 @@
     -unity-font-style: bold;
 }
 .song-library-secondary:hover, .song-library-secondary:focus { border-color: white; color: white; }
+.song-import-audio-button { border-color: rgb(230, 145, 48); color: rgb(255, 185, 91); }
+
+.chart-audio-import-layer { background-color: rgba(0, 2, 7, 0.9); }
+.chart-audio-import-panel {
+    width: 720px;
+    min-height: 610px;
+    padding: 28px 38px;
+    justify-content: flex-start;
+    border-color: rgb(230, 145, 48);
+    background-color: rgba(5, 10, 18, 0.99);
+}
+.chart-audio-import-title { margin-top: 7px; color: white; font-size: 31px; -unity-font-style: bold; }
+.chart-audio-file {
+    margin-top: 13px;
+    padding: 9px 12px;
+    color: rgb(73, 216, 255);
+    font-size: 13px;
+    -unity-font-style: bold;
+    background-color: rgba(9, 34, 47, 0.9);
+    border-width: 1px;
+    border-color: rgba(73, 216, 255, 0.5);
+    border-radius: 5px;
+}
+.chart-audio-import-copy { margin-top: 12px; color: rgb(173, 193, 208); font-size: 12px; white-space: normal; }
+.chart-audio-fields { margin-top: 15px; }
+.chart-audio-field-row { flex-direction: row; justify-content: space-between; }
+.chart-audio-field { width: 31.5%; margin-top: 10px; }
+.chart-audio-field--wide { width: 100%; }
+.chart-audio-field-label { margin-bottom: 5px; color: rgb(120, 192, 220); font-size: 9px; -unity-font-style: bold; letter-spacing: 1px; }
+.chart-audio-text-field { height: 38px; color: white; background-color: rgb(9, 19, 29); }
+.chart-audio-text-field .unity-text-input {
+    padding-left: 10px;
+    color: white;
+    background-color: rgb(9, 19, 29);
+    border-width: 1px;
+    border-color: rgb(52, 86, 108);
+    border-radius: 4px;
+}
+.chart-audio-text-field:focus .unity-text-input { border-color: rgb(73, 216, 255); }
+.chart-audio-error { min-height: 34px; margin-top: 12px; color: rgb(255, 178, 70); font-size: 11px; white-space: normal; }
+.chart-audio-actions { flex-direction: row; justify-content: flex-end; }
+.chart-audio-actions .modal-secondary, .chart-audio-actions .modal-primary { min-width: 190px; }
+.song-bind-audio-button { border-color: rgb(230, 145, 48); color: rgb(255, 191, 105); }
+.song-audio-binding-panel { width: 680px; min-height: 390px; padding: 30px 40px; }
+.song-audio-binding-song { margin-top: 18px; color: white; font-size: 18px; -unity-font-style: bold; white-space: normal; }
 
 .main-menu--compact .song-library-section { left: 6px; top: 8px; right: 6px; }
 .main-menu--compact .song-library-rail { width: 104px; min-width: 104px; }
@@ -1018,5 +1088,6 @@
 .main-menu--short .song-speed-button { height: 27px; min-height: 27px; }
 .main-menu--short .song-detail-readiness { margin-top: 7px; padding: 6px; }
 .main-menu--short .song-play-actions { margin-top: 6px; padding-top: 6px; }
-.main-menu--short .song-play-button { height: 43px; min-height: 43px; }
+.main-menu--short .song-play-button,
+.main-menu--short .song-record-button { height: 43px; min-height: 43px; }
 .main-menu--short .song-library-footer { height: 50px; min-height: 50px; margin-top: 7px; }

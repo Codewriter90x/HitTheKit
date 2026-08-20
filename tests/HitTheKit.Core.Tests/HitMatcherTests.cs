@@ -109,6 +109,47 @@ public sealed class HitMatcherTests
     }
 
     [Fact]
+    public void Articulation_specific_note_rejects_a_different_zone_without_resolving_it()
+    {
+        var matcher = new HitMatcher(TimingWindows.Default);
+        var note = new ChartNote(1.000, DrumPad.Ride, 110, DrumArticulation.Bell);
+        ChartNote[] notes = { note };
+
+        Assert.False(matcher.TryMatch(
+            notes,
+            new DrumHit(DrumPad.Ride, 1.000, 110, DrumArticulation.Bow),
+            out HitResult? wrongZone));
+        Assert.Null(wrongZone);
+        Assert.True(matcher.TryMatch(
+            notes,
+            new DrumHit(DrumPad.Ride, 1.000, 110, DrumArticulation.Bell),
+            out HitResult? correctZone));
+        Assert.NotNull(correctZone);
+    }
+
+    [Fact]
+    public void Default_articulation_remains_a_backward_compatible_wildcard()
+    {
+        var note = new ChartNote(1.000, DrumPad.Snare);
+
+        HitResult result = Match(
+            new HitMatcher(TimingWindows.Default),
+            new[] { note },
+            new DrumHit(DrumPad.Snare, 1.000, 100, DrumArticulation.Rim));
+
+        Assert.Equal(HitGrade.Perfect, result.Grade);
+    }
+
+    [Fact]
+    public void Chart_note_rejects_invalid_velocity_and_pad_articulation_pairs()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new ChartNote(1, DrumPad.Snare, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new ChartNote(1, DrumPad.Snare, 128));
+        Assert.Throws<ArgumentException>(() =>
+            new ChartNote(1, DrumPad.Kick, 100, DrumArticulation.Bell));
+    }
+
+    [Fact]
     public void Expired_note_is_miss()
     {
         var matcher = new HitMatcher(TimingWindows.Default);

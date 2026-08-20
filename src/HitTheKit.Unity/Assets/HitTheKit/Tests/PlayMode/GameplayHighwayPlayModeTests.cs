@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using HitTheKit.Core;
 using HitTheKit.Unity.Charts;
 using HitTheKit.Unity.Gameplay;
@@ -45,6 +46,7 @@ namespace HitTheKit.Unity.Tests
             Assert.That(controller.TargetCount, Is.EqualTo(8));
             Assert.That(controller.Surface, Is.Not.Null);
             Assert.That(controller.KitSurface, Is.Not.Null);
+            Assert.That(controller.ReactiveStageSurface, Is.Not.Null);
             Assert.That(controller.KitSurface.PieceCount, Is.EqualTo(8));
             Assert.That(controller.IsInstructionalKitVisible, Is.False);
             Assert.That(controller.KitSurface.resolvedStyle.display, Is.EqualTo(DisplayStyle.None));
@@ -54,10 +56,22 @@ namespace HitTheKit.Unity.Tests
             Assert.That(app, Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<VisualElement>("target-kick"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<VisualElement>("gameplay-kit-surface"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<VisualElement>("gameplay-reactive-stage-surface"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Label>("reactive-stage-status"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<Label>("kit-guidance-label"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<VisualElement>("results-overlay"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Label>("result-error-map"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Button>("result-practice-weakest"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Label>("auto-tempo-status"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Button>("auto-tempo-advance"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Label>("ghost-status"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Button>("result-ghost-restart"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<Button>("pause-button"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<VisualElement>("countdown-overlay"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<ChartWaveformView>("chart-waveform"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Button>("chart-waveform-preview"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<TextField>("chart-note-velocity"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<DropdownField>("chart-note-articulation"), Is.Not.Null);
             Assert.That(controller.CountdownBeat, Is.InRange(1, 4));
             Assert.That(controller.Theme, Is.EqualTo(GameplayPresentationTheme.ConcertStage));
             Assert.That(app.ClassListContains("theme--concert-stage"), Is.True);
@@ -67,6 +81,84 @@ namespace HitTheKit.Unity.Tests
             Assert.That(document.rootVisualElement.Q<Button>("theme-arcade"), Is.Null);
             Assert.That(document.rootVisualElement.Q<Button>("theme-concert"), Is.Null);
             Assert.That(document.rootVisualElement.Q<Button>("theme-precision"), Is.Null);
+        }
+
+        [UnityTest]
+        public IEnumerator Results_dialog_keeps_diagnostics_scrollable_and_actions_separate()
+        {
+            AsyncOperation load = SceneManager.LoadSceneAsync("GameplayPrototype", LoadSceneMode.Single);
+            while (!load.isDone) yield return null;
+            yield return null;
+
+            GameplayHighwayController controller = Object.FindAnyObjectByType<GameplayHighwayController>();
+            Assert.That(controller, Is.Not.Null);
+            VisualElement root = controller.GetComponent<UIDocument>().rootVisualElement;
+            VisualElement overlay = root.Q<VisualElement>("results-overlay");
+            ScrollView scroll = root.Q<ScrollView>("results-scroll");
+            VisualElement actions = root.Q<VisualElement>(className: "result-actions");
+            VisualElement errorMap = root.Q<VisualElement>(className: "error-map-panel");
+            VisualElement autoTempo = root.Q<VisualElement>(className: "auto-tempo-panel");
+            Button calibration = root.Q<Button>("result-apply-calibration");
+            Button ghost = root.Q<Button>("result-ghost-restart");
+
+            Assert.That(overlay, Is.Not.Null);
+            Assert.That(scroll, Is.Not.Null);
+            Assert.That(actions, Is.Not.Null);
+            overlay.style.display = DisplayStyle.Flex;
+            yield return null;
+            yield return null;
+
+            Assert.That(scroll.worldBound.height, Is.GreaterThan(100f));
+            Assert.That(actions.worldBound.yMin, Is.GreaterThanOrEqualTo(scroll.worldBound.yMax - 1f));
+            Assert.That(autoTempo.worldBound.yMin, Is.GreaterThanOrEqualTo(errorMap.worldBound.yMax - 1f));
+            Assert.That(ghost.worldBound.yMin, Is.GreaterThanOrEqualTo(calibration.worldBound.yMax - 1f));
+        }
+
+        [UnityTest]
+        public IEnumerator Ghost_replay_is_local_visual_only_and_does_not_change_score()
+        {
+            AsyncOperation load = SceneManager.LoadSceneAsync("GameplayPrototype", LoadSceneMode.Single);
+            while (!load.isDone) yield return null;
+            yield return null;
+
+            GameplayHighwayController controller = Object.FindAnyObjectByType<GameplayHighwayController>();
+            Assert.That(controller, Is.Not.Null);
+            Assert.That(controller.CaptureGhostHit(
+                new HitTheKit.Unity.Input.DrumInputEvent(
+                    DrumPad.Kick, 108, 1.25, HitTheKit.Unity.Input.DrumInputSource.Test), null), Is.True);
+            Assert.That(controller.CurrentGhostTakeHitCount, Is.EqualTo(1));
+            Assert.That(controller.BeginGhostReplay(), Is.True);
+            yield return null;
+
+            Assert.That(controller.GhostHits, Has.Count.EqualTo(1));
+            Assert.That(controller.Surface.GhostHits, Has.Count.EqualTo(1));
+            Assert.That(controller.GhostHits[0].Pad, Is.EqualTo(DrumPad.Kick));
+            Assert.That(controller.ScoreSnapshot.Score, Is.Zero,
+                "Ghost markers must never feed the matcher or scoring engine.");
+            Assert.That(controller.CurrentGhostTakeHitCount, Is.Zero);
+        }
+
+        [UnityTest]
+        public IEnumerator Reactive_stage_respects_reduced_motion_and_high_contrast_in_the_real_scene()
+        {
+            PlayerPreferencesRuntime.Current.SetReducedMotion(true);
+            PlayerPreferencesRuntime.Current.SetHighContrast(true);
+            AsyncOperation load = SceneManager.LoadSceneAsync("GameplayPrototype", LoadSceneMode.Single);
+            while (!load.isDone) yield return null;
+            yield return null;
+
+            GameplayHighwayController controller = Object.FindAnyObjectByType<GameplayHighwayController>();
+            Assert.That(controller, Is.Not.Null);
+            Assert.That(controller.ReactiveStageSurface, Is.Not.Null);
+            Assert.That(controller.ReactiveStageState.ReducedMotion, Is.True);
+            Assert.That(controller.ReactiveStageState.HighContrast, Is.True);
+            Assert.That(controller.ReactiveStageState.Intensity, Is.LessThanOrEqualTo(
+                GameplayReactiveStageCalculator.ReducedMotionMaximumIntensity));
+
+            UIDocument gameplayDocument = controller.GetComponent<UIDocument>();
+            VisualElement app = gameplayDocument.rootVisualElement.Q<VisualElement>("gameplay-app");
+            Assert.That(app.ClassListContains("gameplay--reduced-motion"), Is.True);
+            Assert.That(app.ClassListContains("gameplay--high-contrast"), Is.True);
         }
 
         [UnityTest]
@@ -110,6 +202,44 @@ namespace HitTheKit.Unity.Tests
             controller.RestartRun();
             Assert.That(controller.RunState, Is.EqualTo(GameplayRunState.Countdown));
             Assert.That(controller.ScoreSnapshot.Score, Is.Zero);
+        }
+
+        [UnityTest]
+        public IEnumerator Practice_lab_loops_a_section_with_filtered_matching_and_a_paused_seek()
+        {
+            AsyncOperation load = SceneManager.LoadSceneAsync("GameplayPrototype", LoadSceneMode.Single);
+            while (!load.isDone) yield return null;
+            yield return null;
+
+            GameplayHighwayController controller = Object.FindAnyObjectByType<GameplayHighwayController>();
+            var songClock = Object.FindAnyObjectByType<HitTheKit.Unity.Audio.DspSongClockPrototype>();
+            var matching = Object.FindAnyObjectByType<HitTheKit.Unity.Matching.HitMatchingPrototype>();
+            Assert.That(controller, Is.Not.Null);
+            Assert.That(controller.PracticeSections.Count, Is.GreaterThan(1));
+
+            UIDocument document = controller.GetComponent<UIDocument>();
+            Assert.That(document.rootVisualElement.Q<Button>("practice-loop-section"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Button>("practice-set-a"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Button>("practice-set-b"), Is.Not.Null);
+
+            controller.TogglePause();
+            controller.SelectNextPracticeSection();
+            controller.LoopSelectedPracticeSection();
+
+            GameplayPracticeRange range = controller.ActivePracticeRange;
+            Assert.That(range, Is.Not.Null);
+            Assert.That(range.Label, Is.EqualTo("BATTUTE 5–8"));
+            Assert.That(songClock.Clock.IsPaused, Is.True);
+            Assert.That(songClock.GetComponent<AudioSource>().isPlaying, Is.False);
+            Assert.That(songClock.PositionSeconds, Is.LessThanOrEqualTo(range.StartSeconds));
+            Assert.That(matching.Session.Notes, Is.Not.Empty);
+            Assert.That(matching.Session.Notes.All(note =>
+                note.TimeSeconds >= range.StartSeconds && note.TimeSeconds < range.EndSeconds), Is.True);
+
+            controller.TogglePause();
+            yield return null;
+            Assert.That(controller.RunState, Is.EqualTo(GameplayRunState.Playing));
+            Assert.That(songClock.GetComponent<AudioSource>().isPlaying, Is.True);
         }
 
         [UnityTest]

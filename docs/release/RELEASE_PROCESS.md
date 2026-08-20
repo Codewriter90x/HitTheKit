@@ -4,6 +4,11 @@ This process separates source readiness, gameplay validation, legal approval,
 and public distribution. Passing an early stage does not imply that later
 stages passed.
 
+Release candidates follow the branch and tag lifecycle defined in
+[`branching-and-releases.md`](../development/branching-and-releases.md). In
+particular, normal work integrates through `develop`, while stable release tags
+are created only from reviewed commits on `main`.
+
 ## 1. Freeze an exact candidate
 
 1. Choose an exact commit on a clean worktree.
@@ -12,6 +17,8 @@ stages passed.
 3. Stop feature work on the candidate; only reviewed release blockers may
    change it.
 4. Record the commit SHA in the release evidence.
+5. Keep the worktree clean so `SOURCE-CODE.txt` can identify the exact public
+   revision corresponding to every executable candidate.
 
 ## 2. Run source and packaging contracts
 
@@ -74,7 +81,8 @@ Hardware observations must not be generalized beyond the tested models.
 1. confirm the bundled catalog contains only authorized original material;
 2. refresh asset provenance and third-party notices from the exact candidate;
 3. review dependency and CodeQL results;
-4. obtain the required professional GPL/Unity and contribution-model review;
+4. validate MPL compliance, current Unity distribution terms, and the
+   contribution model for the exact candidate;
 5. confirm no secrets, certificates, private captures, or personal data are in
    the candidate; and
 6. decide the clean-history public repository boundary.
@@ -89,6 +97,9 @@ Signing credentials remain outside Git. On the authorized release Mac:
 
 The pipeline must finish with `HITTHEKIT_MACOS_DISTRIBUTION_READY`. Verify the
 stapled application and each archive again after copying to the clean test Mac.
+Confirm that the application resources and DMG both include `Legal/` with
+`LICENSE`, `NOTICE`, `THIRD_PARTY_NOTICES.md`,
+`LICENSING.md`, and an exact-revision `SOURCE-CODE.txt`.
 
 ## 7. Prepare evidence
 

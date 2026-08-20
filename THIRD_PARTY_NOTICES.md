@@ -8,7 +8,7 @@ provenance is recorded separately in
 
 | Component | Version | Declared license or terms | Role | Redistributed by this repository? | Review status / action |
 | --- | --- | --- | --- | --- | --- |
-| Unity Editor and built-in Unity modules | Editor 6000.5.6f1; modules 1.0.0 | Unity Terms of Service and Unity Editor Software Terms | Authoring, compilation, runtime APIs | Editor and module source/binaries are not tracked; a future player build may contain Unity runtime components | **Legal review required:** confirm current plan eligibility, player redistribution, GPL interaction, and separate Unity permission for embedded systems. |
+| Unity Editor and built-in Unity modules | Editor 6000.5.6f1; modules 1.0.0 | Unity Terms of Service and Unity Editor Software Terms | Authoring, compilation, runtime APIs | Editor and module source/binaries are not tracked; a future player build may contain Unity runtime components | Confirm current plan eligibility, player redistribution terms, required notices, and separate Unity permission for embedded systems for every candidate. MPL-2.0 does not relicense Unity. |
 | Unity Test Framework | 1.7.0 | Unity Companion License v1.4 | EditMode and PlayMode testing | Package source is resolved by Unity Package Manager, not tracked or intended for player distribution | Preserve the package license and copyright notice if substantial package portions are redistributed. |
 | Unity Custom NUnit (`com.unity.ext.nunit`) | 2.1.0, based on NUnit 3.5 | Unity Package Distribution License v2.1; bundled NUnit portions under MIT | Transitive Unity test dependency | Resolved by Unity Package Manager, not tracked or intended for player distribution | Preserve Unity package terms and the bundled NUnit MIT notice when applicable. |
 | .NET SDK | 8.0.411 requested by `global.json` | MIT plus the distribution's third-party notices | Build tooling | No | Build tool only; follow the license and notices of the installed distribution. |
@@ -21,7 +21,7 @@ provenance is recorded separately in
 
 ## Verified sources
 
-- GNU GPL version 3: <https://www.gnu.org/licenses/gpl-3.0.html>
+- Mozilla Public License 2.0: <https://www.mozilla.org/MPL/2.0/>
 - Unity terms: <https://unity.com/legal/terms-of-service>
 - Unity Companion License: <https://unity.com/legal/licenses/unity-companion-license>
 - Unity Package Distribution License:
