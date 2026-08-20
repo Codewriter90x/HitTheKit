@@ -61,6 +61,7 @@ namespace HitTheKit.Unity.Gameplay
         private Label keyGuideSnareHiHatLabel;
         private Label keyGuideFloorKickLabel;
         private Label impactCueLabel;
+        private Label reactiveStageStatusLabel;
         private Button menuButton;
         private Button pauseButton;
         private Button resumeButton;
@@ -120,6 +121,7 @@ namespace HitTheKit.Unity.Gameplay
         private readonly List<DrumArticulation> chartArticulationChoices = new List<DrumArticulation>();
         private GameplayHighwaySurface surface;
         private GameplayKitSurface kitSurface;
+        private GameplayReactiveStageSurface reactiveStageSurface;
         private bool showInstructionalKit;
         private HitMatchingPrototype subscribedMatching;
         private readonly GameplayScoreTracker scoreTracker = new GameplayScoreTracker();
@@ -140,6 +142,9 @@ namespace HitTheKit.Unity.Gameplay
         private bool metronomeScheduled;
         private bool metronomeSeekedWhilePaused;
         private bool resultRecorded;
+        private HitGrade? latestStageGrade;
+        private bool latestStageWrongInput;
+        private float stagePulseDeadline;
         private GameplayAutoTempoRecommendation autoTempoRecommendation;
         private bool isChangingTempo;
         private readonly GameplayPracticeLoop practiceLoop = new GameplayPracticeLoop();
@@ -154,6 +159,9 @@ namespace HitTheKit.Unity.Gameplay
         public GameplayPresentationTheme Theme { get; private set; }
         public GameplayHighwaySurface Surface => surface;
         public GameplayKitSurface KitSurface => kitSurface;
+        public GameplayReactiveStageSurface ReactiveStageSurface => reactiveStageSurface;
+        public GameplayReactiveStageState ReactiveStageState => reactiveStageSurface?.State ??
+            GameplayReactiveStageCalculator.Calculate(0, null, null, 0, false, false, false);
         public bool IsInstructionalKitVisible => showInstructionalKit;
         public Texture2D ActiveBackground => BackgroundFor(Theme);
         public string EnvironmentTitle => GameplayEnvironmentProfile.For(Theme).Title;
@@ -273,6 +281,7 @@ namespace HitTheKit.Unity.Gameplay
             }
 
             surface?.SetTheme(theme);
+            reactiveStageSurface?.SetTheme(theme);
             if (impactCueLabel != null)
                 impactCueLabel.style.top = Length.Percent(environment.StrikeRatio * 100f);
             if (kitSurface != null)
@@ -306,6 +315,7 @@ namespace HitTheKit.Unity.Gameplay
             positionLabel = root.Q<Label>("song-position");
             judgmentLabel = root.Q<Label>("judgment-label");
             kitGuidanceLabel = root.Q<Label>("kit-guidance-label");
+            reactiveStageStatusLabel = root.Q<Label>("reactive-stage-status");
             environmentTitleLabel = root.Q<Label>("environment-title");
             environmentSubtitleLabel = root.Q<Label>("environment-subtitle");
             currentInputLabel = root.Q<Label>("current-input");
@@ -381,10 +391,12 @@ namespace HitTheKit.Unity.Gameplay
             if (keyGuideFloorKickLabel != null) keyGuideFloorKickLabel.text = $"{preferences.FloorTomKey}/{preferences.KickKey}  TIMPANO / GRANCASSA";
 
             VisualElement highwayHost = root.Q<VisualElement>("highway-host");
+            VisualElement reactiveStageHost = root.Q<VisualElement>("reactive-stage-host");
             VisualElement kitVisualHost = root.Q<VisualElement>("kit-visual-host");
             VisualElement targetsHost = root.Q<VisualElement>("targets-host");
             VisualElement kickHost = root.Q<VisualElement>("kick-target-host");
-            if (highwayHost == null || kitVisualHost == null || targetsHost == null || kickHost == null)
+            if (highwayHost == null || reactiveStageHost == null || kitVisualHost == null ||
+                targetsHost == null || kickHost == null)
             {
                 Debug.LogError("Gameplay highway UXML is missing a required host element.", this);
                 enabled = false;
@@ -392,6 +404,10 @@ namespace HitTheKit.Unity.Gameplay
             }
 
             highwayHost.Clear();
+            reactiveStageHost.Clear();
+            reactiveStageSurface = new GameplayReactiveStageSurface();
+            reactiveStageSurface.AddToClassList("reactive-stage-surface");
+            reactiveStageHost.Add(reactiveStageSurface);
             surface = new GameplayHighwaySurface { name = "gameplay-highway-surface" };
             surface.AddToClassList("highway-surface");
             highwayHost.Add(surface);
@@ -474,6 +490,19 @@ namespace HitTheKit.Unity.Gameplay
                 ? Mathf.Clamp01((deadline - Time.unscaledTime) / PulseDurationSeconds)
                 : 0;
             surface.SetFrame(upcoming, position, HighwayLookAheadSeconds, latestPulsePad, pulse, ghostReplay.Ghost);
+            PlayerPreferencesSnapshot preferences = PlayerPreferencesRuntime.Current.Snapshot;
+            float stagePulse = Mathf.Clamp01((stagePulseDeadline - Time.unscaledTime) /
+                GameplayReactiveStageCalculator.MinimumPulseDurationSeconds);
+            GameplayReactiveStageState stageState = GameplayReactiveStageCalculator.Calculate(
+                scoreTracker.Snapshot.Combo,
+                latestStageGrade,
+                latestPulsePad,
+                stagePulse,
+                latestStageWrongInput,
+                preferences.ReducedMotion,
+                preferences.HighContrast);
+            reactiveStageSurface?.SetState(stageState);
+            if (reactiveStageStatusLabel != null) reactiveStageStatusLabel.text = stageState.Label;
             if (ghostStatusLabel != null)
                 ghostStatusLabel.text = ghostReplay.HasGhost
                     ? $"GHOST ATTIVO · {ghostReplay.Ghost.Count} COLPI"
@@ -508,6 +537,9 @@ namespace HitTheKit.Unity.Gameplay
             else CaptureGhostHit(input, result);
             latestPulsePad = input.Pad;
             pulseDeadlines[input.Pad] = Time.unscaledTime + PulseDurationSeconds;
+            stagePulseDeadline = Time.unscaledTime + GameplayReactiveStageCalculator.MinimumPulseDurationSeconds;
+            latestStageGrade = result?.Grade;
+            latestStageWrongInput = result == null;
             lastCalibrationSource = input.Source == DrumInputSource.Midi
                 ? DrumInputSource.Midi
                 : DrumInputSource.Keyboard;
@@ -550,6 +582,9 @@ namespace HitTheKit.Unity.Gameplay
         private void HandleHitResolved(HitResult result)
         {
             if (result == null) return;
+            latestStageGrade = result.Grade;
+            latestStageWrongInput = false;
+            stagePulseDeadline = Time.unscaledTime + GameplayReactiveStageCalculator.MinimumPulseDurationSeconds;
             performanceAnalyzer.Record(result.Note.Pad, result.Grade);
             errorMapAnalyzer?.Record(result);
             scoreTracker.Apply(result);
@@ -644,6 +679,9 @@ namespace HitTheKit.Unity.Gameplay
             metronomeScheduled = false;
             pulseDeadlines.Clear();
             latestPulsePad = null;
+            latestStageGrade = null;
+            latestStageWrongInput = false;
+            stagePulseDeadline = 0;
             matching.RestartSession();
             songClock.RestartPlayback();
             RunState = GameplayRunState.Countdown;

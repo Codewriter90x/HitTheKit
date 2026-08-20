@@ -2,6 +2,7 @@
     <Style src="GameplayHighway.uss" />
     <ui:VisualElement name="gameplay-app" class="gameplay-shell theme--arcade-neon">
         <ui:VisualElement name="gameplay-background" class="gameplay-background" />
+        <ui:VisualElement name="reactive-stage-host" class="reactive-stage-host" />
         <ui:VisualElement class="gameplay-vignette" />
 
         <ui:VisualElement class="hud-top">
@@ -35,6 +36,7 @@
         </ui:VisualElement>
 
         <ui:Label name="session-kicker" text="MODALITÀ GIOCO · LA BATTERIA SUONA SOLO QUANDO LA COLPISCI" class="session-kicker" />
+        <ui:Label name="reactive-stage-status" text="PALCO · CALMO" class="reactive-stage-status" />
 
         <ui:VisualElement class="gameplay-content">
             <ui:VisualElement class="side-rail side-rail--left">

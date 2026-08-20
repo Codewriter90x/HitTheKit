@@ -21,6 +21,7 @@
 }
 
 .gameplay-background,
+.reactive-stage-host,
 .gameplay-vignette {
     position: absolute;
     left: 0;
@@ -31,7 +32,28 @@
 }
 
 .gameplay-background { opacity: 0.88; }
+.reactive-stage-host { opacity: 1; }
+.reactive-stage-surface { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
 .gameplay-vignette { background-color: rgba(0, 4, 12, 0.24); }
+
+.reactive-stage-status {
+    position: absolute;
+    top: 119px;
+    right: 28px;
+    min-width: 180px;
+    height: 24px;
+    padding-left: 12px;
+    padding-right: 12px;
+    -unity-text-align: middle-center;
+    color: var(--accent);
+    background-color: rgba(2, 8, 18, 0.78);
+    border-width: 1px;
+    border-color: var(--panel-border);
+    border-radius: 12px;
+    font-size: 9px;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+}
 
 .session-kicker {
     position: absolute;
@@ -604,6 +626,8 @@
 .gameplay--high-contrast .results-dialog,
 .gameplay--high-contrast .run-dialog { border-color: white; background-color: rgba(0, 0, 0, 0.97); }
 .gameplay--high-contrast Label { color: white; }
+.gameplay--high-contrast .reactive-stage-status { border-width: 2px; border-color: white; }
+.gameplay--reduced-motion .reactive-stage-host { opacity: 0.68; }
 .gameplay--reduced-motion .judgment { transition-duration: 0s; }
 .result-actions { flex-direction: row; }
 
