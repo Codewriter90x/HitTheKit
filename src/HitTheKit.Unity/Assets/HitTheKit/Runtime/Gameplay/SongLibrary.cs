@@ -103,6 +103,16 @@ namespace HitTheKit.Unity.Gameplay
         public IReadOnlyList<string> AvailableDifficulties { get; }
         public IReadOnlyList<string> MissingFiles { get; }
         public bool IsPlayable => Availability == SongLibraryAvailability.Ready;
+        public bool CanAuthorChart =>
+            AudioAvailability == SongAudioAvailability.Available &&
+            !string.IsNullOrWhiteSpace(AudioPath) &&
+            Bpm.HasValue && Bars.HasValue && BeatsPerBar.HasValue;
+        public bool CanBindAudio =>
+            Origin == SongLibraryOrigin.UserFolder &&
+            AudioAvailability == SongAudioAvailability.Missing &&
+            ChartAvailability == SongChartAvailability.Available &&
+            !string.IsNullOrWhiteSpace(ChartPath) &&
+            Bpm.HasValue && Bars.HasValue && BeatsPerBar.HasValue;
     }
 
     public sealed class SongLibraryRoot

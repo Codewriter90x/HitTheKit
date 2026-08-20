@@ -58,6 +58,10 @@ namespace HitTheKit.Unity.Tests
             Assert.That(document.rootVisualElement.Q<VisualElement>("results-overlay"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<Button>("pause-button"), Is.Not.Null);
             Assert.That(document.rootVisualElement.Q<VisualElement>("countdown-overlay"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<ChartWaveformView>("chart-waveform"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<Button>("chart-waveform-preview"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<TextField>("chart-note-velocity"), Is.Not.Null);
+            Assert.That(document.rootVisualElement.Q<DropdownField>("chart-note-articulation"), Is.Not.Null);
             Assert.That(controller.CountdownBeat, Is.InRange(1, 4));
             Assert.That(controller.Theme, Is.EqualTo(GameplayPresentationTheme.ConcertStage));
             Assert.That(app.ClassListContains("theme--concert-stage"), Is.True);

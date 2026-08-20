@@ -87,6 +87,26 @@ namespace HitTheKit.Unity.Gameplay
             }
         }
 
+        public static GameplayKitZone For(DrumPad pad, DrumArticulation articulation)
+        {
+            DrumArticulationValidator.EnsureValid(pad, articulation);
+            switch (articulation)
+            {
+                case DrumArticulation.Default: return DefaultFor(pad);
+                case DrumArticulation.Head: return GameplayKitZone.Head;
+                case DrumArticulation.Rim: return GameplayKitZone.Rim;
+                case DrumArticulation.Bell: return GameplayKitZone.Bell;
+                case DrumArticulation.Pedal: return GameplayKitZone.Pedal;
+                case DrumArticulation.Edge:
+                case DrumArticulation.Choke: return GameplayKitZone.Edge;
+                case DrumArticulation.Bow:
+                case DrumArticulation.Closed:
+                case DrumArticulation.HalfOpen:
+                case DrumArticulation.Open: return GameplayKitZone.Bow;
+                default: throw new ArgumentOutOfRangeException(nameof(articulation));
+            }
+        }
+
         public static string BeginnerInstruction(DrumPad pad)
         {
             switch (pad)
@@ -139,6 +159,7 @@ namespace HitTheKit.Unity.Gameplay
                 throw new ArgumentOutOfRangeException(nameof(pulseIntensity));
 
             double nearest = double.PositiveInfinity;
+            DrumArticulation nearestArticulation = DrumArticulation.Default;
             if (upcomingNotes != null)
             {
                 for (int index = 0; index < upcomingNotes.Count; index++)
@@ -148,6 +169,7 @@ namespace HitTheKit.Unity.Gameplay
                     double delta = note.EffectiveTimeSeconds - songPositionSeconds;
                     if (delta < 0 || delta > preparationSeconds || delta >= nearest) continue;
                     nearest = delta;
+                    nearestArticulation = note.Note.Articulation;
                 }
             }
 
@@ -160,7 +182,7 @@ namespace HitTheKit.Unity.Gameplay
 
             return new GameplayKitTargetState(
                 pad,
-                GameplayKitZoneResolver.DefaultFor(pad),
+                GameplayKitZoneResolver.For(pad, nearestArticulation),
                 isUpcoming,
                 isUpcoming ? nearest : double.PositiveInfinity,
                 intensity,

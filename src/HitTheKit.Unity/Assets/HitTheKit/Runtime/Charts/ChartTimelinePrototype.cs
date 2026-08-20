@@ -67,7 +67,14 @@ namespace HitTheKit.Unity.Charts
             if (Timeline == null) throw new InvalidOperationException("The chart timeline has not started.");
             var result = new ChartNote[Timeline.Notes.Count];
             for (int index = 0; index < result.Length; index++)
-                result[index] = new ChartNote(Timeline.Notes[index].EffectiveTimeSeconds, Timeline.Notes[index].Note.Pad);
+            {
+                ChartNote note = Timeline.Notes[index].Note;
+                result[index] = new ChartNote(
+                    Timeline.Notes[index].EffectiveTimeSeconds,
+                    note.Pad,
+                    note.Velocity,
+                    note.Articulation);
+            }
             return Array.AsReadOnly(result);
         }
 

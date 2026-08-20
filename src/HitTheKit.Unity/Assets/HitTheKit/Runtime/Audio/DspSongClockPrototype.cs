@@ -37,6 +37,7 @@ namespace HitTheKit.Unity.Audio
         public double CountInSeconds => countInBeats * 60.0 / bpm;
         public string ExternalAudioPath => externalAudioPath;
         public double AudioPlaybackSpeed => audioPlaybackSpeed;
+        public bool IsPreviewing { get; private set; }
         public string LoadError { get; private set; }
 
         public void Configure(
@@ -153,8 +154,31 @@ namespace HitTheKit.Unity.Audio
             completedLogged = false;
         }
 
+        public void PreviewFromSourceTime(double sourceTimeSeconds, double speed = 1.0)
+        {
+            if (generatedClip == null || audioSource == null)
+                throw new InvalidOperationException("Song audio is not loaded.");
+            if (double.IsNaN(sourceTimeSeconds) || double.IsInfinity(sourceTimeSeconds) ||
+                sourceTimeSeconds < 0 || sourceTimeSeconds >= generatedClip.length)
+                throw new ArgumentOutOfRangeException(nameof(sourceTimeSeconds));
+            if (double.IsNaN(speed) || double.IsInfinity(speed) || speed <= 0 || speed > 3)
+                throw new ArgumentOutOfRangeException(nameof(speed));
+            audioSource.Stop();
+            audioSource.pitch = (float)speed;
+            audioSource.time = (float)sourceTimeSeconds;
+            audioSource.Play();
+            IsPreviewing = true;
+        }
+
+        public void StopPreview()
+        {
+            if (audioSource != null) audioSource.Stop();
+            IsPreviewing = false;
+        }
+
         private void SchedulePlayback()
         {
+            IsPreviewing = false;
             audioSource.clip = generatedClip;
             audioSource.pitch = (float)audioPlaybackSpeed;
             var timeSource = new UnityDspTimeSource();

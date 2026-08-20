@@ -94,3 +94,39 @@ machine-specific path into bundled `song.json`.
 The refresh button performs an explicit rescan. Discovery does not watch the
 filesystem continuously, allocate every frame, or access folders outside the
 two configured roots.
+
+## Local audio authoring
+
+The Song Library's **Import audio & create** action opens the macOS file picker
+for WAV/OGG content. After the player supplies title, artist and verified timing
+metadata, the importer copies the selected file into a new, never-overwritten
+folder under `~/Documents/HTKSongs`. The source file is not changed and its
+absolute path is not persisted in `song.json`.
+
+The resulting entry is intentionally audio-only: it is not playable as a normal
+song, but it can start Chart Creator with the existing DSP clock and an empty
+timeline. Once a take is saved, the local folder contains authorized audio plus
+the new chart and is playable immediately. Its sibling `.htksong` remains
+chart-only for safe transfer.
+
+## Portable `.htksong` chart packages
+
+Chart Creator writes a portable chart-only package next to each recorded take.
+Copy a `.htksong` file directly into `~/Documents/HTKSongs` and select
+**Refresh library**. Before normal folder discovery, the game validates the
+container and atomically installs its `song.json` and `notes.json` into a folder
+named after the validated song ID. The package remains in place so it can be
+copied to another computer; subsequent refreshes are idempotent.
+
+Package schema version 1 contains no audio and rejects any audio declaration or
+extra archive entry. Imports are bounded to 5 MiB, reject links, duplicate or
+case-colliding names, malformed ZIP/JSON/chart data, unsupported versions and
+path traversal, and never replace an existing song folder.
+
+An imported chart is therefore visible but unavailable until the player
+selects **Bind local audio** and supplies a WAV/OGG file they are entitled to
+use. The confirmation panel identifies the selected song and local filename;
+on confirmation the game copies the audio into that song's direct user-library
+folder, atomically updates its manifest, and refreshes the entry as playable.
+The source audio and `.htksong` package are never modified, and no absolute
+machine path is persisted.
