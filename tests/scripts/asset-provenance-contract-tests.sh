@@ -41,6 +41,7 @@ find branding docs/design src/HitTheKit.Unity/Assets website \
   -type f \( \
     -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o \
     -iname '*.svg' -o -iname '*.fbx' -o -iname '*.icns' -o \
+    -iname '*.ico' -o \
     -iname '*.wav' -o -iname '*.ogg' -o -iname '*.mp3' -o \
     -iname '*.flac' -o -iname '*.aac' -o -iname '*.m4a' -o \
     -iname '*.mp4' -o -iname '*.webm' -o -iname '*.mov' -o \

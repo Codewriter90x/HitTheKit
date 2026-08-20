@@ -41,6 +41,7 @@ without creating an unreviewed second source of truth.
 
 ## Development and testing
 
+- [Branching and release channels](development/branching-and-releases.md)
 - [DSP song clock](development/dsp-song-clock.md)
 - [Chart timeline](development/chart-timeline.md)
 - [Chart Creator foundation](development/chart-creator.md)
@@ -70,7 +71,8 @@ without creating an unreviewed second source of truth.
 
 - [Asset provenance](legal/ASSET_PROVENANCE.md)
 - [Dual-licensing readiness report](legal/dual-licensing-readiness-report.md)
-- [Dual-licensing decision record](governance/dual-licensing-decision.md)
+- [MPL Community license decision](governance/mpl-community-license-decision.md)
+- [Historical GPL dual-licensing proposal](governance/dual-licensing-decision.md)
 - [Commercial-license draft](legal/COMMERCIAL-LICENSE-DRAFT.md)
 - [Project governance](../GOVERNANCE.md)
 - [License](../LICENSE)
