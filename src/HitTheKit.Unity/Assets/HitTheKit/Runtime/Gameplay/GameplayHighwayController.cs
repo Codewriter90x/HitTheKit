@@ -39,8 +39,6 @@ namespace HitTheKit.Unity.Gameplay
         [SerializeField] private Texture2D concertStageBackground;
         [SerializeField] private Texture2D precisionGridBackground;
 
-        private readonly Dictionary<DrumPad, VisualElement> targets =
-            new Dictionary<DrumPad, VisualElement>();
         private readonly Dictionary<DrumPad, float> pulseDeadlines =
             new Dictionary<DrumPad, float>();
 
@@ -127,6 +125,7 @@ namespace HitTheKit.Unity.Gameplay
         private readonly List<DrumArticulation> chartArticulationChoices = new List<DrumArticulation>();
         private GameplayHighwaySurface surface;
         private GameplayKitSurface kitSurface;
+        private GameplayTargetBar targetBar;
         private GameplayReactiveStageSurface reactiveStageSurface;
         private bool showInstructionalKit;
         private HitMatchingPrototype subscribedMatching;
@@ -172,7 +171,7 @@ namespace HitTheKit.Unity.Gameplay
         public Texture2D ActiveBackground => BackgroundFor(Theme);
         public string EnvironmentTitle => GameplayEnvironmentProfile.For(Theme).Title;
         public string EnvironmentSubtitle => GameplayEnvironmentProfile.For(Theme).Subtitle;
-        public int TargetCount => targets.Count;
+        public int TargetCount => targetBar?.Count ?? 0;
         public bool IsViewBound => root != null && surface != null && kitSurface != null;
         public bool IsReturningToMenu { get; private set; }
         public GameplayRunState RunState { get; private set; } = GameplayRunState.Countdown;
@@ -434,7 +433,8 @@ namespace HitTheKit.Unity.Gameplay
             kitVisualHost.Clear();
             kitSurface = new GameplayKitSurface();
             kitVisualHost.Add(kitSurface);
-            BuildTargets(targetsHost, kickHost);
+            kickHost.Clear();
+            targetBar = new GameplayTargetBar(targetsHost);
 
             BindRunControls();
             SetTheme(CurrentSession.Theme);
@@ -446,92 +446,6 @@ namespace HitTheKit.Unity.Gameplay
             if (menuButton == null) return;
             menuButton.clicked -= ReturnToMainMenu;
             menuButton.clicked += ReturnToMainMenu;
-        }
-
-        private void BuildTargets(VisualElement targetsHost, VisualElement kickHost)
-        {
-            targets.Clear();
-            targetsHost.Clear();
-            kickHost.Clear();
-
-            DrumPad[] displayOrder =
-            {
-                DrumPad.HiHat,
-                DrumPad.Snare,
-                DrumPad.Tom1,
-                DrumPad.Tom2,
-                DrumPad.Kick,
-                DrumPad.FloorTom,
-                DrumPad.Crash,
-                DrumPad.Ride
-            };
-            for (int index = 0; index < displayOrder.Length; index++)
-            {
-                GameplayLaneDefinition lane = GameplayHighwayLanes.Find(displayOrder[index]);
-                VisualElement target = CreateTarget(lane, isKick: lane.Pad == DrumPad.Kick);
-                targetsHost.Add(target);
-                targets.Add(lane.Pad, target);
-            }
-        }
-
-        private VisualElement CreateTarget(GameplayLaneDefinition lane, bool isKick)
-        {
-            var target = new VisualElement { name = $"target-{lane.Id}" };
-            target.AddToClassList("lane-target");
-            if (isKick) target.AddToClassList("kick-target");
-            target.AddToClassList($"lane--{lane.Id}");
-            target.style.borderTopColor = lane.Color;
-            target.style.borderRightColor = lane.Color;
-            target.style.borderBottomColor = lane.Color;
-            target.style.borderLeftColor = lane.Color;
-
-            var header = new VisualElement();
-            header.AddToClassList("target-header");
-            var symbol = new GameplayTargetSymbol(lane.TargetSymbol, lane.Color)
-            {
-                name = $"target-symbol-{lane.Id}"
-            };
-            var key = new Label(lane.Key);
-            key.AddToClassList("target-key");
-            header.Add(symbol);
-            header.Add(key);
-            target.Add(header);
-
-            Texture2D iconTexture = TargetIconFor(lane.Pad);
-            var icon = new VisualElement { name = $"target-icon-{lane.Id}" };
-            icon.AddToClassList("target-instrument-icon");
-            if (iconTexture != null) icon.style.backgroundImage = new StyleBackground(iconTexture);
-            target.Add(icon);
-
-            var name = new Label(lane.Label);
-            name.AddToClassList("target-name");
-            target.Add(name);
-
-            var subtitle = new Label(lane.Subtitle);
-            subtitle.AddToClassList("target-subtitle");
-            target.Add(subtitle);
-            return target;
-        }
-
-        private Texture2D TargetIconFor(DrumPad pad)
-        {
-            switch (pad)
-            {
-                case DrumPad.HiHat:
-                    return targetHiHatIcon;
-                case DrumPad.Snare:
-                case DrumPad.Tom1:
-                case DrumPad.Tom2:
-                case DrumPad.FloorTom:
-                    return targetDrumIcon;
-                case DrumPad.Crash:
-                case DrumPad.Ride:
-                    return targetCymbalIcon;
-                case DrumPad.Kick:
-                    return targetKickIcon;
-                default:
-                    return null;
-            }
         }
 
         private void RefreshPresentation()
@@ -665,13 +579,7 @@ namespace HitTheKit.Unity.Gameplay
 
         private void UpdatePulseState()
         {
-            if (targets.Count == 0) return;
-            float now = Time.unscaledTime;
-            foreach (KeyValuePair<DrumPad, VisualElement> pair in targets)
-            {
-                bool active = pulseDeadlines.TryGetValue(pair.Key, out float deadline) && deadline > now;
-                pair.Value.EnableInClassList("target--active", active);
-            }
+            targetBar?.UpdatePulseState(pulseDeadlines, Time.unscaledTime);
         }
 
         private void HandleShortcuts()

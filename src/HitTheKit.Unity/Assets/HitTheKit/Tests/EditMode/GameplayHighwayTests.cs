@@ -40,11 +40,11 @@ namespace HitTheKit.Unity.Tests
             {
                 DrumPad.HiHat,
                 DrumPad.Snare,
-                DrumPad.Tom1,
-                DrumPad.Tom2,
-                DrumPad.Kick,
-                DrumPad.FloorTom,
                 DrumPad.Crash,
+                DrumPad.Tom1,
+                DrumPad.Kick,
+                DrumPad.Tom2,
+                DrumPad.FloorTom,
                 DrumPad.Ride
             }));
             Assert.That(GameplayHighwayLanes.HighwayIndex(DrumPad.Kick), Is.EqualTo(4));
@@ -74,6 +74,48 @@ namespace HitTheKit.Unity.Tests
                 Assert.That(lane.TargetSymbol, Is.EqualTo(target));
                 Assert.That(lane.NoteSymbol, Is.EqualTo(note));
             }
+        }
+
+        [Test]
+        public void Target_bar_is_an_isolated_eight_piece_module_in_the_approved_visual_order()
+        {
+            var host = new UnityEngine.UIElements.VisualElement();
+            var bar = new GameplayTargetBar(host);
+
+            Assert.That(GameplayTargetBar.DisplayOrder, Is.EqualTo(new[]
+            {
+                DrumPad.HiHat,
+                DrumPad.Snare,
+                DrumPad.Crash,
+                DrumPad.Tom1,
+                DrumPad.Kick,
+                DrumPad.Tom2,
+                DrumPad.FloorTom,
+                DrumPad.Ride
+            }));
+            Assert.That(bar.Count, Is.EqualTo(8));
+            Assert.That(host.ClassListContains("gameplay-target-bar"), Is.True);
+            Assert.That(host.childCount, Is.EqualTo(8));
+            Assert.That(host[4].name, Is.EqualTo("target-kick"));
+        }
+
+        [Test]
+        public void Target_bar_pulses_only_the_requested_instrument_and_resets_deterministically()
+        {
+            var host = new UnityEngine.UIElements.VisualElement();
+            var bar = new GameplayTargetBar(host);
+            var deadlines = new System.Collections.Generic.Dictionary<DrumPad, float>
+            {
+                [DrumPad.Snare] = 2f
+            };
+
+            bar.UpdatePulseState(deadlines, 1f);
+            Assert.That(bar.TargetFor(DrumPad.Snare).ClassListContains("target--active"), Is.True);
+            Assert.That(bar.TargetFor(DrumPad.Kick).ClassListContains("target--active"), Is.False);
+
+            bar.UpdatePulseState(deadlines, 2f);
+            Assert.That(bar.TargetFor(DrumPad.Snare).ClassListContains("target--active"), Is.False);
+            Assert.Throws<System.ArgumentOutOfRangeException>(() => bar.TargetFor((DrumPad)99));
         }
 
         [Test]

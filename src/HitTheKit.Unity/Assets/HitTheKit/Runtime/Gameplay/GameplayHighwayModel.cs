@@ -126,11 +126,11 @@ namespace HitTheKit.Unity.Gameplay
         {
             Lane(DrumPad.HiHat, "hi-hat", "CHARLESTON", "HI-HAT", "K", "62E87C", GameplayLaneSymbol.Cross, GameplayLaneSymbol.Circle),
             Lane(DrumPad.Snare, "snare", "RULLANTE", "SNARE", "J", "B77BFF", GameplayLaneSymbol.Circle, GameplayLaneSymbol.Circle),
-            Lane(DrumPad.Tom1, "tom-1", "TOM 1", "ALTO", "G", "45C9FF", GameplayLaneSymbol.Square, GameplayLaneSymbol.Square),
-            Lane(DrumPad.Tom2, "tom-2", "TOM 2", "MEDIO", "H", "FFC04D", GameplayLaneSymbol.Circle, GameplayLaneSymbol.Circle),
-            Lane(DrumPad.Kick, "kick", "CASSA", "GRANCASSA", "F", "FF4F70", GameplayLaneSymbol.Capsule, GameplayLaneSymbol.Capsule),
-            Lane(DrumPad.FloorTom, "floor-tom", "FLOOR TOM", "TIMPANO", "L", "B77BFF", GameplayLaneSymbol.Diamond, GameplayLaneSymbol.Diamond),
             Lane(DrumPad.Crash, "crash", "CRASH", "PIATTO", "D", "FF685E", GameplayLaneSymbol.Triangle, GameplayLaneSymbol.Triangle),
+            Lane(DrumPad.Tom1, "tom-1", "TOM 1", "ALTO", "G", "45C9FF", GameplayLaneSymbol.Square, GameplayLaneSymbol.Square),
+            Lane(DrumPad.Kick, "kick", "CASSA", "GRANCASSA", "F", "FF4F70", GameplayLaneSymbol.Capsule, GameplayLaneSymbol.Capsule),
+            Lane(DrumPad.Tom2, "tom-2", "TOM 2", "MEDIO", "H", "FFC04D", GameplayLaneSymbol.Circle, GameplayLaneSymbol.Circle),
+            Lane(DrumPad.FloorTom, "floor-tom", "FLOOR TOM", "TIMPANO", "L", "B77BFF", GameplayLaneSymbol.Diamond, GameplayLaneSymbol.Diamond),
             Lane(DrumPad.Ride, "ride", "RIDE", "PIATTO", "S", "42E3EE", GameplayLaneSymbol.Square, GameplayLaneSymbol.Square)
         };
 

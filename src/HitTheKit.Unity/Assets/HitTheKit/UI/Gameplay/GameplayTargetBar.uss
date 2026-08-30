@@ -1,0 +1,62 @@
+.gameplay-target-bar {
+    position: relative;
+    height: 184px;
+    min-height: 184px;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 1.45%;
+    padding-right: 6.95%;
+    background-image: url("TargetBar/gameplay-target-bar-soft-interlock.png");
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.target-bar-hit-zone {
+    position: relative;
+    height: 100%;
+    min-width: 0;
+    flex-shrink: 1;
+    overflow: hidden;
+}
+
+.target-bar-pulse {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    top: 3px;
+    bottom: 3px;
+    border-radius: 14px;
+    opacity: 0;
+    transition-property: opacity, scale;
+    transition-duration: 0.08s;
+}
+
+.target-bar-hit-zone.target--active .target-bar-pulse {
+    opacity: 0.36;
+    scale: 1.02;
+}
+
+.gameplay--reduced-motion .target-bar-pulse {
+    transition-duration: 0s;
+}
+
+.theme--arcade-neon .gameplay-target-bar,
+.theme--concert-stage .gameplay-target-bar,
+.theme--precision-grid .gameplay-target-bar {
+    height: 184px;
+    min-height: 184px;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+@media (max-width: 1250px) {
+    .gameplay-target-bar,
+    .theme--arcade-neon .gameplay-target-bar,
+    .theme--concert-stage .gameplay-target-bar,
+    .theme--precision-grid .gameplay-target-bar {
+        height: 150px;
+        min-height: 150px;
+    }
+}

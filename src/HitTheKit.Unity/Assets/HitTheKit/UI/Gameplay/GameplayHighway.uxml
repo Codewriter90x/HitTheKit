@@ -1,5 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
     <Style src="GameplayHighway.uss" />
+    <Style src="GameplayTargetBar.uss" />
     <ui:VisualElement name="gameplay-app" class="gameplay-shell theme--arcade-neon">
         <ui:VisualElement name="gameplay-background" class="gameplay-background" />
         <ui:VisualElement name="reactive-stage-host" class="reactive-stage-host" />

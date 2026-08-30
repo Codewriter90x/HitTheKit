@@ -41,6 +41,59 @@ final result: passed
 
 ---
 
+# Design QA — Gameplay Target Bar Module
+
+## Source and implementation
+
+- Approved reference: `mockup/gameplay-target-controls-selected-reference.png`
+  (2172 x 724).
+- Runtime artwork: `UI/Gameplay/TargetBar/gameplay-target-bar-soft-interlock.png`
+  (2172 x 360).
+- Actual Unity Game View capture:
+  `mockup/gameplay-target-bar-implementation-clean.png` (988 x 557).
+- Temporary comparison artifact:
+  `artifacts/gameplay-target-bar/reference-vs-implementation.png`.
+
+## Exact-match checks
+
+- The eight controls preserve the approved order: Charleston, Rullante, Crash,
+  Tom 1, Cassa, Tom 2, Floor Tom and Ride.
+- The center Cassa panel remains wider, symmetric and visually dominant.
+- Adjacent panels retain the complementary inward/outward facets from the
+  supplied reference rather than becoming independent rounded rectangles.
+- Neon colors, geometric symbols, line-art instruments and Italian labels are
+  preserved in one approved raster asset, preventing UI layout engines from
+  changing their relative geometry.
+- Eight transparent runtime hit zones align with the artwork and retain live
+  hit pulses without reconstructing or approximating the visible design.
+- The target order is shared with the highway lane model so notes terminate at
+  the matching control.
+
+## Module boundary
+
+- `GameplayTargetBar` owns ordering, proportional hit zones and pulse state.
+- `GameplayTargetBar.uss` owns sizing, responsiveness and the fixed artwork.
+- `GameplayHighwayController` only instantiates the module and forwards pulse
+  deadlines; it no longer creates individual target cards.
+- The module is documented in `docs/design/gameplay-target-bar.md`, including
+  the rule that highway, HUD, stage and drum-kit work must not edit it.
+
+## Verification
+
+- Unity EditMode: 521/521 passed.
+- Unity PlayMode: 55/55 passed.
+- The PlayMode scene test verifies the approved artwork, exact eight-piece order,
+  centered kick and all runtime pulse layers.
+- The EditMode tests verify deterministic ordering, isolated construction and
+  pulse activation/reset behavior.
+- The .NET suite could not run because the repository requires SDK 8.0.411 and
+  that exact SDK is not installed on this machine; `global.json` was not changed.
+- No P0, P1 or P2 visual mismatch remains in the verified 16:9 Game View.
+
+final result: passed
+
+---
+
 # Design QA — Gameplay Arena Highway
 
 ## Source and implementation

@@ -150,17 +150,18 @@ namespace HitTheKit.Unity.Tests
             Assert.That(controller.IsInstructionalKitVisible, Is.True);
             Assert.That(kitArtwork.resolvedStyle.display, Is.EqualTo(DisplayStyle.Flex));
             Assert.That(targets.childCount, Is.EqualTo(8));
+            Assert.That(targets.ClassListContains("gameplay-target-bar"), Is.True);
+            Assert.That(targets.resolvedStyle.backgroundImage.texture, Is.Not.Null,
+                "The target bar must use the approved single artwork rather than approximate cards.");
             Assert.That(targets[4].name, Is.EqualTo("target-kick"),
                 "The kick target must sit at the center of the visual drum-kit order.");
-            foreach (GameplayLaneDefinition lane in GameplayHighwayLanes.All)
+            for (int index = 0; index < GameplayTargetBar.DisplayOrder.Count; index++)
             {
-                GameplayTargetSymbol symbol = root.Q<GameplayTargetSymbol>($"target-symbol-{lane.Id}");
-                VisualElement icon = root.Q<VisualElement>($"target-icon-{lane.Id}");
-                Assert.That(symbol, Is.Not.Null, $"Missing geometric target symbol for {lane.Id}.");
-                Assert.That(symbol.Symbol, Is.EqualTo(lane.TargetSymbol));
-                Assert.That(icon, Is.Not.Null, $"Missing instrument art for {lane.Id}.");
-                Assert.That(icon.resolvedStyle.backgroundImage.texture, Is.Not.Null,
-                    $"Target {lane.Id} must use a real instrument texture, not a placeholder glyph.");
+                GameplayLaneDefinition lane = GameplayHighwayLanes.Find(GameplayTargetBar.DisplayOrder[index]);
+                Assert.That(targets[index].name, Is.EqualTo($"target-{lane.Id}"));
+                Assert.That(targets[index].ClassListContains("target-bar-hit-zone"), Is.True);
+                Assert.That(root.Q<VisualElement>($"target-pulse-{lane.Id}"), Is.Not.Null,
+                    $"Missing runtime pulse layer for {lane.Id}.");
             }
             Assert.That(kitArtwork.worldBound.yMin, Is.GreaterThan(highway.worldBound.yMin + highway.worldBound.height * 0.26f),
                 "The physical kit must stay in the rear/lower stage and leave the highway readable.");

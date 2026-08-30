@@ -7,7 +7,13 @@
   "allowUnsafeCode": false,
   "overrideReferences": true,
   "precompiledReferences": [
-    "HitTheKit.Core.dll"
+    "HitTheKit.Core.dll",
+    "UnityEngine.AudioModule.dll",
+    "UnityEngine.JSONSerializeModule.dll",
+    "UnityEngine.ParticleSystemModule.dll",
+    "UnityEngine.UIElementsModule.dll",
+    "UnityEngine.UnityWebRequestAudioModule.dll",
+    "UnityEngine.UnityWebRequestModule.dll"
   ],
   "autoReferenced": true,
   "defineConstraints": [],
