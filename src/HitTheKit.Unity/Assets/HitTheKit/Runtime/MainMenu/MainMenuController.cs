@@ -153,6 +153,7 @@ namespace HitTheKit.Unity.MainMenu
         private Label resolutionValue;
         private Button resetPreferencesButton;
         private Button resetLocalDataButton;
+        private Button resetKitConfigurationButton;
         private Label resetStatus;
         private Button onboardingKeyboardButton;
         private Button onboardingMidiButton;
@@ -191,6 +192,7 @@ namespace HitTheKit.Unity.MainMenu
         private DrumPad? pendingKeyBinding;
         private bool resetConfirmationPending;
         private bool resetDataConfirmationPending;
+        private bool resetKitConfirmationPending;
         private readonly GuidedLatencySoundCheck soundCheck = new GuidedLatencySoundCheck();
         private DrumInputSource selectedSoundCheckSource = DrumInputSource.Keyboard;
         private AudioSource soundCheckAudioSource;
@@ -570,6 +572,7 @@ namespace HitTheKit.Unity.MainMenu
             resolutionValue = Required<Label>(root, "resolution-value");
             resetPreferencesButton = Required<Button>(root, "reset-preferences");
             resetLocalDataButton = Required<Button>(root, "reset-local-data");
+            resetKitConfigurationButton = Required<Button>(root, "reset-kit-configuration");
             resetStatus = Required<Label>(root, "reset-status");
             onboardingKeyboardButton = Required<Button>(root, "onboarding-keyboard");
             onboardingMidiButton = Required<Button>(root, "onboarding-midi");
@@ -658,6 +661,7 @@ namespace HitTheKit.Unity.MainMenu
             resolutionNextButton.clicked += SelectNextResolution;
             resetPreferencesButton.clicked += ResetPreferences;
             resetLocalDataButton.clicked += ResetLocalData;
+            resetKitConfigurationButton.clicked += ResetKitConfiguration;
             onboardingKeyboardButton.clicked += CompleteKeyboardOnboarding;
             onboardingMidiButton.clicked += CompleteMidiOnboarding;
             onboardingSkipButton.clicked += CompleteKeyboardOnboarding;
@@ -781,6 +785,7 @@ namespace HitTheKit.Unity.MainMenu
             resolutionNextButton.clicked -= SelectNextResolution;
             resetPreferencesButton.clicked -= ResetPreferences;
             resetLocalDataButton.clicked -= ResetLocalData;
+            resetKitConfigurationButton.clicked -= ResetKitConfiguration;
             onboardingKeyboardButton.clicked -= CompleteKeyboardOnboarding;
             onboardingMidiButton.clicked -= CompleteMidiOnboarding;
             onboardingSkipButton.clicked -= CompleteKeyboardOnboarding;
@@ -1475,6 +1480,35 @@ namespace HitTheKit.Unity.MainMenu
             RenderSettings();
         }
 
+        private void ResetKitConfiguration()
+        {
+            if (!resetKitConfirmationPending)
+            {
+                resetKitConfirmationPending = true;
+                resetStatus.text = Language == MainMenuLanguage.Italian
+                    ? "Premi di nuovo per tornare al profilo generico della batteria. Progressi e brani restano invariati."
+                    : "Press again to return to the generic drum kit profile. Progress and songs are kept.";
+                return;
+            }
+
+            try
+            {
+                DeviceSetupConfigurationRuntime.DeleteSavedConfiguration();
+                PlayerPreferencesRuntime.Current.SelectMidiDevice(null);
+                resetStatus.text = Language == MainMenuLanguage.Italian
+                    ? "Configurazione batteria ripristinata: verrà usato il profilo generico."
+                    : "Drum kit configuration reset: the generic profile will be used.";
+            }
+            catch (Exception exception)
+            {
+                resetStatus.text = Language == MainMenuLanguage.Italian
+                    ? $"Ripristino incompleto: {exception.Message}"
+                    : $"Reset incomplete: {exception.Message}";
+            }
+            resetKitConfirmationPending = false;
+            RenderSettings();
+        }
+
         private void CompleteKeyboardOnboarding()
         {
             PlayerPreferencesRuntime.Current.SetFirstRunCompleted(true);
@@ -1935,6 +1969,9 @@ namespace HitTheKit.Unity.MainMenu
             resetLocalDataButton.text = italian
                 ? "CANCELLA PROGRESSI E CONFIGURAZIONE"
                 : "DELETE PROGRESS AND CONFIGURATION";
+            resetKitConfigurationButton.text = italian
+                ? "RIPRISTINA CONFIGURAZIONE BATTERIA"
+                : "RESET DRUM KIT CONFIGURATION";
             settingsThemeHeading.text = italian ? "AMBIENTE DI GIOCO" : "GAMEPLAY ENVIRONMENT";
             settingsThemeArcadeButton.text = "ARCADE NEON";
             settingsThemeConcertButton.text = "CONCERT STAGE";
