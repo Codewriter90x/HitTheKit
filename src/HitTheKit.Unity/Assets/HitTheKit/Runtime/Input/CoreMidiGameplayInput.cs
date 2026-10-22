@@ -36,7 +36,7 @@ namespace HitTheKit.Unity.Input
 
         private void Start()
         {
-#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
             if (genericProfile == null)
             {
                 StatusMessage = "CORE MIDI NON CONFIGURATO";
@@ -50,10 +50,14 @@ namespace HitTheKit.Unity.Input
             resolver = new GameplayKitMappingResolver(usesSavedConfiguration ? saved : generic, generic);
             configurationLabel = usesSavedConfiguration ? "CONFIGURAZIONE PERSONALE" : "PROFILO GENERICO";
 
-            nativeSession = new CoreMidiNativeSession(new CoreMidiNativeApi());
+            nativeSession = new CoreMidiNativeSession(NativeMidiApiFactory.Create());
             if (!nativeSession.IsAvailable)
             {
+                #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+                StatusMessage = "MIDI WINDOWS NON DISPONIBILE";
+#else
                 StatusMessage = "CORE MIDI PLUGIN ASSENTE";
+#endif
                 return;
             }
 
@@ -84,7 +88,7 @@ namespace HitTheKit.Unity.Input
             // result is remembered, because it is the one choice the player had to make by playing.
             OpenDevice(selection.Device);
 #else
-            StatusMessage = "TASTIERA · CORE MIDI SOLO SU MACOS";
+            StatusMessage = "TASTIERA · MIDI NON SUPPORTATO SU QUESTO SISTEMA";
 #endif
         }
 

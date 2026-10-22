@@ -11,6 +11,7 @@ namespace HitTheKit.Unity.DeviceSetup
     public enum DeviceSetupInputBackend
     {
         Simulated,
+        /// <summary>Native MIDI: CoreMIDI on macOS, WinMM on Windows (name kept for serialized scenes).</summary>
         CoreMidiMacOS
     }
 

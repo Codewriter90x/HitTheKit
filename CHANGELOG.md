@@ -7,6 +7,7 @@ semantico a partire dalla prima release pubblica stabile.
 
 ### Added
 
+- backend MIDI sperimentale per Windows tramite WinMM, dietro la stessa interfaccia di CoreMIDI; in attesa di verifica su hardware (#53);
 - selezione automatica della batteria MIDI in gameplay: porte virtuali ignorate, profilo riconosciuto preferito e rilevamento al primo colpo quando ci sono più ingressi (#50);
 - pulsante dedicato per ripristinare la sola configurazione batteria (#51);
 - build e packaging Windows x64 keyboard-only con esclusione verificata di CoreMIDI;

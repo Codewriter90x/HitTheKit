@@ -62,7 +62,7 @@ namespace HitTheKit.Unity.DeviceSetup
             ISimulatedGuidedMidiCaptureControl simulation = null;
             if (inputBackend == DeviceSetupInputBackend.CoreMidiMacOS)
             {
-                coreMidiSession = new CoreMidiNativeSession(new CoreMidiNativeApi());
+                coreMidiSession = new CoreMidiNativeSession(NativeMidiApiFactory.Create());
                 CoreMidiDiscovery = new CoreMidiDrumDeviceDiscovery(coreMidiSession, DeviceSetupProfileCatalog.ForCoreMidiDevice);
                 CoreMidiCaptureSource = new CoreMidiGuidedMidiCaptureSource(coreMidiSession);
                 ActiveDiscovery = CoreMidiDiscovery;
