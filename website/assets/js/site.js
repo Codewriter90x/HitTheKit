@@ -104,7 +104,11 @@ navigation.querySelectorAll("a").forEach((link) => {
 });
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") setMenu(false);
+  if (event.key !== "Escape") return;
+  const wasOpen = menuButton.getAttribute("aria-expanded") === "true";
+  setMenu(false);
+  // Return keyboard focus to the control that opened the overlay instead of leaving it behind it.
+  if (wasOpen) menuButton.focus();
 });
 
 window.addEventListener("resize", () => {
