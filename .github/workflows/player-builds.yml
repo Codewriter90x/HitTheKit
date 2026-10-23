@@ -1,0 +1,167 @@
+name: Player builds
+
+# Builds the Windows x64 playtest ZIP and the macOS Apple-silicon app on a GitHub
+# macOS runner by reusing the repository packaging scripts unchanged. Artifacts are
+# attached to the workflow run only; publishing a GitHub prerelease stays a manual,
+# reviewed step (see docs/development/ci-player-builds.md).
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Numeric player version, for example 0.6.1
+        required: true
+        type: string
+      sign_macos:
+        description: Sign with Developer ID and notarize the macOS app
+        required: true
+        type: boolean
+        default: true
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: player-builds-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  players:
+    name: Windows x64 + macOS arm64
+    if: vars.UNITY_CI_ENABLED == 'true'
+    runs-on: macos-15
+    timeout-minutes: 150
+    env:
+      HITTHEKIT_SOURCE_COMMIT: ${{ github.sha }}
+      SIGN_MACOS: ${{ github.event_name == 'push' || inputs.sign_macos }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Resolve version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            label=${GITHUB_REF_NAME#v}
+          else
+            label=$INPUT_VERSION
+          fi
+          numeric=${label%%-*}
+          if ! [[ "$numeric" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Version '$label' must start with MAJOR.MINOR.PATCH" >&2
+            exit 1
+          fi
+          echo "numeric=$numeric" >> "$GITHUB_OUTPUT"
+          echo "label=$label" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Install Unity 6000.5.6f1 with Windows Build Support
+        id: unity
+        uses: buildalon/unity-setup@v2
+        with:
+          version-file: src/HitTheKit.Unity/ProjectSettings/ProjectVersion.txt
+          unity-version: 6000.5.6f1
+          build-targets: StandaloneOSX, StandaloneWindows64
+          architecture: arm64
+
+      - name: Activate Unity license
+        uses: buildalon/activate-unity-license@v2
+        with:
+          license: Personal
+          username: ${{ secrets.UNITY_EMAIL }}
+          password: ${{ secrets.UNITY_PASSWORD }}
+
+      - name: Expose the Unity editor binary to the packaging scripts
+        run: |
+          editor="$UNITY_EDITOR_PATH"
+          case "$editor" in
+            *.app) editor="$editor/Contents/MacOS/Unity" ;;
+          esac
+          [ -x "$editor" ] || { echo "Unity editor not found: $editor" >&2; exit 1; }
+          echo "UNITY_PATH=$editor" >> "$GITHUB_ENV"
+
+      - name: Build Windows x64 playtest package
+        run: ./scripts/package-game-windows-x64.sh "${{ steps.version.outputs.numeric }}" "$RUNNER_TEMP/players/windows"
+
+      - name: Prepare signing keychain and notary profile
+        if: env.SIGN_MACOS == 'true'
+        env:
+          MACOS_CERTIFICATE_P12: ${{ secrets.MACOS_CERTIFICATE_P12 }}
+          MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+        run: |
+          for name in MACOS_CERTIFICATE_P12 MACOS_CERTIFICATE_PASSWORD APPLE_ID APPLE_TEAM_ID APPLE_APP_SPECIFIC_PASSWORD; do
+            [ -n "${!name}" ] || { echo "Missing repository secret: $name" >&2; exit 1; }
+          done
+          keychain="$RUNNER_TEMP/hitthekit-signing.keychain-db"
+          keychain_password=$(openssl rand -hex 24)
+          certificate="$RUNNER_TEMP/developer-id.p12"
+          printf '%s' "$MACOS_CERTIFICATE_P12" | base64 --decode > "$certificate"
+          security create-keychain -p "$keychain_password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          security import "$certificate" -k "$keychain" -P "$MACOS_CERTIFICATE_PASSWORD" \
+            -T /usr/bin/codesign -T /usr/bin/security
+          rm -f "$certificate"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$keychain_password" "$keychain" >/dev/null
+          existing=()
+          while IFS= read -r line; do
+            line=${line//\"/}
+            line=${line#"${line%%[![:space:]]*}"}
+            [ -n "$line" ] && existing+=("$line")
+          done < <(security list-keychains -d user)
+          security list-keychains -d user -s "$keychain" "${existing[@]}"
+          security default-keychain -d user -s "$keychain"
+          xcrun notarytool store-credentials HitTheKit-Notary \
+            --apple-id "$APPLE_ID" --team-id "$APPLE_TEAM_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" \
+            --keychain "$keychain"
+          echo "HITTHEKIT_SIGNING_KEYCHAIN=$keychain" >> "$GITHUB_ENV"
+
+      - name: Build, sign, notarize and package the macOS app
+        if: env.SIGN_MACOS == 'true'
+        run: ./scripts/build-sign-notarize-macos.sh "${{ steps.version.outputs.numeric }}" "$RUNNER_TEMP/players/macos"
+
+      - name: Build an unsigned macOS playtest app
+        if: env.SIGN_MACOS != 'true'
+        run: ./scripts/package-game-macos-arm64.sh "${{ steps.version.outputs.numeric }}" "$RUNNER_TEMP/players/macos"
+
+      - name: Collect artifacts and checksums
+        run: |
+          out="$RUNNER_TEMP/players/upload"
+          mkdir -p "$out"
+          find "$RUNNER_TEMP/players" -maxdepth 2 -type f \( -name '*.zip' -o -name '*.dmg' \) -not -path "$out/*" \
+            -exec cp {} "$out/" \;
+          ls "$out"/*.zip >/dev/null
+          (cd "$out" && shasum -a 256 -- * > SHA256SUMS && cat SHA256SUMS)
+          {
+            echo "### HitTheKit ${{ steps.version.outputs.label }}"
+            echo
+            echo "Source commit: \`$HITTHEKIT_SOURCE_COMMIT\`"
+            echo
+            echo '```'
+            cat "$out/SHA256SUMS"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload player artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: HitTheKit-players-${{ steps.version.outputs.label }}
+          path: ${{ runner.temp }}/players/upload
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Remove signing keychain
+        if: always() && env.HITTHEKIT_SIGNING_KEYCHAIN != ''
+        run: security delete-keychain "$HITTHEKIT_SIGNING_KEYCHAIN" || true
