@@ -1,5 +1,7 @@
 using System;
+using HitTheKit.Core;
 using HitTheKit.Unity.Devices;
+using HitTheKit.Unity.Input;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -17,9 +19,26 @@ namespace HitTheKit.Unity.Tests
             Assert.That(fixture, Is.Not.Null);
             ElectronicDrumProfile profile = new ElectronicDrumProfileLoader().Load(fixture.text);
             Assert.That(profile.ProfileId, Is.EqualTo("generic-gm-drums-v1"));
-            Assert.That(profile.Elements, Has.Count.EqualTo(12));
-            Assert.That(profile.DefaultMappings, Has.Count.EqualTo(15));
+            Assert.That(profile.Elements, Has.Count.EqualTo(15));
+            Assert.That(profile.DefaultMappings, Has.Count.EqualTo(20));
             Assert.That(profile.Notes, Does.Contain("user confirmation required"));
+        }
+
+        [TestCase(37, DrumPad.Snare)]
+        [TestCase(52, DrumPad.Crash)]
+        [TestCase(55, DrumPad.Crash)]
+        [TestCase(57, DrumPad.Crash)]
+        [TestCase(59, DrumPad.Ride)]
+        public void Generic_profile_routes_extended_general_midi_notes_to_gameplay_pads(int note, DrumPad expectedPad)
+        {
+            TextAsset fixture = AssetDatabase.LoadAssetAtPath<TextAsset>(FixturePath);
+            ElectronicDrumProfile profile = new ElectronicDrumProfileLoader().Load(fixture.text);
+            UserKitConfiguration configuration = UserKitConfiguration.FromProfile(profile, "test.generic", "Generic");
+
+            MidiKitMappingResult mapped = new MidiKitMappingEngine().Map(RawMidiMessage.NoteOn(9, note, 100, 1.0), configuration);
+            Assert.That(mapped.Status, Is.EqualTo(MidiKitMappingStatus.Mapped));
+            Assert.That(new MvpDrumInputMapper().Map(mapped.Hit, true, out DrumInputEvent input), Is.EqualTo(MvpDrumInputMappingStatus.Mapped));
+            Assert.That(input.Pad, Is.EqualTo(expectedPad));
         }
 
         [TestCase(null)]

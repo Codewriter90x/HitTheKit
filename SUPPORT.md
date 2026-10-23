@@ -29,7 +29,7 @@ proposals so that actionable reports retain the information needed for review.
 
 ## Supported versions
 
-Only the current `0.5.x` pre-release line receives best-effort fixes. Historical
+Only the current `0.6.x` pre-release line receives best-effort fixes. Historical
 playtest tags and binaries are unsupported and must not be redistributed as
 current releases.
 
