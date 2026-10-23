@@ -24,8 +24,9 @@ namespace HitTheKit.Unity.Input
         [SerializeField] private TextAsset genericProfile;
         private CoreMidiNativeSession nativeSession;
         private CoreMidiGuidedMidiCaptureSource capture;
-        private UserKitConfiguration configuration;
-        private readonly MidiKitMappingEngine mappingEngine = new MidiKitMappingEngine();
+        private GameplayKitMappingResolver resolver;
+        private MidiDrumDeviceProbe probe;
+        private string configurationLabel;
         private readonly MvpDrumInputMapper inputMapper = new MvpDrumInputMapper();
         private readonly MonotonicMidiTimestampMapper timestampMapper = new MonotonicMidiTimestampMapper();
 
@@ -42,12 +43,13 @@ namespace HitTheKit.Unity.Input
                 return;
             }
 
-            bool usesSavedConfiguration = DeviceSetupConfigurationRuntime.TryLoadComplete(out configuration);
-            if (!usesSavedConfiguration)
-            {
-                ElectronicDrumProfile profile = new ElectronicDrumProfileLoader().Load(genericProfile.text);
-                configuration = UserKitConfiguration.FromProfile(profile, "gameplay.generic-gm", "Gameplay Generic GM");
-            }
+            ElectronicDrumProfile profile = new ElectronicDrumProfileLoader().Load(genericProfile.text);
+            UserKitConfiguration generic = UserKitConfiguration.FromProfile(profile, "gameplay.generic-gm", "Gameplay Generic GM");
+            bool usesSavedConfiguration = DeviceSetupConfigurationRuntime.TryLoadComplete(out UserKitConfiguration saved);
+            // A saved configuration wins, but notes it does not know still resolve through the generic profile.
+            resolver = new GameplayKitMappingResolver(usesSavedConfiguration ? saved : generic, generic);
+            configurationLabel = usesSavedConfiguration ? "CONFIGURAZIONE PERSONALE" : "PROFILO GENERICO";
+
             nativeSession = new CoreMidiNativeSession(new CoreMidiNativeApi());
             if (!nativeSession.IsAvailable)
             {
@@ -55,37 +57,32 @@ namespace HitTheKit.Unity.Input
                 return;
             }
 
-            var discovery = new CoreMidiDrumDeviceDiscovery(nativeSession);
+            var discovery = new CoreMidiDrumDeviceDiscovery(nativeSession, DeviceSetupProfileCatalog.ForCoreMidiDevice);
             DeviceDiscoverySnapshot snapshot = discovery.Refresh();
-            if (snapshot.Devices.Count == 0)
+            string preferredDeviceId = PlayerPreferencesRuntime.Current.Snapshot.SelectedMidiDeviceId;
+            MidiDrumDeviceSelection selection = MidiDrumDeviceAutoSelector.Select(snapshot.Devices, preferredDeviceId);
+            if (selection.Kind == MidiDrumDeviceSelectionKind.NoDevice)
             {
                 State = GameplayMidiState.NoDevice;
                 StatusMessage = "TASTIERA · NESSUNA BATTERIA MIDI";
-                return;
-            }
-            DrumDeviceDescriptor selectedDevice = null;
-            string preferredDeviceId = PlayerPreferencesRuntime.Current.Snapshot.SelectedMidiDeviceId;
-            for (int index = 0; index < snapshot.Devices.Count; index++)
-                if (string.Equals(snapshot.Devices[index].Id, preferredDeviceId, StringComparison.Ordinal))
-                    selectedDevice = snapshot.Devices[index];
-            if (selectedDevice == null && snapshot.Devices.Count == 1) selectedDevice = snapshot.Devices[0];
-            if (selectedDevice == null)
-            {
-                State = GameplayMidiState.Ambiguous;
-                StatusMessage = $"TASTIERA · {snapshot.Devices.Count} MIDI (SELEZIONA IN CONFIGURA)";
                 return;
             }
 
             capture = new CoreMidiGuidedMidiCaptureSource(nativeSession);
             capture.MessageReceived += HandleMessage;
             capture.ConnectionChanged += HandleConnection;
-            capture.SelectDevice(selectedDevice.Id);
-            capture.Start("gameplay");
-            State = capture.IsCapturing ? GameplayMidiState.Connected : GameplayMidiState.Disconnected;
-            StatusMessage = capture.IsCapturing
-                ? $"TASTIERA + MIDI · {selectedDevice.DisplayName}" +
-                  (usesSavedConfiguration ? " · CONFIGURAZIONE PERSONALE" : " · PROFILO GENERICO")
-                : "TASTIERA · MIDI DISCONNESSO";
+
+            if (selection.Kind == MidiDrumDeviceSelectionKind.Probe)
+            {
+                probe = new MidiDrumDeviceProbe(selection.ProbeCandidates, Time.unscaledTimeAsDouble);
+                OpenDevice(probe.Current);
+                if (capture.IsCapturing) StatusMessage = "TASTIERA + MIDI · COLPISCI UN PAD PER RICONOSCERE LA BATTERIA";
+                return;
+            }
+
+            // Preferred, recognized or single inputs are re-derived on every launch; only a probe
+            // result is remembered, because it is the one choice the player had to make by playing.
+            OpenDevice(selection.Device);
 #else
             StatusMessage = "TASTIERA · CORE MIDI SOLO SU MACOS";
 #endif
@@ -93,7 +90,37 @@ namespace HitTheKit.Unity.Input
 
         private void Update()
         {
+            if (probe != null && !probe.IsLocked && probe.Advance(Time.unscaledTimeAsDouble))
+            {
+                OpenDevice(probe.Current);
+                if (capture.IsCapturing) StatusMessage = "TASTIERA + MIDI · COLPISCI UN PAD PER RICONOSCERE LA BATTERIA";
+            }
             capture?.Poll();
+        }
+
+        public GameplayKitMappingResolver MappingResolver => resolver;
+
+        private void OpenDevice(DrumDeviceDescriptor device)
+        {
+            capture.SelectDevice(device.Id);
+            capture.Start("gameplay");
+            timestampMapper.Reset();
+            State = capture.IsCapturing ? GameplayMidiState.Connected : GameplayMidiState.Disconnected;
+            StatusMessage = capture.IsCapturing
+                ? $"TASTIERA + MIDI · {device.DisplayName} · {configurationLabel}"
+                : "TASTIERA · MIDI DISCONNESSO";
+        }
+
+        private static void RememberDevice(DrumDeviceDescriptor device)
+        {
+            try
+            {
+                PlayerPreferencesRuntime.Current.SelectMidiDevice(device.Id);
+            }
+            catch (Exception)
+            {
+                // Remembering the device is a convenience; gameplay must continue if preferences cannot be saved.
+            }
         }
 
         private void OnDestroy()
@@ -130,8 +157,14 @@ namespace HitTheKit.Unity.Input
                     timestamp = timestampMapper.Map(eventMonotonicSeconds, currentMonotonicSeconds, songPosition);
             }
             RawMidiMessage message = WithTimestamp(nativeMessage, timestamp);
-            MidiKitMappingResult mapped = mappingEngine.Map(message, configuration);
-            if (mapped.Status != MidiKitMappingStatus.Mapped) return;
+            if (probe != null && probe.ReportMessage(message))
+            {
+                RememberDevice(probe.LockedDevice);
+                StatusMessage = $"TASTIERA + MIDI · {probe.LockedDevice.DisplayName} · {configurationLabel}";
+            }
+            GameplayKitMappingResolution resolution = resolver.Resolve(message);
+            if (!resolution.IsMapped) return;
+            MidiKitMappingResult mapped = resolution.Result;
             if (inputMapper.Map(mapped.Hit, true, out DrumInputEvent input) == MvpDrumInputMappingStatus.Mapped)
                 HitReceived?.Invoke(input);
         }
