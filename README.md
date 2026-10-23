@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version 0.5.0 pre-release" src="https://img.shields.io/badge/version-0.5.0--pre--release-ff4fa3">
+  <img alt="Version 0.6.0 beta" src="https://img.shields.io/badge/version-0.6.0--beta.1-ff4fa3">
   <img alt="License MPL-2.0" src="https://img.shields.io/badge/license-MPL--2.0-2fe0ff">
   <img alt="Unity 6" src="https://img.shields.io/badge/Unity-6000.5.6f1-ffffff">
   <img alt="MIDI support macOS only" src="https://img.shields.io/badge/MIDI-macOS%20CoreMIDI-f6a623">
@@ -66,10 +66,10 @@ for HitTheKit.
 ## Project status
 
 > [!IMPORTANT]
-> HitTheKit is an active pre-release project. This public repository distributes
-> source code and the website only. No Unity player binary is currently approved
-> for public distribution. Historical builds and private development history are
-> intentionally excluded.
+> HitTheKit is an active pre-release project. Signed and notarized Apple-silicon
+> beta builds, when available, are published only through the official GitHub
+> prereleases. They are tester-facing candidates rather than stable releases.
+> Historical private builds and private development history remain excluded.
 
 | Capability | Current status |
 | --- | --- |
@@ -77,7 +77,7 @@ for HitTheKit.
 | Electronic-drum MIDI | macOS Apple Silicon through CoreMIDI |
 | Learning path | 12 playable lessons; 12 more planned |
 | Included music | Original rights-clean demo only |
-| Public binary | Not yet approved for distribution |
+| Public binary | macOS Apple-silicon beta only; see GitHub Releases |
 
 Current limitations and release gates are tracked in
 [SUPPORT.md](SUPPORT.md) and the
