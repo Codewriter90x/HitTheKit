@@ -530,8 +530,10 @@
     border-radius: 14px;
 }
 
-.results-dialog { width: 720px; }
-.result-performance-panel { width: 100%; align-items: center; }
+.results-dialog { width: 720px; max-height: 92%; padding: 20px; }
+.results-scroll { width: 100%; flex-grow: 1; min-height: 0; }
+.results-scroll .unity-scroll-view__content-container { align-items: center; }
+.result-performance-panel { width: 100%; align-items: center; flex-shrink: 0; }
 .run-dialog-title { font-size: 34px; -unity-font-style: bold; letter-spacing: 3px; }
 .run-dialog-copy { color: var(--muted); margin-top: 9px; margin-bottom: 20px; }
 .practice-dialog { width: 720px; }
@@ -584,11 +586,11 @@
 .result-value { font-size: 25px; -unity-font-style: bold; margin-top: 4px; }
 .result-breakdown { color: var(--muted); margin-top: 20px; margin-bottom: 10px; }
 .result-practice { margin-top: 2px; margin-bottom: 8px; color: rgb(255, 202, 103); font-size: 12px; -unity-font-style: bold; -unity-text-align: middle-center; white-space: normal; }
-.error-map-panel { width: 100%; align-items: center; margin-top: 3px; margin-bottom: 7px; padding: 9px; border-width: 1px; border-color: rgba(255, 175, 72, 0.38); border-radius: 7px; background-color: rgba(27, 13, 6, 0.78); }
+.error-map-panel { width: 100%; align-items: center; flex-shrink: 0; margin-top: 3px; margin-bottom: 7px; padding: 9px; border-width: 1px; border-color: rgba(255, 175, 72, 0.38); border-radius: 7px; background-color: rgba(27, 13, 6, 0.78); }
 .error-map-kicker { color: rgb(255, 190, 85); font-size: 10px; -unity-font-style: bold; letter-spacing: 2px; }
 .result-error-map { margin-top: 5px; color: white; font-size: 11px; -unity-font-style: bold; -unity-text-align: middle-center; white-space: normal; }
 .result-practice-weakest { width: 300px; min-height: 38px; margin-top: 7px; margin-bottom: 0; }
-.auto-tempo-panel { width: 100%; align-items: center; margin-top: 4px; margin-bottom: 8px; padding: 10px; border-width: 1px; border-color: rgba(77, 216, 255, 0.35); border-radius: 7px; background-color: rgba(5, 22, 38, 0.88); }
+.auto-tempo-panel { width: 100%; align-items: center; flex-shrink: 0; margin-top: 4px; margin-bottom: 8px; padding: 10px; border-width: 1px; border-color: rgba(77, 216, 255, 0.35); border-radius: 7px; background-color: rgba(5, 22, 38, 0.88); }
 .auto-tempo-kicker { color: var(--accent); font-size: 10px; -unity-font-style: bold; letter-spacing: 2px; }
 .auto-tempo-status { margin-top: 5px; color: white; font-size: 12px; -unity-font-style: bold; -unity-text-align: middle-center; white-space: normal; }
 .auto-tempo-button { width: 300px; min-height: 38px; margin-top: 8px; margin-bottom: 0; }
@@ -596,7 +598,7 @@
 .result-calibration-button { align-self: center; width: 300px; min-height: 38px; margin-top: 8px; margin-bottom: 10px; }
 .result-ghost-button { align-self: center; width: 340px; min-height: 40px; margin-top: 2px; margin-bottom: 9px; border-color: rgba(255, 255, 255, 0.56); }
 .ghost-status { margin-top: 7px; padding-top: 6px; border-top-width: 1px; border-top-color: rgba(255, 255, 255, 0.18); color: rgba(255, 255, 255, 0.76); font-size: 9px; -unity-font-style: bold; white-space: normal; }
-.chart-creator-results { width: 100%; margin-top: 8px; padding: 12px; background-color: rgba(4, 22, 30, 0.96); border-width: 1px; border-color: rgba(65, 219, 255, 0.72); border-radius: 6px; }
+.chart-creator-results { width: 100%; flex-shrink: 0; margin-top: 8px; padding: 12px; background-color: rgba(4, 22, 30, 0.96); border-width: 1px; border-color: rgba(65, 219, 255, 0.72); border-radius: 6px; }
 .chart-creator-eyebrow { color: rgb(91, 224, 255); }
 .chart-creator-summary { margin-top: 6px; color: white; font-size: 19px; -unity-font-style: bold; -unity-text-align: middle-center; }
 .chart-creator-copy { margin-top: 6px; color: rgb(171, 196, 211); font-size: 10px; white-space: normal; -unity-text-align: middle-center; }
@@ -629,7 +631,7 @@
 .gameplay--high-contrast .reactive-stage-status { border-width: 2px; border-color: white; }
 .gameplay--reduced-motion .reactive-stage-host { opacity: 0.68; }
 .gameplay--reduced-motion .judgment { transition-duration: 0s; }
-.result-actions { flex-direction: row; }
+.result-actions { flex-direction: row; flex-shrink: 0; margin-top: 8px; }
 
 .theme--concert-stage { --accent: rgb(255, 176, 73); --accent-secondary: rgb(75, 165, 255); --panel-border: rgba(255, 175, 72, 0.45); }
 .theme--concert-stage .gameplay-background { opacity: 1; }
