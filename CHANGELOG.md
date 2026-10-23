@@ -9,6 +9,8 @@ semantico a partire dalla prima release pubblica stabile.
 
 ### Added
 
+- selezione automatica della batteria MIDI in gameplay: porte virtuali ignorate, profilo riconosciuto preferito e rilevamento al primo colpo quando ci sono più ingressi (#50);
+- pulsante dedicato per ripristinare la sola configurazione batteria (#51);
 - build e packaging Windows x64 keyboard-only con esclusione verificata di CoreMIDI;
 - roadmap pubblica, governance, maintainer, supporto e funding trasparente;
 - issue form separati per funzionalità, hardware e lezioni;
@@ -33,6 +35,8 @@ semantico a partire dalla prima release pubblica stabile.
 
 ### Changed
 
+- profilo GM generico esteso con note 37, 52, 55, 57 e 59 (#49);
+- le note non presenti nella configurazione salvata usano il profilo generico invece di essere ignorate; le note non mappate vengono contate (#51);
 - timestamp MIDI preservati fino al clock della canzone;
 - catalogo incluso limitato a contenuti originali o esempi locali neutrali;
 - toolchain xUnit aggiornata per rimuovere dipendenze transitive vulnerabili;
