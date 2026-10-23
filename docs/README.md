@@ -62,6 +62,7 @@ without creating an unreviewed second source of truth.
 - [CoreMIDI plug-in build](development/coremidi-plugin-build.md)
 - [CoreMIDI hardware smoke test](development/coremidi-hardware-smoke.md)
 - [Unity EditMode/PlayMode gate](development/unity-test-gate.md)
+- [CI player builds](development/ci-player-builds.md)
 - [URP migration](development/urp-migration.md)
 
 ## Packaging and release
